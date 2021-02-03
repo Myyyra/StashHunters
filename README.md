@@ -62,7 +62,7 @@ This section will be updated later :)
 <!-- ROADMAP -->
 ## Roadmap
 
-We have established a development plan starting with a minimum viable product (MVP) and building up from there. You will find a list of features included in each version of the game in our wiki: LINKKI
+We have established a development plan starting with a minimum viable product (MVP) and building up from there. You will find a list of features included in each version of the game in our wiki: https://github.com/Myyyra/StashHunters/wiki/Roadmap
 
 
 <!-- GETTING STARTED -->
