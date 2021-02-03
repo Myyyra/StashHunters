@@ -27,9 +27,10 @@
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
+        <li><a href="#building-with">Building With</a></li>
       </ul>
     </li>
+    <li><a href="#roadmap">Roadmap</a></li>
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
@@ -38,7 +39,6 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -59,7 +59,10 @@ This section will be updated later :)
 * [Firebase](https://firebase.google.com)
 * [Node.js](https://nodejs.org/en/)
 
+<!-- ROADMAP -->
+## Roadmap
 
+We have established a development plan starting with a minimum viable product (MVP) and building up from there. You will find a list of features included in each version of the game in our wiki: LINKKI
 
 
 <!-- GETTING STARTED -->
@@ -79,15 +82,6 @@ This section will be updated later :)
 ## Usage
 
 This section will be updated later :)
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-We have established a development plan starting with a minimum viable product (MVP) and building up from there. You will find a list of features included in each version of the game in our wiki: LINKKI
-
-
 
 
 <!-- LICENSE -->
