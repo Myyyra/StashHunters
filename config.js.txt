@@ -1,0 +1,22 @@
+import * as firebase from 'firebase';
+import '@firebase/auth';
+import '@firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyASqO9wJOkRQjhDAFeP2_JFYkK9wriEnUo ',
+  authDomain: 'stashhunters.firebaseapp.com',
+  databaseURL: 'https://stashhunters.firebaseio.com',
+  projectId: 'stashhunters',
+  storageBucket: 'stashhunters.appspot.com',
+  messagingSenderId: '220185997672',
+  appId: '1:220185997672:android:690340e1588b24eea9e6dd',
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+export { firebase };
+
+
+
