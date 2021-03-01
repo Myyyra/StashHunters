@@ -2,13 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, Alert, Button } from 'react-native';
 import * as firebase from 'firebase';
-import * as Permissions from 'expo-permissions'
+//import * as Permissions from 'expo-permissions';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import Geolocation from "react-native-geolocation-service";
+//import Geolocation from "react-native-geolocation-service";
 
+//TODO: encrypt
 const firebaseConfig = {
-  
   apiKey: "AIzaSyASqO9wJOkRQjhDAFeP2_JFYkK9wriEnUo",
   authDomain: "stashhunters.firebaseapp.com",
   databaseURL: "https://stashhunters-default-rtdb.firebaseio.com/",
@@ -20,7 +20,7 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
-}else {
+} else {
   firebase.app(); // if already initialized, use that one
 } 
 
@@ -49,78 +49,58 @@ const styles = StyleSheet.create({
 export default function App() {
   
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
   const [latitude, setLatitude] = useState(60.201313);
   const [longitude, setLongitude] = useState(24.934041);
-  const [maprange, setMapRange] = useState(0.0001)
+  const [maprange, setMapRange] = useState(0.0001);
+  const [permission, setPermission] = useState(Location.PermissionStatus.UNDETERMINED);
 
-
-  //tee että tämä alla oleva async juttu tehdään vain nappia painaessa 
-  //laita async osuus funktion sisään jota kutsutaan kun painaa uploadlocation
+  //check if app is allowed to use location when started
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
+      if (status === 'granted') {
+        setPermission('granted');
+        getCurrentLocation();
       }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-
-      setLatitude(location.coords.latitude);
-      setLongitude(location.coords.longitude);
-      
     })();
   }, []);
 
-  let text = 'Waiting..';
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
-  
-
-  const saveStash = () => {
-
-    (async () => {
-      let { status } = await Location.requestPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-  
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+  const getCurrentLocation = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
       
-      setLatitude(location.coords.latitude);
-      setLongitude(location.coords.longitude);
-
-      Alert.alert("tässä olet " + latitude + " : " + longitude);
-
-      firebase.database().ref('stashes/').push(
-          {
-            location
-          }
-      );
-
-    })();
-    }
+    setLatitude(location.coords.latitude);
+    setLongitude(location.coords.longitude);
   
-    text = 'Waiting..';
-    if (errorMsg) {
-      text = errorMsg;
-    } else if (location) {
-      text = JSON.stringify(location);
+    //Alert.alert("tässä olet " + latitude + " : " + longitude);
+  }
+  
+  const saveStash = () => {
+    (async () => {
+      if (permission === 'granted') {
+        //Alert.alert("lupa on saatu " + permission)
+        
+        getCurrentLocation();
 
-    
-    
-    
-    //Alert.alert("heitetty firebaseen");
+        let userMsg = "tötttörröö";
+        let desc = "koti"
+
+        firebase.database().ref('stashes/').push(
+            {
+              location,
+              title: userMsg,
+              description: desc
+            }
+        );
+        //if no permission to location, give error msg
+      } else { 
+        setErrorMsg('Permission to access location was denied');
+        Alert.alert('Permission to access location was denied');
+      }
+    })();
   }
 
-  useEffect(() => {saveStash}, []);
 
   return (
     <View style={styles.container}>
@@ -138,17 +118,14 @@ export default function App() {
         coordinate={{
           latitude: latitude, 
           longitude: longitude}}
-          title='Haaga-Helia' />
+          title='Haaga-Helia' 
+      />
       
       </MapView>
-      
-
       <Text></Text>
       <Button title="UploadLocation" onPress={saveStash} />
       <StatusBar style="auto" />
     </View>
-
-    
   );
 }
 
