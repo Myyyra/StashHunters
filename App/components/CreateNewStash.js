@@ -1,9 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 
-
-
-
 const CreateNewStash = () => {
 
     const [title, setTitle] = useState('');
@@ -15,6 +12,7 @@ const CreateNewStash = () => {
 
     return(
         <View style = {styles.container}>
+            <Text>Create new stash</Text>
             <TextInput  
                 style = {styles.input}
                 onChangeText = {t => setTitle(t)}

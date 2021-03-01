@@ -2,10 +2,9 @@ import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, Alert, Button } from 'react-native';
 import * as firebase from 'firebase';
-//import * as Permissions from 'expo-permissions';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-//import Geolocation from "react-native-geolocation-service";
+import CreateNewStash from './components/CreateNewStash';
 
 //TODO: encrypt
 const firebaseConfig = {
@@ -45,7 +44,6 @@ const styles = StyleSheet.create({
   },
  });
 
-
 export default function App() {
   
   const [location, setLocation] = useState(null);
@@ -78,9 +76,7 @@ export default function App() {
   
   const saveStash = () => {
     (async () => {
-      if (permission === 'granted') {
-        //Alert.alert("lupa on saatu " + permission)
-        
+      if (permission === 'granted') {        
         getCurrentLocation();
 
         let userMsg = "tötttörröö";
@@ -122,8 +118,7 @@ export default function App() {
       />
       
       </MapView>
-      <Text></Text>
-      <Button title="UploadLocation" onPress={saveStash} />
+      <Button title="New stash" onPress={saveStash} />
       <StatusBar style="auto" />
     </View>
   );
