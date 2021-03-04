@@ -6,6 +6,7 @@ const CreateNewStash = () => {
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
 
+
     const saveStash = () => {
         Alert.alert("Stash saved");
     }
@@ -15,13 +16,13 @@ const CreateNewStash = () => {
             <Text>Create new stash</Text>
             <TextInput  
                 style = {styles.input}
-                onChangeText = {t => setTitle(t)}
-                value={t}
+                onChangeText = {title => setTitle(title)}
+                value={title}
             />
             <TextInput  
                 style = {styles.input}
-                onChangeText = {d => setDesc(d)}
-                value={d}
+                onChangeText = {desc => setDesc(desc)}
+                value={desc}
             />
             <Button 
                 onPress = {saveStash}
