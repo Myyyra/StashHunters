@@ -31,9 +31,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions = { screenOptions }>
+        <Tab.Screen name='HomeScreen' component={ HomeScreen } options={{ title: 'My home' }}/>
         <Tab.Screen name='CreateNewStash' component={ CreateNewStash } options={{ title: 'Add'}}/>
         <Tab.Screen name='MapScreen' component={ MapScreen } options={{ title: 'Map' }}/>
-        <Tab.Screen name='HomeScreen' component={ HomeScreen } options={{ title: 'My home' }}/>
       </Tab.Navigator>
     </NavigationContainer>
   );

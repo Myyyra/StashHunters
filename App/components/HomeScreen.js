@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function HomeScreen({navigation}) {
   return (
     <View style={styles.container}>
-      <Text>Homepage!</Text>
+      <Text>Let's play StashHunters!</Text>
       <StatusBar style="auto" />
     </View>
   );
