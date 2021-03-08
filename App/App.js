@@ -4,11 +4,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import MapScreen from './components/MapScreen';
+import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './components/HomeScreen';
+import MapScreen from './components/MapScreen';
 import CreateNewStash from './components/CreateNewStash';
 
-export default function App() {
+const Tab = createBottomTabNavigator();
+
+function BottomNavi() {
   
   const screenOptions = ({ route }) => ({
     tabBarIcon: ({ focused, color, size }) => {
@@ -26,15 +29,27 @@ export default function App() {
     }
   });
 
-  const Tab = createBottomTabNavigator();
+  return (
+    <Tab.Navigator screenOptions = { screenOptions }>
+      <Tab.Screen name='MapScreen' component={ MapScreen } options={{ title: 'Map' }}/>
+      <Tab.Screen name='HomeScreen' component={ HomeScreen } options={{ title: 'My home' }}/>
+      <Tab.Screen name='CreateNewStash' component={ CreateNewStash } options={{ title: 'Add'}}/>
+    </Tab.Navigator>
+  );
+  }
+
+
+
+const Stack = createStackNavigator();
+
+export default function App() {  
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator screenOptions = { screenOptions }>
-        <Tab.Screen name='CreateNewStash' component={ CreateNewStash } options={{ title: 'Add'}}/>
-        <Tab.Screen name='MapScreen' component={ MapScreen } options={{ title: 'Map' }}/>
-        <Tab.Screen name='HomeScreen' component={ HomeScreen } options={{ title: 'My home' }}/>
-      </Tab.Navigator>
+    <NavigationContainer>      
+      <Stack.Navigator>
+        <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="BottomNavi" component={BottomNavi} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
