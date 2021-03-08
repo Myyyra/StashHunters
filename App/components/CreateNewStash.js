@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState} from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 import * as firebase from 'firebase';
 
@@ -20,7 +20,7 @@ const firebaseConfig = {
     firebase.app(); // if already initialized, use that one
   } 
 
-export default function CreateNewStash() {
+export default function CreateNewStash({navigation}) {
     
     //initialize states for creating a new stash
     const [title, setTitle] = useState('');
@@ -33,7 +33,11 @@ export default function CreateNewStash() {
     const saveAndRedirect = () => {
         saveStash();
         Alert.alert("Stash saved");
-        //To do: redirect
+        setTitle('');
+        setDesc('');
+        setLatitude('');
+        setLongitude('');
+        navigation.navigate('MapScreen');
     }
 
     //save the created stash to database
@@ -42,7 +46,8 @@ export default function CreateNewStash() {
     
             firebase.database().ref('stashes/').push(
                 {
-                latLng:{latitude:latitude, longitude:longitude},
+                latitude: latitude,
+                longitude: longitude,
                 title: title,
                 description: desc
                 }
