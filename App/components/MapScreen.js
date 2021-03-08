@@ -46,16 +46,32 @@ export default function MapScreen() {
   const [longitude, setLongitude] = useState(24.934041);
   const [maprange, setMapRange] = useState(0.0001);
   const [permission, setPermission] = useState(Location.PermissionStatus.UNDETERMINED);
+  const [stashes, setStashes] = useState([]);
+
+  const [region, setRegion] = useState({
+    latitude: 60.200692,
+    longitude: 24.934302,
+    latitudeDelta: 0.0222,
+    longitudeDelta: 0.0121
+  });
 
   //check if app is allowed to use location when started
   useEffect(() => {
+
+    getStashes();
+
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
       if (status === 'granted') {
         setPermission('granted');
         getCurrentLocation();
+
+        
+        
       }
     })();
+
+    
   }, []);
 
   const getCurrentLocation = async () => {
@@ -64,8 +80,16 @@ export default function MapScreen() {
       
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
-  
-    //Alert.alert("tässä olet " + latitude + " : " + longitude);
+  }
+
+  const getStashes = () => {
+    firebase.database()
+        .ref('/stashes')
+        .on('value', snapshot => {
+          const data = snapshot.val();
+          const s = Object.values(data);
+          setStashes(s);
+        });
   }
   
   const saveStash = () => {
@@ -75,10 +99,14 @@ export default function MapScreen() {
 
         let userMsg = "täällä ollaan";
         let desc = "puisto"
+        let LatLong = {
+          latitude: latitude,
+          longitude: longitude
+        }
 
         firebase.database().ref('stashes/').push(
             {
-              location,
+              latlong: LatLong,
               title: userMsg,
               description: desc
             }
@@ -92,26 +120,25 @@ export default function MapScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.map}>
     
       <MapView
         style={styles.map}
-        region={{
-          latitude: latitude + maprange,
-          longitude: longitude + maprange,
-          latitudeDelta: 0.0322,
-          longitudeDelta: 0.0221,
-      }} >
+        region={region} >
+ 
+      {stashes.map((stash, index) => (
+          <Marker
+            key={index}
 
-      <Marker
-        coordinate={{
-          latitude: latitude, 
-          longitude: longitude}}
-          title='Haaga-Helia' 
-      />
+            coordinate={{ latitude : parseFloat(stash.latitude) , longitude : parseFloat(stash.longitude) }}
+
+            title={stash.title}
+            description={stash.description}
+          />
+        ))}
       
       </MapView>
-      <Button title="New stash" onPress={saveStash} />
+      
       <StatusBar style="auto" />
     </View>
   );
