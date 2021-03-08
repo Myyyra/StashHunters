@@ -1,16 +1,50 @@
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
+import * as firebase from 'firebase';
 
-const CreateNewStash = () => {
+const firebaseConfig = {
+    apiKey: "AIzaSyAVAQVZTPJGg4LcRsOe2-jOv9iL_D2l03A",
+    authDomain: "stashhunters.firebaseapp.com",
+    databaseURL: "https://stashhunters-default-rtdb.firebaseio.com",
+    projectId: "stashhunters",
+    storageBucket: "stashhunters.appspot.com",
+    messagingSenderId: "220185997672",
+    appId: "1:220185997672:web:4c44ff88c7def725a9e6dd",
+    measurementId: "G-NEN89Q25YP"
+  };
+  
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  } else {
+    firebase.app(); // if already initialized, use that one
+  } 
+
+export default function CreateNewStash() {
 
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
+    const [latitude, setLatitude] = useState(60.201313);
+    const [longitude, setLongitude] = useState(24.934041);
 
-
-    const saveStash = () => {
+    const saveAndRedirect = () => {
+        saveStash();
         Alert.alert("Stash saved");
+        //To do: redirect
     }
 
+    const saveStash = () => {
+        (async () => {            
+    
+            firebase.database().ref('stashes/').push(
+                {
+                latLng:{latitude:latitude, longitude:longitude},
+                title: title,
+                description: desc
+                }
+            );         
+        })();
+        }
+    
     return(
         <View style = {styles.container}>
             <Text>Create new stash</Text>
@@ -18,15 +52,32 @@ const CreateNewStash = () => {
                 style = {styles.input}
                 onChangeText = {title => setTitle(title)}
                 value={title}
+                placeholder='Stash name'
             />
             <TextInput  
                 style = {styles.input}
                 onChangeText = {desc => setDesc(desc)}
                 value={desc}
+                placeholder='Description'
+            />
+
+            <TextInput  
+                style = {styles.input}
+                onChangeText = {latitude => setLatitude(latitude)}
+                value={latitude}
+                placeholder='Latitude'
+            />
+
+            <TextInput  
+                style = {styles.input}
+                onChangeText = {longitude => setLongitude(longitude)}
+                value={longitude}
+                placeholder='Longitude'
             />
             <Button 
-                onPress = {saveStash}
-                title = "Save"
+                onPress = {saveAndRedirect}
+                title = "Save" 
+                color='#029B76'
             />
         </View>
     );
@@ -43,11 +94,11 @@ const styles = StyleSheet.create({
     input: {
         width: 200,
         borderColor: 'gray',
-        borderWidth: 1
+        borderWidth: 1,
+        paddingLeft: 10,
+        margin: 10
     },
     button: {
 
     }
    });
-
-export default CreateNewStash;
