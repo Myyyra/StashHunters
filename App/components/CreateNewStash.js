@@ -13,6 +13,7 @@ const firebaseConfig = {
     measurementId: "G-NEN89Q25YP"
   };
   
+  //initialize connection to database
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   } else {
@@ -20,18 +21,22 @@ const firebaseConfig = {
   } 
 
 export default function CreateNewStash() {
-
+    
+    //initialize states for creating a new stash
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
     const [latitude, setLatitude] = useState(60.201313);
     const [longitude, setLongitude] = useState(24.934041);
 
+    //when save-button is pressed, save the new stash, inform the player that
+    //saving was successful, and redirect to map view
     const saveAndRedirect = () => {
         saveStash();
         Alert.alert("Stash saved");
         //To do: redirect
     }
 
+    //save the created stash to database
     const saveStash = () => {
         (async () => {            
     
