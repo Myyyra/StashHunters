@@ -8,6 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './components/HomeScreen';
 import MapScreen from './components/MapScreen';
 import CreateNewStash from './components/CreateNewStash';
+import StashListView from './components/StashListView';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,6 +25,9 @@ function BottomNavi() {
       } else if (route.name === 'CreateNewStash') {
         iconName = 'add-circle-outline';
       }
+      else if (route.name === 'StashListView') {
+        iconName = 'list';
+      }
   
       return <Ionicons name={iconName} size={size} color={color} />;
     }
@@ -34,6 +38,7 @@ function BottomNavi() {
       <Tab.Screen name='MapScreen' component={ MapScreen } options={{ title: 'Map' }}/>
       <Tab.Screen name='HomeScreen' component={ HomeScreen } options={{ title: 'My home' }}/>
       <Tab.Screen name='CreateNewStash' component={ CreateNewStash } options={{ title: 'Add'}}/>
+      <Tab.Screen name='StashListView' component={ StashListView } options={{ title: 'List'}}/>
     </Tab.Navigator>
   );
   }

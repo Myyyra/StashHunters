@@ -126,7 +126,10 @@ export default function MapScreen() {
         style={styles.map}
         region={region} >
  
+      
+
       {stashes.map((stash, index) => (
+        
           <Marker
             key={index}
 
