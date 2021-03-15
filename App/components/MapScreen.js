@@ -137,6 +137,8 @@ export default function MapScreen() {
 
             title={stash.title}
             description={stash.description}
+
+            image={require('../assets/flag.png')}
           />
         ))}
       
