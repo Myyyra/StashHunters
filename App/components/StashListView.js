@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, Alert, Button, FlatList } from 'react-native';
-import * as firebase from 'firebase';
+//import * as firebase from 'firebase';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-
+import Firebase from '../config/Firebase';
+/*
 //TODO: encrypt
 const firebaseConfig = {
   apiKey: "AIzaSyAVAQVZTPJGg4LcRsOe2-jOv9iL_D2l03A",
@@ -22,7 +23,8 @@ if (!firebase.apps.length) {
 } else {
   firebase.app(); // if already initialized, use that one
 } 
-
+*/
+const firebase = Firebase;
 export default function MapScreen() {
   
   const [permission, setPermission] = useState(Location.PermissionStatus.UNDETERMINED);
