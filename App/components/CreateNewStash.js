@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 import * as firebase from 'firebase';
+import * as Location from 'expo-location';
 
 const firebaseConfig = {
     apiKey: "AIzaSyAVAQVZTPJGg4LcRsOe2-jOv9iL_D2l03A",
@@ -40,6 +41,13 @@ export default function CreateNewStash({ navigation }) {
         navigation.navigate('MapScreen');
     }
 
+    const findLocation = async () => {
+        let location = await Location.getCurrentPositionAsync({});
+
+        setLatitude(location.coords.latitude);
+        setLongitude(location.coords.longitude);
+    }
+
     //save the created stash to database
     const saveStash = () => {
         firebase.database().ref('stashes/').push(
@@ -52,6 +60,10 @@ export default function CreateNewStash({ navigation }) {
         );
     }
 
+    useEffect(() => {
+        findLocation()
+    }, []);
+
     return (
         <View style={styles.container}>
             <Text>Create new stash</Text>
@@ -62,25 +74,14 @@ export default function CreateNewStash({ navigation }) {
                 placeholder='Stash name'
             />
             <TextInput
-                style={styles.input}
+                multiline
+                numberOfLines={3}
+                style={styles.inputBig}
                 onChangeText={setDesc}
                 value={desc}
                 placeholder='Description'
             />
 
-            <TextInput
-                style={styles.input}
-                onChangeText={setLatitude}
-                value={latitude}
-                placeholder='Latitude'
-            />
-
-            <TextInput
-                style={styles.input}
-                onChangeText={longitude => setLongitude(longitude)}
-                value={longitude}
-                placeholder='Longitude'
-            />
             <Button
                 onPress={saveAndRedirect}
                 title="Save"
@@ -105,7 +106,13 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         margin: 10
     },
-    button: {
-
-    }
+    inputBig: {
+        width: 200,
+        height: 75,
+        borderColor: 'gray',
+        borderWidth: 1,
+        paddingLeft: 10,
+        paddingRight: 10,
+        margin: 10
+    },
 });
