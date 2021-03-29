@@ -2,11 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Button, ImageBackground, StyleSheet, Text, TextInput, View } from 'react-native';
 
-
-
 export default function HomeScreen({navigation}) {
-  
-    
   return (
     <View style={styles.container}>
       <ImageBackground source={require('../assets/kartta.png')} style={styles.image, {width: '100%', height: '100%'}}>

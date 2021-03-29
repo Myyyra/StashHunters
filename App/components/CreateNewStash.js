@@ -1,28 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
-import * as firebase from 'firebase';
+//import * as firebase from 'firebase';
 import * as Location from 'expo-location';
-
-const firebaseConfig = {
-    apiKey: "AIzaSyAVAQVZTPJGg4LcRsOe2-jOv9iL_D2l03A",
-    authDomain: "stashhunters.firebaseapp.com",
-    databaseURL: "https://stashhunters-default-rtdb.firebaseio.com",
-    projectId: "stashhunters",
-    storageBucket: "stashhunters.appspot.com",
-    messagingSenderId: "220185997672",
-    appId: "1:220185997672:web:4c44ff88c7def725a9e6dd",
-    measurementId: "G-NEN89Q25YP"
-};
-
-//initialize connection to database
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-} else {
-    firebase.app(); // if already initialized, use that one
-}
+import Firebase from '../config/Firebase';
 
 export default function CreateNewStash({ navigation }) {
-
     //initialize states for creating a new stash
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
@@ -50,7 +32,8 @@ export default function CreateNewStash({ navigation }) {
 
     //save the created stash to database
     const saveStash = () => {
-        firebase.database().ref('stashes/').push(
+        const fb = Firebase;
+        fb.database().ref('stashes/').push(
             {
                 latitude: latitude,
                 longitude: longitude,
