@@ -57,20 +57,20 @@ export default function CreateNewStash({ navigation }) {
             <Text>Create new stash</Text>
             <TextInput
                 style={styles.input}
-                onChangeText={title => setTitle(title)}
+                onChangeText={setTitle}
                 value={title}
                 placeholder='Stash name'
             />
             <TextInput
                 style={styles.input}
-                onChangeText={desc => setDesc(desc)}
+                onChangeText={setDesc}
                 value={desc}
                 placeholder='Description'
             />
 
             <TextInput
                 style={styles.input}
-                onChangeText={latitude => setLatitude(latitude)}
+                onChangeText={setLatitude}
                 value={latitude}
                 placeholder='Latitude'
             />
