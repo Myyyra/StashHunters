@@ -2,8 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Button, ImageBackground, StyleSheet, Text, TextInput, View } from 'react-native';
 
-
-
 export default function HomeScreen({navigation}) {
   
     

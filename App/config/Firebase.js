@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import {
     API_KEY,
     AUTH_DOMAIN,
@@ -6,7 +6,7 @@ import {
     PROJECT_ID,
     MESSAGE_SENDER_ID,
     APP_ID
-} from 'react-native-dotenv';
+} from '@env';
 
 const firebaseConfig = {
     apiKey: API_KEY,
@@ -17,16 +17,15 @@ const firebaseConfig = {
     messagingSenderId: MESSAGE_SENDER_ID,
     appId: APP_ID
 }
-
 // Initialize Firebase
 
-let Firebase = firebase.initializeApp(firebaseConfig);
-/*
+//let Firebase = firebase.initializeApp(firebaseConfig);
+
 let Firebase = null;
 if (!firebase.apps.length) {
     Firebase = firebase.initializeApp(firebaseConfig);
   } else {
     Firebase = firebase.app(); // if already initialized, use that one
 } 
-*/
+
 export default Firebase;
