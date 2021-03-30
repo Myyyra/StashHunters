@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app';
+import * as firebase from 'firebase';
 import {
     API_KEY,
     AUTH_DOMAIN,

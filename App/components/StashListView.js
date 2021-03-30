@@ -32,7 +32,7 @@ export default function StashListView() {
 
   const getCurrentLocation = async () => {
     let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
+    //setLocation(location);
       
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
