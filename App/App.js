@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +8,8 @@ import HomeScreen from './components/HomeScreen';
 import MapScreen from './components/MapScreen';
 import CreateNewStash from './components/CreateNewStash';
 import StashListView from './components/StashListView';
+import SignUp from './components/SignUp';
+import StashCard from './components/StashCard';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,8 +36,7 @@ function BottomNavi() {
 
   return (
     <Tab.Navigator screenOptions = { screenOptions }>
-      <Tab.Screen name='MapScreen' component={ MapScreen } options={{ title: 'Map' }}/>
-      <Tab.Screen name='HomeScreen' component={ HomeScreen } options={{ title: 'My home' }}/>
+      <Tab.Screen name='MapScreen' component={MapScreen} options={{ title: 'Map' }} />
       <Tab.Screen name='CreateNewStash' component={ CreateNewStash } options={{ title: 'Add'}}/>
       <Tab.Screen name='StashListView' component={ StashListView } options={{ title: 'List'}}/>
     </Tab.Navigator>
@@ -54,6 +54,8 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} />
         <Stack.Screen options={{ headerShown: false }} name="BottomNavi" component={BottomNavi} />
+        <Stack.Screen options={{ headerShown: false }} name="SignUp" component={SignUp} />
+        <Stack.Screen options={{ headerShown: false }} name="StashCard" component={StashCard} />
       </Stack.Navigator>
     </NavigationContainer>
   );

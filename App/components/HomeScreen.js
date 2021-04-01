@@ -22,8 +22,8 @@ export default function HomeScreen({navigation}) {
         </View>
 
         <View style={styles.textParagraph}>
-          <Text style={{fontSize: 20}}>Create new account</Text>
-          <Text style={{fontSize: 20}} onPress={() => navigation.navigate('BottomNavi')}>Continue without login</Text>
+          <Text style={{ fontSize: 20, marginBottom: 10 }} onPress={() => navigation.navigate('SignUp')}>Create a new account</Text>
+          <Text style={{ fontSize: 20 }} onPress={() => navigation.navigate('BottomNavi')}>Continue without login</Text>
         </View>
 
       </ImageBackground>

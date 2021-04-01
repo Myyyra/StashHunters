@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Text, View, Alert, Button, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Alert, Button, FlatList, TouchableOpacity } from 'react-native';
 import * as firebase from 'firebase';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -23,7 +23,7 @@ if (!firebase.apps.length) {
   firebase.app(); // if already initialized, use that one
 } 
 
-export default function MapScreen() {
+export default function StashListView({ navigation }) {
   
   const [permission, setPermission] = useState(Location.PermissionStatus.UNDETERMINED);
   const [stashes, setStashes] = useState([]);
@@ -73,10 +73,12 @@ export default function MapScreen() {
         <View style={styles.list}>
             <FlatList 
             keyExtractor={(item, index) => index.toString()} 
-            renderItem={({item}) => <View style={styles.listcontainer}>
+          renderItem={({ item }) =>
+            <View style={styles.listcontainer}>
                 <Text style={{fontSize: 24, fontWeight: 'bold'}}>{item.title}</Text>
                 <Text style={{fontSize: 18}}>{item.description}</Text>
-            </View>} 
+              <Button title='STASH' onPress={() => navigation.navigate('StashCard', item)} />
+              </View>} 
             data={stashes} 
             /> 
         </View>
@@ -104,8 +106,6 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         marginBottom: 10,
         padding: 5
-    }
-
-
+  }
 
    });
