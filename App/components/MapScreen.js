@@ -3,10 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import Firebase from '../config/Firebase';
+import Geolocation from '@react-native-community/geolocation';
+
 
 export default function MapScreen() {
 
+  const [latitude, setLatitude] = useState(60.201313);
+  const [longitude, setLongitude] = useState(24.934041);
   const [stashes, setStashes] = useState([]);
+  const [hunted, setHunted] = useState([]);
 
   //this is for haaga helia so might delete later
   const [region, setRegion] = useState({
@@ -31,9 +36,20 @@ export default function MapScreen() {
 
   }
 
+  const findLocation = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+
+    setLatitude(location.coords.latitude);
+    setLongitude(location.coords.longitude);
+  }
+
   useEffect(() => {
     getStashes();
   }, []);
+
+  //useEffect(() => {
+  //  Alert.alert("hello");
+  //}, [Geolocation.watchPosition()]);
 
 
   return (
@@ -54,13 +70,20 @@ export default function MapScreen() {
             description={stash.description}
 
             image={require('../assets/flag.png')}
+
+            onPress={() => setHunted(stash)}
           />
         ))}
 
       </MapView>
 
+      <View>
+        <Text>The Hunted Stash: {hunted.title}</Text>
+      </View>
+
       <StatusBar style="auto" />
     </View>
+
   );
 }
 
@@ -76,3 +99,5 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 });
+
+
