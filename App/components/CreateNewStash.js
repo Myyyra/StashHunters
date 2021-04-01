@@ -2,20 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 //import * as firebase from 'firebase';
 import * as Location from 'expo-location';
+import { getDistance } from 'geolib';
 import Firebase from '../config/Firebase';
 
 export default function CreateNewStash({ navigation }) {
+    const firebase = Firebase;
+
     //initialize states for creating a new stash
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
     const [latitude, setLatitude] = useState(60.201313);
     const [longitude, setLongitude] = useState(24.934041);
+    const [stashes, setStashes] = useState([]);
 
     //when save-button is pressed, save the new stash, inform the player that
     //saving was successful, and redirect to map view
     const saveAndRedirect = () => {
         saveStash();
-        Alert.alert("Stash saved");
         setTitle('');
         setDesc('');
         setLatitude('');
@@ -31,16 +34,60 @@ export default function CreateNewStash({ navigation }) {
     }
 
     //save the created stash to database
+    //checks if the are no other stahes too near
     const saveStash = () => {
-        const fb = Firebase;
-        fb.database().ref('stashes/').push(
-            {
-                latitude: latitude,
-                longitude: longitude,
-                title: title,
-                description: desc
+        //const firebase = Firebase;
+            
+        getStashes();
+
+        let closest = null;
+        stashes.forEach(stash => {
+            let distance = getDistance(
+                {
+                    //user location
+                    latitude: latitude,
+                    longitude: longitude,
+                },
+                {
+                    //compared stash location
+                    latitude: stash.latitude,
+                    longitude: stash.longitude,
+                }
+            )
+
+            //muokkaa tänne parempi etäissyy arvo kun tarttee
+            //lähin testattu piilo oli 36 metrin päässä 
+            if (distance < 36) {
+                Alert.alert("Cannot create Stash. There is another Stash nearby!");
+
+                if (distance < closest || closest == null) {
+                    closest = stash;
+                }
             }
-        );
+        })
+
+        //if there is no close stashes save location to firebase
+        if (closest == null) {
+            firebase.database().ref('stashes/').push(
+                {
+                    latitude: latitude,
+                    longitude: longitude,
+                    title: title,
+                    description: desc
+                }
+            );
+            Alert.alert("Stash saved");
+        }
+    }
+
+    const getStashes = () => {
+        firebase.database()
+            .ref('/stashes')
+            .on('value', snapshot => {
+                const data = snapshot.val();
+                const s = Object.values(data);
+                setStashes(s);
+            });
     }
 
     useEffect(() => {
@@ -58,13 +105,26 @@ export default function CreateNewStash({ navigation }) {
             />
             <TextInput
                 multiline
-                numberOfLines={3}
+                numberOfLines={4}
                 style={styles.inputBig}
                 onChangeText={setDesc}
                 value={desc}
                 placeholder='Description'
             />
 
+            <TextInput
+                style={styles.input}
+                onChangeText={setLatitude}
+                value={latitude}
+                placeholder='Latitude'
+            />
+
+            <TextInput
+                style={styles.input}
+                onChangeText={setLongitude}
+                value={longitude}
+                placeholder='Longitude'
+            />
             <Button
                 onPress={saveAndRedirect}
                 title="Save"
@@ -97,5 +157,5 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         margin: 10
-    },
+    }
 });
