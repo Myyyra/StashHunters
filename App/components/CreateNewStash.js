@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
-//import * as firebase from 'firebase';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Firebase from '../config/Firebase';
 
 export default function CreateNewStash({ navigation }) {
-    const firebase = Firebase;
 
     //initialize states for creating a new stash
     const [title, setTitle] = useState('');
@@ -36,12 +34,14 @@ export default function CreateNewStash({ navigation }) {
     //save the created stash to database
     //checks if the are no other stahes too near
     const saveStash = () => {
-        //const firebase = Firebase;
-            
-        getStashes();
 
-        let closest = null;
+        getStashes();
+        findLocation();
+
+        let farEnough = false;
         stashes.forEach(stash => {
+
+            //distance between stash and user location in meters
             let distance = getDistance(
                 {
                     //user location
@@ -55,44 +55,49 @@ export default function CreateNewStash({ navigation }) {
                 }
             )
 
+            //!!!! tämä ei vielä toimi vaikka toimi aikaisemmin?!!
+
             //muokkaa tänne parempi etäissyy arvo kun tarttee
             //lähin testattu piilo oli 36 metrin päässä 
-            if (distance < 36) {
-                Alert.alert("Cannot create Stash. There is another Stash nearby!");
-
-                if (distance < closest || closest == null) {
-                    closest = stash;
-                }
+            if (distance < 25) {
+                Alert.alert("nyt o liia lähellä");
+            }
+            else {
+                farEnough = true;
             }
         })
 
         //if there is no close stashes save location to firebase
-        if (closest == null) {
-            firebase.database().ref('stashes/').push(
-                {
-                    latitude: latitude,
-                    longitude: longitude,
-                    title: title,
-                    description: desc
-                }
-            );
-            Alert.alert("Stash saved");
+        if (farEnough === true) {
+            try {
+                Firebase.database().ref('stashes/').push(
+                    {
+                        latitude: latitude,
+                        longitude: longitude,
+                        title: title,
+                        description: desc
+                    }
+                );
+                Alert.alert("Stash saved");
+            } catch (error) {
+                console.log("Error saving stash " + error);
+            }
         }
     }
 
     const getStashes = () => {
-        firebase.database()
-            .ref('/stashes')
-            .on('value', snapshot => {
-                const data = snapshot.val();
-                const s = Object.values(data);
-                setStashes(s);
-            });
+        try {
+            Firebase.database()
+                .ref('/stashes')
+                .on('value', snapshot => {
+                    const data = snapshot.val();
+                    const s = Object.values(data);
+                    setStashes(s);
+                });
+        } catch (error) {
+            console.log("Error at getting stashes from firebase " + error);
+        }
     }
-
-    useEffect(() => {
-        findLocation()
-    }, []);
 
     return (
         <View style={styles.container}>

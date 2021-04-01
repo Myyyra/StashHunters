@@ -1,11 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button } from 'react-native';
-//import * as firebase from 'firebase';
 import MapView, { Marker } from 'react-native-maps';
 import Firebase from '../config/Firebase';
-
-const fb = Firebase;
 
 export default function MapScreen() {
 
@@ -21,15 +18,15 @@ export default function MapScreen() {
 
   const getStashes = async () => {
     try {
-      await fb.database()
-      .ref('/stashes')
-      .on('value', snapshot => {
-        const data = snapshot.val();
-        const s = Object.values(data);
-        setStashes(s);
-      });
-    } catch(error) {
-      console.log("ALERT! Haussa virhe " + error )
+      await Firebase.database()
+        .ref('/stashes')
+        .on('value', snapshot => {
+          const data = snapshot.val();
+          const s = Object.values(data);
+          setStashes(s);
+        });
+    } catch (error) {
+      console.log("ALERT! Haussa virhe " + error)
     }
 
   }
