@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Alert, Button, FlatList } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { StyleSheet, Text, View, Alert, Button, FlatList, TouchableOpacity } from 'react-native';
+import * as firebase from 'firebase';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import Firebase from '../config/Firebase';
@@ -28,19 +29,21 @@ export default function StashListView() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.title}>
-        <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Nearby Stashes</Text>
-      </View>
-      <View style={styles.list}>
-        <FlatList
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => <View style={styles.listcontainer}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{item.title}</Text>
-            <Text style={{ fontSize: 18 }}>{item.description}</Text>
-          </View>}
-          data={stashes}
-        />
-      </View>
+        <View style={styles.title}>
+            <Text style={{fontSize: 28, fontWeight: 'bold'}}>Nearby Stashes</Text>
+        </View>
+        <View style={styles.list}>
+            <FlatList 
+            keyExtractor={(item, index) => index.toString()} 
+          renderItem={({ item }) =>
+            <View style={styles.listcontainer}>
+                <Text style={{fontSize: 24, fontWeight: 'bold'}}>{item.title}</Text>
+                <Text style={{fontSize: 18}}>{item.description}</Text>
+              <Button title='STASH' onPress={() => navigation.navigate('StashCard', item)} />
+              </View>} 
+            data={stashes} 
+            /> 
+        </View>
       <StatusBar style="auto" />
     </View>
   );
