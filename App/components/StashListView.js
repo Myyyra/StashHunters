@@ -6,7 +6,7 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import Firebase from '../config/Firebase';
 
-export default function StashListView() {
+export default function StashListView({ navigation }) {
 
   const [permission, setPermission] = useState(Location.PermissionStatus.UNDETERMINED);
   const [stashes, setStashes] = useState([]);
