@@ -24,11 +24,13 @@ export default function CreateNewStash({ navigation }) {
         navigation.navigate('MapScreen');
     }
 
-    const findLocation = async () => {
+    const findLocation = async (_callback) => {
         let location = await Location.getCurrentPositionAsync({});
 
         setLatitude(location.coords.latitude);
         setLongitude(location.coords.longitude);
+
+        _callback();
     }
 
     //save the created stash to database
@@ -38,7 +40,7 @@ export default function CreateNewStash({ navigation }) {
         getStashes();
         findLocation();
 
-        let farEnough = false;
+        let tooClose = false;
         stashes.forEach(stash => {
 
             //distance between stash and user location in meters
@@ -55,20 +57,17 @@ export default function CreateNewStash({ navigation }) {
                 }
             )
 
-            //!!!! tämä ei vielä toimi vaikka toimi aikaisemmin?!!
-
             //muokkaa tänne parempi etäissyy arvo kun tarttee
-            //lähin testattu piilo oli 36 metrin päässä 
-            if (distance < 25) {
-                Alert.alert("nyt o liia lähellä");
+            //lähin testattu piilo oli 35 metrin päässä 
+            if (distance < 34) {
+                Alert.alert("There is another Stash too close");
+                tooClose = true;
             }
-            else {
-                farEnough = true;
-            }
+
         })
 
         //if there is no close stashes save location to firebase
-        if (farEnough === true) {
+        if (tooClose === false) {
             try {
                 Firebase.database().ref('stashes/').push(
                     {
@@ -98,6 +97,11 @@ export default function CreateNewStash({ navigation }) {
             console.log("Error at getting stashes from firebase " + error);
         }
     }
+
+    useEffect(() => {
+        getStashes();
+        findLocation();
+    }, []);
 
     return (
         <View style={styles.container}>
