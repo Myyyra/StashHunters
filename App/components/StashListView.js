@@ -1,8 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Text, View, Alert, Button, FlatList, TouchableOpacity } from 'react-native';
-import * as firebase from 'firebase';
-import MapView, { Marker } from 'react-native-maps';
+import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
 import Firebase from '../config/Firebase';
 
