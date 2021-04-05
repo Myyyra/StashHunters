@@ -24,13 +24,12 @@ export default function CreateNewStash({ navigation }) {
         navigation.navigate('MapScreen');
     }
 
-    const findLocation = async (_callback) => {
+    const findLocation = async () => {
+
         let location = await Location.getCurrentPositionAsync({});
 
         setLatitude(location.coords.latitude);
         setLongitude(location.coords.longitude);
-
-        _callback();
     }
 
     //save the created stash to database
