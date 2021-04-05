@@ -10,6 +10,7 @@ import CreateNewStash from './components/CreateNewStash';
 import StashListView from './components/StashListView';
 import SignUp from './components/SignUp';
 import StashCard from './components/StashCard';
+import Loading from './components/Loading';
 
 const Tab = createBottomTabNavigator();
 
@@ -52,6 +53,7 @@ export default function App() {
   return (
     <NavigationContainer>      
       <Stack.Navigator>
+        <Stack.Screen options={{ headerShown: false }} name="Loading" component={Loading} />
         <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} />
         <Stack.Screen options={{ headerShown: false }} name="BottomNavi" component={BottomNavi} />
         <Stack.Screen options={{ headerShown: false }} name="SignUp" component={SignUp} />

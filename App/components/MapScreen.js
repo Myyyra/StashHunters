@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Alert, Button } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import Firebase from '../config/Firebase';
+import Firebase, { firebaseAuth } from '../config/Firebase';
 
-export default function MapScreen() {
-
+export default function MapScreen({ navigation }) {
   const [stashes, setStashes] = useState([]);
+  const { currentUser } = firebaseAuth;
 
   //this is for haaga helia so might delete later
   const [region, setRegion] = useState({
@@ -36,43 +36,65 @@ export default function MapScreen() {
   }, []);
 
 
+  const handleLogout = () => {
+    firebaseAuth.signOut()
+      .then(() => navigation.navigate('Home'))
+      .catch(error => console.log(error));
+  }
+
   return (
-    <View style={styles.map}>
+    <View style={styles.container}>
+      <View style={styles.map}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>{currentUser.displayName}</Text>
+          <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
+        </View>
+        <MapView
+          style={styles.map}
+          region={region} >
 
-      <MapView
-        style={styles.map}
-        region={region} >
+          {stashes.map((stash, index) => (
 
-        {stashes.map((stash, index) => (
+            <Marker
+              key={index}
 
-          <Marker
-            key={index}
+              coordinate={{ latitude: parseFloat(stash.latitude), longitude: parseFloat(stash.longitude) }}
 
-            coordinate={{ latitude: parseFloat(stash.latitude), longitude: parseFloat(stash.longitude) }}
+              title={stash.title}
+              description={stash.description}
 
-            title={stash.title}
-            description={stash.description}
+              image={require('../assets/flag.png')}
+            />
+          ))}
 
-            image={require('../assets/flag.png')}
-          />
-        ))}
+        </MapView>
 
-      </MapView>
-
-      <StatusBar style="auto" />
+        <StatusBar style="auto" />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
-    height: 400,
-    width: 400,
+    flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#029B76',
+    height: 30,
+    padding: 5
+  },
+  headerText: {
+    color: 'white',
+    fontSize: 20
+  },
   map: {
     ...StyleSheet.absoluteFillObject,
+    top: 30
   },
 });

@@ -37,7 +37,7 @@ export default function StashListView({ navigation }) {
             <View style={styles.listcontainer}>
                 <Text style={{fontSize: 24, fontWeight: 'bold'}}>{item.title}</Text>
                 <Text style={{fontSize: 18}}>{item.description}</Text>
-              <Button title='STASH' onPress={() => navigation.navigate('StashCard', item)} />
+                <Button title='STASH' onPress={() => navigation.navigate('StashCard', item)} />
               </View>} 
             data={stashes} 
             /> 

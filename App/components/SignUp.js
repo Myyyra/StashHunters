@@ -1,13 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import { firebaseAuth } from '../config/Firebase';
 
 export default function SignUp({ navigation }) {
     const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
 
     const handleSignUp = () => {
-        // TODO: Firebase
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+            .then((res) => {
+                return res.user.updateProfile({ displayName: username })
+            })
+            .then(() => navigation.navigate('Home'))
+            .catch(error => setErrorMsg(error));
     }
 
     return (
@@ -16,6 +24,7 @@ export default function SignUp({ navigation }) {
 
                 <View style={styles.heading}>
                     <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Create a new account</Text>
+                    <Text style={{ fontSize: 18, color: 'red' }}>{errorMsg}</Text>
                 </View>
 
                 <View style={styles.inputView}>
@@ -24,6 +33,13 @@ export default function SignUp({ navigation }) {
                         placeholder="Email"
                         value={email}
                         onChangeText={setEmail}
+                        keyboardType='email-address'
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Username"
+                        value={username}
+                        onChangeText={setUsername}
                     />
                     <TextInput
                         style={styles.input}
@@ -66,13 +82,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         width: 250,
         height: 40,
-        marginBottom: 20,
+        marginBottom: 15,
         paddingLeft: 5,
-        borderRadius: 3,
+        borderRadius: 5,
         backgroundColor: 'white'
     },
     inputView: {
-        flex: 2,
+        flex: 3,
         alignItems: 'center',
         justifyContent: 'flex-start'
     },
