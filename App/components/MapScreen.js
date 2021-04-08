@@ -5,11 +5,12 @@ import MapView, { Marker } from 'react-native-maps';
 import Firebase from '../config/Firebase';
 import * as Location from 'expo-location';
 
+let done = false;
+let lat = 60.201313;
+let long = 24.934041;
 
 export default function MapScreen() {
 
-    const [latitude, setLatitude] = useState(60.201313);
-    const [longitude, setLongitude] = useState(24.934041);
     const [stashes, setStashes] = useState([]);
     //hunted means the stash that the user will try to find
     //this feature is still in progress
@@ -43,12 +44,22 @@ export default function MapScreen() {
         if (status === 'granted') {
             await Location.getCurrentPositionAsync({})
                 .then(location => {
-                    setLatitude(location.coords.latitude);
-                    setLongitude(location.coords.longitude);
-                    //this might be edited to because the re-location of user view is unwanted effect
-                    setRegion({ ...region, latitude: location.coords.latitude, longitude: location.coords.longitude });
+                    //setLatitude(location.coords.latitude);
+                    //setLongitude(location.coords.longitude);
 
-                    setTimeout(function () { findLocation(); }, 5000);
+                    lat = location.coords.latitude;
+                    long = location.coords.longitude;
+
+                    if (done === false) {
+
+                        setRegion({ ...region, latitude: lat, longitude: long });
+
+                        //miksi tämä ei settaa donea trueksi ???
+
+                        done = true;
+                    }
+
+                    setTimeout(function () { findLocation(); }, 2000);
                 });
 
             // At the moment user location is tracked at 5 second intervals 
@@ -60,6 +71,7 @@ export default function MapScreen() {
     useEffect(() => {
         getStashes();
         findLocation();
+
     }, []);
 
     /* Region <- ???
@@ -73,12 +85,11 @@ export default function MapScreen() {
             <MapView
                 style={styles.map}
                 region={region}
+                showsUserLocation
+                followsUserLocation={true}
+                showsMyLocationButton={true}
             >
 
-                <Marker
-                    coordinate={{ latitude: parseFloat(latitude), longitude: parseFloat(longitude) }}
-                    image={require('../assets/you.png')}
-                />
 
 
                 {stashes.map((stash, index) => (
