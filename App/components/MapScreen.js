@@ -46,10 +46,10 @@ export default function MapScreen() {
         }
     }
 
-<<<<<<< HEAD
   useEffect(() => {
     getStashes();
     getUsers();
+    findLocation();
   }, []);
 
   const getUsers = async () => {
@@ -81,7 +81,6 @@ export default function MapScreen() {
     }
   }
 
-=======
     const findLocation = async () => {
 
         let { status } = await Location.requestPermissionsAsync();
@@ -90,7 +89,6 @@ export default function MapScreen() {
                 .then(location => {
                     //setLatitude(location.coords.latitude);
                     //setLongitude(location.coords.longitude);
->>>>>>> d0c98baa1a2b29cdaea96b6075ccb73ebc780c59
 
                     lat = location.coords.latitude;
                     long = location.coords.longitude;
@@ -112,12 +110,6 @@ export default function MapScreen() {
             // react native geolocation service maybe??
         }
     }
-
-
-    useEffect(() => {
-        getStashes();
-        findLocation();
-    }, []);
 
 
     return (
