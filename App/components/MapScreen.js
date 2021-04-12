@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 
@@ -33,7 +33,37 @@ export default function MapScreen({ navigation }) {
 
   useEffect(() => {
     getStashes();
+    getUsers();
   }, []);
+
+  const getUsers = async () => {
+    try {
+      await Firebase.database()
+        .ref('/users')
+        .on('value', snapshot => {
+          const data = snapshot.val();
+          const users = Object.keys(data);
+          let userExists = users.filter(u => u == currentUser.uid);
+
+          if (currentUser.uid !== userExists[0]) {
+            createUserToDatabase();
+          }
+        });
+    } catch (error) {
+      console.log("ALERT! Haussa virhe " + error)
+    }
+
+  }
+
+  const createUserToDatabase = () => {
+    try {
+      Firebase.database().ref('users/' + currentUser.uid).set({ username: currentUser.displayName });
+
+      Alert.alert("User saved");
+    } catch (error) {
+      console.log("Error saving user " + error);
+    }
+  }
 
 
   const handleLogout = () => {
