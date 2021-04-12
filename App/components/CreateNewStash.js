@@ -68,21 +68,31 @@ export default function CreateNewStash({ navigation }) {
         //if there is no close stashes save location to firebase
         if (tooClose === false) {
             try {
-                Firebase.database().ref('stashes/').push(
+                let key = getKey();
+                console.log(key);
+
+                Firebase.database().ref('stashes/' + key).set(
                     {
                         latitude: latitude,
                         longitude: longitude,
                         title: title,
                         description: desc,
                         owner: firebaseAuth.currentUser.uid,
-                        disabled: false
+                        disabled: false,
+                        key: key
                     }
                 );
+
                 Alert.alert("Stash saved");
+
             } catch (error) {
                 console.log("Error saving stash " + error);
             }
         }
+    }
+
+    const getKey = () => {
+        return Firebase.database().ref('stashes/').push().getKey();
     }
 
     const getStashes = () => {
