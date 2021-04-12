@@ -1,10 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View, Image, Button } from 'react-native';
+import React, { Children } from 'react';
+import { StyleSheet, Text, View, Image, Button, Alert } from 'react-native';
+import Firebase from '../config/Firebase';
 
 export default function StashCard({ navigation, route }) {
 
     const stash = route.params;
+    const key = stash.key;
+
+    const archiveStash = () => {
+        try {
+            Firebase.database().ref('stashes/' + key).update(
+                {
+                    disabled: true
+                }
+            );
+            Alert.alert('Please note!', 'Your stash will be removed from the map!');
+        } catch (error) {
+            console.log("Error archiving stash " + error);
+        }
+    };
+
     return (
         <View style={styles.container}>
 
@@ -18,7 +34,9 @@ export default function StashCard({ navigation, route }) {
 
             <View style={styles.description}>
                 <Text style={styles.descriptionText}>{stash.description}</Text>
-                <Button title="BACK" onPress={() => navigation.goBack()} />
+                <Button title="Edit" color='#029B76' onPress={() => console.log(key)} />
+                <Button title="Archive" color='#FF1B1B' onPress={() => archiveStash()} />
+                <Button title="BACK" color='#908F8F' onPress={() => navigation.goBack()} />
             </View>
 
             <StatusBar style="auto" />
@@ -43,7 +61,8 @@ const styles = StyleSheet.create({
         flex: 2
     },
     description: {
-        flex: 2
+        flex: 2,
+        justifyContent: 'space-evenly'
     },
     descriptionText: {
         fontSize: 20,
