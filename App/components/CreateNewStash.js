@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
-import Firebase from '../config/Firebase';
+import Firebase, { firebaseAuth } from '../config/Firebase';
 
 export default function CreateNewStash({ navigation }) {
 
@@ -73,7 +73,9 @@ export default function CreateNewStash({ navigation }) {
                         latitude: latitude,
                         longitude: longitude,
                         title: title,
-                        description: desc
+                        description: desc,
+                        owner: firebaseAuth.currentUser.uid,
+                        disabled: false
                     }
                 );
                 Alert.alert("Stash saved");
@@ -138,6 +140,7 @@ export default function CreateNewStash({ navigation }) {
                 title="Save"
                 color='#029B76'
             />
+
         </View>
     );
 }
