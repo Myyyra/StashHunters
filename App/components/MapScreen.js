@@ -46,44 +46,6 @@ export default function MapScreen({ navigation }) {
         }
     }
 
-<<<<<<< HEAD
-  useEffect(() => {
-    getStashes();
-    getUsers();
-    findLocation();
-  }, []);
-
-  const getUsers = async () => {
-    try {
-      await Firebase.database()
-        .ref('/users')
-        .on('value', snapshot => {
-          const data = snapshot.val();
-          const users = Object.keys(data);
-          let userExists = users.filter(u => u == currentUser.uid);
-
-          if (currentUser.uid !== userExists[0]) {
-            createUserToDatabase();
-          }
-        });
-    } catch (error) {
-      console.log("ALERT! Haussa virhe " + error)
-    }
-
-  }
-
-  const createUserToDatabase = () => {
-    try {
-      Firebase.database().ref('users/' + currentUser.uid).set({ username: currentUser.displayName });
-
-      Alert.alert("User saved");
-    } catch (error) {
-      console.log("Error saving user " + error);
-    }
-  }
-
-=======
->>>>>>> 13bf177f2773df54de6538d688848aedf95af91e
     const findLocation = async () => {
 
         let { status } = await Location.requestPermissionsAsync();
@@ -146,8 +108,6 @@ export default function MapScreen({ navigation }) {
         }
     }
 
-<<<<<<< HEAD
-=======
     useEffect(() => {
         getStashes();
         findLocation();
@@ -155,7 +115,6 @@ export default function MapScreen({ navigation }) {
     }, []);
 
 
->>>>>>> 13bf177f2773df54de6538d688848aedf95af91e
     return (
         <View style={styles.container}>
             <View style={styles.map}>
