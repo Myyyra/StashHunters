@@ -1,14 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Circle } from 'react-native-maps';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 
+
 let done = false;
 let lat = 60.201313;
 let long = 24.934041;
+let circleRad = 50;
+let circleColor = 'rgba(252, 138, 7, 0.35)';
 
 export default function MapScreen({ navigation }) {
 
@@ -23,8 +26,8 @@ export default function MapScreen({ navigation }) {
     const [region, setRegion] = useState({
         latitude: 60.200692,
         longitude: 24.934302,
-        latitudeDelta: 0.0222,
-        longitudeDelta: 0.0121
+        latitudeDelta: 0.00222,
+        longitudeDelta: 0.00121
     });
 
 
@@ -70,7 +73,8 @@ export default function MapScreen({ navigation }) {
                 .on('value', snapshot => {
                     const data = snapshot.val();
                     const s = Object.values(data);
-                    setStashes(s);
+                    const filtered = s.filter(stash => stash.disabled === false);
+                    setStashes(filtered);
                 });
         } catch (error) {
             console.log("ALERT! Error finding stashes " + error)
@@ -87,20 +91,20 @@ export default function MapScreen({ navigation }) {
 
         if (currentUser) {
             try {
-            await Firebase.database()
-                .ref('/users')
-                .on('value', snapshot => {
-                    const data = snapshot.val();
-                    const users = Object.keys(data);
-                    let userExists = users.filter(u => u == currentUser.uid);
+                await Firebase.database()
+                    .ref('/users')
+                    .on('value', snapshot => {
+                        const data = snapshot.val();
+                        const users = Object.keys(data);
+                        let userExists = users.filter(u => u == currentUser.uid);
 
-                    if (currentUser.uid !== userExists[0]) {
-                        createUserToDatabase();
-                    }
-                });
-        } catch (error) {
-            console.log("Error fetching user " + error)
-        }
+                        if (currentUser.uid !== userExists[0]) {
+                            createUserToDatabase();
+                        }
+                    });
+            } catch (error) {
+                console.log("Error fetching user " + error)
+            }
         }
     }
 
@@ -142,6 +146,42 @@ export default function MapScreen({ navigation }) {
         }
     }
 
+    //Tästä voi olla hyötyä 
+    // että voidaan mitata oikea määrä kordinaatteja 
+    //ATM mittaa kahden pisteen välimatkan
+    //muokkaa että antaa kordinaatteina tai 
+    //suhdeukuna paljonko se pitäisi olla
+    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        var R = 6371; // Radius of the earth in km
+        var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+        var dLon = deg2rad(lon2 - lon1);
+        var a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2)
+            ;
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c; // Distance in km
+        return d;
+    }
+
+    function deg2rad(deg) {
+        return deg * (Math.PI / 180)
+    }
+
+    //Ei vielä palauta random lokaatiota?
+    const randomCenter = (stash) => {
+
+        let latitude = stash.latitude;
+        let longitude = stash.longitude;
+        let diff = circleRad * 0.0000081;
+
+        let x = latitude + (Math.random() * (diff - (-diff) - diff));
+        let y = longitude + (Math.random() * (diff - (-diff) - diff));
+
+        return { latitude: x, longitude: y };
+    }
+
 
     return (
         <View style={styles.container}>
@@ -160,25 +200,36 @@ export default function MapScreen({ navigation }) {
                 style={styles.map}
                 region={region}
                 showsUserLocation
-                showsMyLocationButton={true} >
+                showsMyLocationButton={true}
+
+            >
 
                 {stashes.map((stash, index) => (
+                    <View key={index}>
 
-                    <Marker
-                        key={index}
 
-                        coordinate={{ latitude: parseFloat(stash.latitude), longitude: parseFloat(stash.longitude) }}
+                        <Marker
+                            coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
 
-                        title={stash.title}
-                        description={stash.description}
+                            title={stash.title}
+                            description={stash.description}
 
-                        //image={require('../assets/flag.png')}
+                            //image={require('../assets/flag.png')}
 
-                        onPress={() => {
-                            Hunt(stash);
-                            setHunted(stash);
-                        }}
-                    />
+                            onPress={() => {
+                                Hunt(stash);
+                                setHunted(stash);
+                            }}
+                        />
+                        <Circle
+                            center={randomCenter(stash)}
+                            radius={circleRad}
+                            strokeColor={circleColor}
+                            fillColor={circleColor}
+
+                        />
+
+                    </View>
                 ))}
 
             </MapView>

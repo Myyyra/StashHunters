@@ -4,13 +4,14 @@ import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 
+let lat = 60.201313;
+let long = 24.934041;
+
 export default function CreateNewStash({ navigation }) {
 
     //initialize states for creating a new stash
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
-    const [latitude, setLatitude] = useState(60.201313);
-    const [longitude, setLongitude] = useState(24.934041);
     const [stashes, setStashes] = useState([]);
 
     //when save-button is pressed, save the new stash, inform the player that
@@ -19,17 +20,22 @@ export default function CreateNewStash({ navigation }) {
         saveStash();
         setTitle('');
         setDesc('');
-        setLatitude('');
-        setLongitude('');
+        lat = '';
+        long = '';
         navigation.navigate('MapScreen');
     }
 
     const findLocation = async () => {
 
-        let location = await Location.getCurrentPositionAsync({});
+        let { status } = await Location.requestPermissionsAsync();
 
-        setLatitude(location.coords.latitude);
-        setLongitude(location.coords.longitude);
+        if (status === 'granted') {
+            await Location.getCurrentPositionAsync({})
+                .then(location => {
+                    lat = location.coords.latitude;
+                    long = location.coords.longitude;
+                });
+        }
     }
 
     //save the created stash to database
@@ -37,58 +43,59 @@ export default function CreateNewStash({ navigation }) {
     const saveStash = () => {
 
         getStashes();
-        findLocation();
+        findLocation().then(() => {
 
-        let tooClose = false;
-        stashes.forEach(stash => {
+            let tooClose = false;
+            stashes.forEach(stash => {
 
-            //distance between stash and user location in meters
-            let distance = getDistance(
-                {
-                    //user location
-                    latitude: latitude,
-                    longitude: longitude,
-                },
-                {
-                    //compared stash location
-                    latitude: stash.latitude,
-                    longitude: stash.longitude,
-                }
-            )
-
-            //muokkaa tänne parempi etäissyy arvo kun tarttee
-            //lähin testattu piilo oli 35 metrin päässä 
-            if (distance < 34) {
-                Alert.alert("There is another Stash too close");
-                tooClose = true;
-            }
-
-        })
-
-        //if there is no close stashes save location to firebase
-        if (tooClose === false) {
-            try {
-                let key = getKey();
-                console.log(key);
-
-                Firebase.database().ref('stashes/' + key).set(
+                //distance between stash and user location in meters
+                let distance = getDistance(
                     {
-                        latitude: latitude,
-                        longitude: longitude,
-                        title: title,
-                        description: desc,
-                        owner: firebaseAuth.currentUser.uid,
-                        disabled: false,
-                        key: key
+                        //user location
+                        latitude: lat,
+                        longitude: long,
+                    },
+                    {
+                        //compared stash location
+                        latitude: stash.latitude,
+                        longitude: stash.longitude,
                     }
-                );
+                )
 
-                Alert.alert("Stash saved");
+                //muokkaa tänne parempi etäissyy arvo kun tarttee
+                //lähin testattu piilo oli 35 metrin päässä 
+                if (distance < 34) {
+                    Alert.alert("There is another Stash too close");
+                    tooClose = true;
+                }
 
-            } catch (error) {
-                console.log("Error saving stash " + error);
+            })
+
+            //if there is no close stashes save location to firebase
+            if (tooClose === false) {
+                try {
+                    let key = getKey();
+                    console.log(key);
+
+                    Firebase.database().ref('stashes/' + key).set(
+                        {
+                            latitude: lat,
+                            longitude: long,
+                            title: title,
+                            description: desc,
+                            owner: firebaseAuth.currentUser.uid,
+                            disabled: false,
+                            key: key
+                        }
+                    );
+
+                    Alert.alert("Stash saved");
+
+                } catch (error) {
+                    console.log("Error saving stash " + error);
+                }
             }
-        }
+        });
     }
 
     const getKey = () => {
@@ -132,19 +139,6 @@ export default function CreateNewStash({ navigation }) {
                 placeholder='Description'
             />
 
-            <TextInput
-                style={styles.input}
-                onChangeText={setLatitude}
-                value={latitude}
-                placeholder='Latitude'
-            />
-
-            <TextInput
-                style={styles.input}
-                onChangeText={setLongitude}
-                value={longitude}
-                placeholder='Longitude'
-            />
             <Button
                 onPress={saveAndRedirect}
                 title="Save"
