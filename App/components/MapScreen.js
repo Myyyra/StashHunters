@@ -84,7 +84,9 @@ export default function MapScreen({ navigation }) {
     }, []);
 
     const getUsers = async () => {
-        try {
+
+        if (currentUser) {
+            try {
             await Firebase.database()
                 .ref('/users')
                 .on('value', snapshot => {
@@ -97,9 +99,9 @@ export default function MapScreen({ navigation }) {
                     }
                 });
         } catch (error) {
-            console.log("ALERT! Haussa virhe " + error)
+            console.log("Error fetching user " + error)
         }
-
+        }
     }
 
     const createUserToDatabase = () => {
@@ -143,44 +145,49 @@ export default function MapScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.map}>
+            {currentUser ?
                 <View style={styles.header}>
                     <Text style={styles.headerText}>{currentUser.displayName}</Text>
                     <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
                 </View>
-                <MapView
-                    style={styles.map}
-                    region={region}
-                    showsUserLocation
-                    showsMyLocationButton={true} >
-
-                    {stashes.map((stash, index) => (
-
-                        <Marker
-                            key={index}
-
-                            coordinate={{ latitude: parseFloat(stash.latitude), longitude: parseFloat(stash.longitude) }}
-
-                            title={stash.title}
-                            description={stash.description}
-
-                            image={require('../assets/flag.png')}
-
-                            onPress={() => {
-                                Hunt(stash);
-                                setHunted(stash);
-                            }}
-                        />
-                    ))}
-
-                </MapView>
-
-                <View>
-                    <Text>The Hunted Stash: {hunted.title}</Text>
+                :
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>anonymous</Text>
+                    <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
                 </View>
+            }
+            <MapView
+                style={styles.map}
+                region={region}
+                showsUserLocation
+                showsMyLocationButton={true} >
 
-                <StatusBar style="auto" />
+                {stashes.map((stash, index) => (
+
+                    <Marker
+                        key={index}
+
+                        coordinate={{ latitude: parseFloat(stash.latitude), longitude: parseFloat(stash.longitude) }}
+
+                        title={stash.title}
+                        description={stash.description}
+
+                        //image={require('../assets/flag.png')}
+
+                        onPress={() => {
+                            Hunt(stash);
+                            setHunted(stash);
+                        }}
+                    />
+                ))}
+
+            </MapView>
+
+            <View>
+                <Text>The Hunted Stash: {hunted.title}</Text>
             </View>
+
+            <StatusBar style="auto" />
         </View>
     );
 }
