@@ -149,7 +149,7 @@ export default function MapScreen({ navigation }) {
                             title={stash.title}
                             description={stash.description}
 
-                            image={require('../assets/flag.png')}
+                            //image={require('../assets/flag.png;base64')}
 
                             onPress={() => setHunted(stash)}
                         />
