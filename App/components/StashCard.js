@@ -1,12 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { Children } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, Button, Alert } from 'react-native';
 import Firebase from '../config/Firebase';
 
 export default function StashCard({ navigation, route }) {
 
+    const [edited, setEdits] = useState({});
+
     const stash = route.params;
     const key = stash.key;
+
+    useEffect(() => {
+        getStashes();
+    }, []);
+
+    const getStashes = async () => {
+        await Firebase.database()
+            .ref('/stashes/' + stash.key)
+            .on('value', snapshot => {
+                const data = snapshot.val();
+                setEdits(data);
+            });
+    }
 
     const archiveStash = () => {
         try {
@@ -16,16 +31,18 @@ export default function StashCard({ navigation, route }) {
                 }
             );
             Alert.alert('Please note!', 'Your stash will be removed from the map!');
+            navigation.goBack();
         } catch (error) {
             console.log("Error archiving stash " + error);
         }
     };
 
+
     return (
         <View style={styles.container}>
 
             <View style={styles.header}>
-                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{stash.title}</Text>
+                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{edited.title}</Text>
             </View>
 
             <View style={styles.image}>
@@ -33,8 +50,8 @@ export default function StashCard({ navigation, route }) {
             </View>
 
             <View style={styles.description}>
-                <Text style={styles.descriptionText}>{stash.description}</Text>
-                <Button title="Edit" color='#029B76' onPress={() => console.log(key)} />
+                <Text style={styles.descriptionText}>{edited.description}</Text>
+                <Button title="Edit" color='#029B76' onPress={() => navigation.navigate('EditStash', stash)} />
                 <Button title="Archive" color='#FF1B1B' onPress={() => archiveStash()} />
                 <Button title="BACK" color='#908F8F' onPress={() => navigation.goBack()} />
             </View>
