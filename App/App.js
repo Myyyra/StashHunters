@@ -11,6 +11,7 @@ import StashListView from './components/StashListView';
 import SignUp from './components/SignUp';
 import StashCard from './components/StashCard';
 import Loading from './components/Loading';
+import { firebaseAuth } from './config/Firebase';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,7 +39,14 @@ function BottomNavi() {
   return (
     <Tab.Navigator screenOptions = { screenOptions }>
       <Tab.Screen name='MapScreen' component={MapScreen} options={{ title: 'Map' }} />
-      <Tab.Screen name='CreateNewStash' component={ CreateNewStash } options={{ title: 'Add'}}/>
+      <Tab.Screen name='CreateNewStash' component={CreateNewStash} options={{ title: 'Add' }}
+        listeners={{
+          tabPress: e => {
+            if (!firebaseAuth.currentUser) {
+              e.preventDefault();
+            }
+          }
+        }} />
       <Tab.Screen name='StashListView' component={ StashListView } options={{ title: 'List'}}/>
     </Tab.Navigator>
   );

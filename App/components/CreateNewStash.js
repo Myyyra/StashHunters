@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
-import Firebase from '../config/Firebase';
+import Firebase, { firebaseAuth } from '../config/Firebase';
 
 export default function CreateNewStash({ navigation }) {
 
@@ -68,19 +68,31 @@ export default function CreateNewStash({ navigation }) {
         //if there is no close stashes save location to firebase
         if (tooClose === false) {
             try {
-                Firebase.database().ref('stashes/').push(
+                let key = getKey();
+                console.log(key);
+
+                Firebase.database().ref('stashes/' + key).set(
                     {
                         latitude: latitude,
                         longitude: longitude,
                         title: title,
-                        description: desc
+                        description: desc,
+                        owner: firebaseAuth.currentUser.uid,
+                        disabled: false,
+                        key: key
                     }
                 );
+
                 Alert.alert("Stash saved");
+
             } catch (error) {
                 console.log("Error saving stash " + error);
             }
         }
+    }
+
+    const getKey = () => {
+        return Firebase.database().ref('stashes/').push().getKey();
     }
 
     const getStashes = () => {
@@ -138,6 +150,7 @@ export default function CreateNewStash({ navigation }) {
                 title="Save"
                 color='#029B76'
             />
+
         </View>
     );
 }
