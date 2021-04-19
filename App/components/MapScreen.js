@@ -139,46 +139,20 @@ export default function MapScreen({ navigation }) {
 
                     setTimeout(function () { findLocation(); }, 2000);
                 });
-
-            // At the moment user location is tracked at 5 second intervals 
-            // still searching for better way to track user location in real time
-            // react native geolocation service maybe??
         }
     }
-
-    //Tästä voi olla hyötyä 
-    // että voidaan mitata oikea määrä kordinaatteja 
-    //ATM mittaa kahden pisteen välimatkan
-    //muokkaa että antaa kordinaatteina tai 
-    //suhdeukuna paljonko se pitäisi olla
-    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-        var R = 6371; // Radius of the earth in km
-        var dLat = deg2rad(lat2 - lat1);  // deg2rad below
-        var dLon = deg2rad(lon2 - lon1);
-        var a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2)
-            ;
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c; // Distance in km
-        return d;
-    }
-
-    function deg2rad(deg) {
-        return deg * (Math.PI / 180)
-    }
-
-    //Ei vielä palauta random lokaatiota?
+    
     const randomCenter = (stash) => {
-
+        // circle around a stash is randomized by moving circle's origo a bit away from stash's location
         let latitude = stash.latitude;
         let longitude = stash.longitude;
-        let diff = circleRad * 0.0000081;
-
-        let x = latitude + (Math.random() * (diff - (-diff) - diff));
-        let y = longitude + (Math.random() * (diff - (-diff) - diff));
-
+        // the constant is an estimated value 
+        let diff = circleRad * 0.0000081; //= max --> min : -1 * diff
+        
+        let x = latitude + (Math.random() * ((diff - (-1 * diff)))  + (-1 * diff));
+        let y = longitude + (Math.random() * ((diff - (-1 * diff)))  + (-1 * diff));
+        
+        // return origo's new location 
         return { latitude: x, longitude: y };
     }
 
@@ -187,61 +161,50 @@ export default function MapScreen({ navigation }) {
         <View style={styles.container}>
             <View style = {styles.map}>
                 <View>
-            {currentUser ?
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>{currentUser.displayName}</Text>
-                    <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
-                </View>
-                :
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>anonymous</Text>
-                    <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
-                </View>
-            }
-            </View>
-            <MapView
-                style={styles.map}
-                region={region}
-                showsUserLocation
-                showsMyLocationButton={true}
-
-            >
-
-                {stashes.map((stash, index) => (
-                    <View key={index}>
-
-
-                        <Marker
-                            coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
-
-                            title={stash.title}
-                            description={stash.description}
-
-                            //image={require('../assets/flag.png')}
-
-                            onPress={() => {
-                                Hunt(stash);
-                                setHunted(stash);
-                            }}
-                        />
-                        <Circle
-                            center={randomCenter(stash)}
-                            radius={circleRad}
-                            strokeColor={circleColor}
-                            fillColor={circleColor}
-
-                        />
-
+                    {currentUser ?
+                    <View style={styles.header}>
+                        <Text style={styles.headerText}>{currentUser.displayName}</Text>
+                        <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
                     </View>
-                ))}
+                    :
+                    <View style={styles.header}>
+                        <Text style={styles.headerText}>anonymous</Text>
+                        <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
+                    </View>
+                    }
+                </View>
+                <MapView
+                    style={styles.map}
+                    region={region}
+                    showsUserLocation
+                    showsMyLocationButton={true}
 
-            </MapView>
-
-            <View>
-                <Text>The Hunted Stash: {hunted.title}</Text>
-            </View>
-
-            <StatusBar style="auto" />
+                >
+                    {stashes.map((stash, index) => (
+                        <View key={index}>
+                            <Marker
+                                coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
+                                title={stash.title}
+                                description={stash.description}
+                                //image={require('../assets/flag.png')}
+                                onPress={() => {
+                                    Hunt(stash);
+                                    setHunted(stash);
+                                }}
+                            />
+                            <Circle
+                                center={randomCenter(stash)}
+                                radius={circleRad}
+                                strokeColor={circleColor}
+                                fillColor={circleColor}
+                            />
+                        </View>
+                    ))}
+                </MapView>
+                <View>
+                    <Text>The Hunted Stash: {hunted.title}</Text>
+                </View>
+                <StatusBar style="auto" />
             </View>
         </View>
     );
