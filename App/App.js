@@ -11,15 +11,17 @@ import StashListView from './components/StashListView';
 import SignUp from './components/SignUp';
 import StashCard from './components/StashCard';
 import Loading from './components/Loading';
+import EditStash from './components/EditStash';
+import { firebaseAuth } from './config/Firebase';
 
 const Tab = createBottomTabNavigator();
 
 function BottomNavi() {
-  
+
   const screenOptions = ({ route }) => ({
     tabBarIcon: ({ focused, color, size }) => {
       let iconName;
-  
+
       if (route.name === 'HomeScreen') {
         iconName = 'md-home';
       } else if (route.name === 'MapScreen') {
@@ -30,34 +32,42 @@ function BottomNavi() {
       else if (route.name === 'StashListView') {
         iconName = 'list';
       }
-  
+
       return <Ionicons name={iconName} size={size} color={color} />;
     }
   });
 
   return (
-    <Tab.Navigator screenOptions = { screenOptions }>
+    <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen name='MapScreen' component={MapScreen} options={{ title: 'Map' }} />
-      <Tab.Screen name='CreateNewStash' component={ CreateNewStash } options={{ title: 'Add'}}/>
-      <Tab.Screen name='StashListView' component={ StashListView } options={{ title: 'List'}}/>
+      <Tab.Screen name='CreateNewStash' component={CreateNewStash} options={{ title: 'Add' }}
+        listeners={{
+          tabPress: e => {
+            if (!firebaseAuth.currentUser) {
+              e.preventDefault();
+            }
+          }
+        }} />
+      <Tab.Screen name='StashListView' component={StashListView} options={{ title: 'List' }} />
     </Tab.Navigator>
   );
-  }
+}
 
 
 
 const Stack = createStackNavigator();
 
-export default function App() {  
+export default function App() {
 
   return (
-    <NavigationContainer>      
+    <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Loading" component={Loading} />
         <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} />
         <Stack.Screen options={{ headerShown: false }} name="BottomNavi" component={BottomNavi} />
         <Stack.Screen options={{ headerShown: false }} name="SignUp" component={SignUp} />
         <Stack.Screen options={{ headerShown: false }} name="StashCard" component={StashCard} />
+        <Stack.Screen options={{ headerShown: false }} name="EditStash" component={EditStash} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,16 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Circle } from 'react-native-maps';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import * as Location from 'expo-location';
+import { getDistance } from 'geolib';
+
 
 let done = false;
 let lat = 60.201313;
 let long = 24.934041;
+let circleRad = 50;
+let circleColor = 'rgba(252, 138, 7, 0.35)';
 
 export default function MapScreen({ navigation }) {
 
+    const [userLocation, setUserLocation] = useState([]);
     const [stashes, setStashes] = useState([]);
     //hunted means the stash that the user will try to find
     //this feature is still in progress
@@ -21,8 +26,8 @@ export default function MapScreen({ navigation }) {
     const [region, setRegion] = useState({
         latitude: 60.200692,
         longitude: 24.934302,
-        latitudeDelta: 0.0222,
-        longitudeDelta: 0.0121
+        latitudeDelta: 0.00222,
+        longitudeDelta: 0.00121
     });
 
 
@@ -32,6 +37,35 @@ export default function MapScreen({ navigation }) {
             .catch(error => console.log(error));
     }
 
+    const Hunt = (target) => {
+
+        let found = false;
+
+        if (hunted !== null) {
+            let distance = getDistance(
+                {
+                    //user location
+                    latitude: lat,
+                    longitude: long,
+                },
+                {
+                    //compared stash location
+                    latitude: target.latitude,
+                    longitude: target.longitude,
+                }
+            )
+            if (distance < 5) {
+                Alert.alert("You have found " + target.title);
+                setHunted([]);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            setTimeout(function () { Hunt(target); }, 2000);
+        }
+    }
+
     const getStashes = async () => {
         try {
             await Firebase.database()
@@ -39,44 +73,22 @@ export default function MapScreen({ navigation }) {
                 .on('value', snapshot => {
                     const data = snapshot.val();
                     const s = Object.values(data);
-                    setStashes(s);
+                    const filtered = s.filter(stash => stash.disabled === false);
+                    setStashes(filtered);
                 });
         } catch (error) {
             console.log("ALERT! Error finding stashes " + error)
         }
     }
 
-    const findLocation = async () => {
-
-        let { status } = await Location.requestPermissionsAsync();
-        if (status === 'granted') {
-            await Location.getCurrentPositionAsync({})
-                .then(location => {
-                    //setLatitude(location.coords.latitude);
-                    //setLongitude(location.coords.longitude);
-
-                    lat = location.coords.latitude;
-                    long = location.coords.longitude;
-
-                    if (done === false) {
-
-                        setRegion({ ...region, latitude: lat, longitude: long });
-
-                        //miksi tämä ei settaa donea trueksi ???
-
-                        done = true;
-                    }
-
-                    setTimeout(function () { findLocation(); }, 2000);
-                });
-
-            // At the moment user location is tracked at 5 second intervals 
-            // still searching for better way to track user location in real time
-            // react native geolocation service maybe??
-        }
-    }
+    useEffect(() => {
+        getStashes();
+        getUsers();
+        findLocation();
+    }, []);
 
     const getUsers = async () => {
+
         if (currentUser) {
             try {
                 await Firebase.database()
@@ -94,8 +106,6 @@ export default function MapScreen({ navigation }) {
                 console.log("Error fetching user " + error)
             }
         }
-
-
     }
 
     const createUserToDatabase = () => {
@@ -108,59 +118,92 @@ export default function MapScreen({ navigation }) {
         }
     }
 
-    useEffect(() => {
-        getStashes();
-        findLocation();
-        getUsers();
-    }, []);
+    const findLocation = async () => {
+
+        let { status } = await Location.requestPermissionsAsync();
+        if (status === 'granted') {
+            await Location.getCurrentPositionAsync({})
+                .then(location => {
+
+                    //setUserLocation(location.coords.latitude, location.coords.longitude);
+
+                    lat = location.coords.latitude;
+                    long = location.coords.longitude;
+
+                    if (done === false) {
+
+                        setRegion({ ...region, latitude: lat, longitude: long });
+
+                        done = true;
+                    }
+
+                    setTimeout(function () { findLocation(); }, 2000);
+                });
+        }
+    }
+    
+    const randomCenter = (stash) => {
+        // circle around a stash is randomized by moving circle's origo a bit away from stash's location
+        let latitude = stash.latitude;
+        let longitude = stash.longitude;
+        // the constant is an estimated value 
+        let diff = circleRad * 0.0000081; //= max --> min : -1 * diff
+        
+        let x = latitude + (Math.random() * ((diff - (-1 * diff)))  + (-1 * diff));
+        let y = longitude + (Math.random() * ((diff - (-1 * diff)))  + (-1 * diff));
+        
+        // return origo's new location 
+        return { latitude: x, longitude: y };
+    }
 
 
     return (
         <View style={styles.container}>
-            <View style={styles.map}>
+            <View style = {styles.map}>
                 <View>
                     {currentUser ?
-                        <View style={styles.header}>
-                            <Text style={styles.headerText}>{currentUser.displayName}</Text>
-                            <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
-                        </View>
-                        :
-                        <View style={styles.header}>
-                            <Text style={styles.headerText}>anonymous</Text>
-                            <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
-                        </View>
+                    <View style={styles.header}>
+                        <Text style={styles.headerText}>{currentUser.displayName}</Text>
+                        <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
+                    </View>
+                    :
+                    <View style={styles.header}>
+                        <Text style={styles.headerText}>anonymous</Text>
+                        <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
+                    </View>
                     }
-
                 </View>
                 <MapView
                     style={styles.map}
                     region={region}
                     showsUserLocation
-                    followsUserLocation={true}
-                    showsMyLocationButton={true} >
+                    showsMyLocationButton={true}
 
+                >
                     {stashes.map((stash, index) => (
-
-                        <Marker
-                            key={index}
-
-                            coordinate={{ latitude: parseFloat(stash.latitude), longitude: parseFloat(stash.longitude) }}
-
-                            title={stash.title}
-                            description={stash.description}
-
-                            //image={require('../assets/flag.png;base64')}
-
-                            onPress={() => setHunted(stash)}
-                        />
+                        <View key={index}>
+                            <Marker
+                                coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
+                                title={stash.title}
+                                description={stash.description}
+                                //image={require('../assets/flag.png')}
+                                onPress={() => {
+                                    Hunt(stash);
+                                    setHunted(stash);
+                                }}
+                            />
+                            <Circle
+                                center={randomCenter(stash)}
+                                radius={circleRad}
+                                strokeColor={circleColor}
+                                fillColor={circleColor}
+                            />
+                        </View>
                     ))}
-
                 </MapView>
-
                 <View>
                     <Text>The Hunted Stash: {hunted.title}</Text>
                 </View>
-
                 <StatusBar style="auto" />
             </View>
         </View>
