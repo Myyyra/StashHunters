@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Button, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert, TouchableOpacity } from 'react-native';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -28,7 +28,7 @@ export default function StashCard({ navigation, route }) {
             console.log("Error fetching stash " + error);
 
         }
-    }
+    };
 
     const archiveStash = () => {
         try {
