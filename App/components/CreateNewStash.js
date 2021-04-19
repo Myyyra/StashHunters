@@ -22,11 +22,28 @@ export default function CreateNewStash({ navigation }) {
     const [type, setType] = useState(Camera.Constants.Type.back);
     const camera = useRef(null);
 
+    useEffect(() => {
+        getStashes();
+        findLocation();
+        //askCameraPermission();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            console.log('tarkistetaan kamerankäyttöoikeus');
+          const { camStatus } = await Camera.requestPermissionsAsync();
+          console.log('status on ' + camStatus);
+          setPermission(camStatus === 'granted');
+        })();
+      }, []);
+
+    
     const askCameraPermission = async () => {
         const { camStatus } = await Camera.requestPermissionsAsync();
         setPermission(camStatus === 'granted');
+        
     }
-
+    
     const snap = async () => {
         if (camera) {
             const photo = await camera.current.takePictureAsync({ base64: true });
@@ -137,16 +154,19 @@ export default function CreateNewStash({ navigation }) {
         }
     }
 
-    useEffect(() => {
-        getStashes();
-        findLocation();
-        askCameraPermission();
-    }, []);
+    if (hasCameraPermission === null) {
+        return <View />;
+      }
+      if (hasCameraPermission === false) {
+        return (
+        <View style={styles.container}>
+            <Text>No access to camera</Text>
+            <Button title='Muokkaa lupaa' onPress={() => askCameraPermission()}/>
+        </View>);
+    }
 
     return (
         <View>
-            {hasCameraPermission ?
-                (
                     <View style={styles.container}>
                         <Text>Create new stash</Text>
                         <TextInput
@@ -179,11 +199,6 @@ export default function CreateNewStash({ navigation }) {
                         />
 
                     </View>
-                ) : (
-                    <View style={styles.container}>
-                        <Text>No access to camera</Text>
-                    </View>
-                )}
         </View>
     );
 }
