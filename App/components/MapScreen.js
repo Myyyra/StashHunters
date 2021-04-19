@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Alert } from 'react-native';
+import { StyleSheet, Text, View, Alert, Button } from 'react-native';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import * as Location from 'expo-location';
@@ -12,22 +12,27 @@ let lat = 60.201313;
 let long = 24.934041;
 let circleRad = 50;
 let circleColor = 'rgba(252, 138, 7, 0.35)';
+let centered = false;
 
 export default function MapScreen({ navigation }) {
 
     const [userLocation, setUserLocation] = useState([]);
     const [stashes, setStashes] = useState([]);
+    const [hunted, setHunted] = useState({
+        title: "",
+        latitude: 0,
+        longitude: 0
+    });
     //hunted means the stash that the user will try to find
     //this feature is still in progress
-    const [hunted, setHunted] = useState([]);
     const currentUser = firebaseAuth.currentUser ? firebaseAuth.currentUser : null;
 
     //Haaga-Helia as a preset for mapview to start from something
     const [region, setRegion] = useState({
         latitude: 60.200692,
         longitude: 24.934302,
-        latitudeDelta: 0.00222,
-        longitudeDelta: 0.00121
+        latitudeDelta: 0.0222,
+        longitudeDelta: 0.0121
     });
 
 
@@ -39,9 +44,24 @@ export default function MapScreen({ navigation }) {
 
     const Hunt = (target) => {
 
+        if (!centered) {
+
+            centered = true;
+
+            setHunted(target);
+
+            setRegion({
+                latitude: target.latitude,
+                longitude: target.longitude,
+                latitudeDelta: 0.0071,
+                longitudeDelta: 0.00405
+            });
+        }
+
+
         let found = false;
 
-        if (hunted !== null) {
+        if (hunted !== NaN) {
             let distance = getDistance(
                 {
                     //user location
@@ -54,9 +74,9 @@ export default function MapScreen({ navigation }) {
                     longitude: target.longitude,
                 }
             )
-            if (distance < 5) {
+            if (distance < 10) {
                 Alert.alert("You have found " + target.title);
-                setHunted([]);
+                setHunted({ title: "" });
                 found = true;
             }
         }
@@ -203,34 +223,67 @@ export default function MapScreen({ navigation }) {
                 showsMyLocationButton={true}
 
             >
+                <Marker
+                    title="hunted"
+                    coordinate={{ latitude: hunted.latitude, longitude: hunted.longitude }}
+                    pinColor='rgba(0, 234, 82, 1)'
+                />
+                <Circle
+                    center={randomCenter(hunted)}
+                    radius={circleRad}
+                    strokeColor='rgba(0, 234, 82, 1)'
+                    fillColor='rgba(0, 234, 82, 0.3)'
 
-                {stashes.map((stash, index) => (
-                    <View key={index}>
+                />
+
+                {stashes.filter(stash => stash.title !== hunted.title)
+                    .map((stash, index) => (
+                        <View key={index}>
 
 
-                        <Marker
-                            coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
+                            <Marker
+                                coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
 
-                            title={stash.title}
-                            description={stash.description}
+                                title={stash.title}
+                                description={stash.description}
 
-                            //image={require('../assets/flag.png')}
+                                //image={require('../assets/flag.png')}
 
-                            onPress={() => {
-                                Hunt(stash);
-                                setHunted(stash);
-                            }}
-                        />
-                        <Circle
-                            center={randomCenter(stash)}
-                            radius={circleRad}
-                            strokeColor={circleColor}
-                            fillColor={circleColor}
+                                onPress={() => {
+                                    if (hunted.title !== stash.title) {
+                                        Alert.alert(
+                                            "Do you want to start hunting this Stash?",
+                                            "",
+                                            [
+                                                {
+                                                    text: "Yes",
+                                                    onPress: () => {
+                                                        centered = false;
+                                                        Hunt(stash);
+                                                    }
+                                                },
+                                                {
+                                                    text: "No"
+                                                }
+                                            ],
+                                            {
+                                                cancelable: true
+                                            }
+                                        )
+                                    }
+                                }}
+                            />
+                            <Circle
+                                center={randomCenter(stash)}
+                                radius={circleRad}
+                                strokeColor={circleColor}
+                                fillColor={circleColor}
 
-                        />
+                            />
 
-                    </View>
-                ))}
+                        </View>
+                    ))}
+
 
             </MapView>
 
@@ -264,5 +317,5 @@ const styles = StyleSheet.create({
     map: {
         ...StyleSheet.absoluteFillObject,
         top: 30
-    },
+    }
 });
