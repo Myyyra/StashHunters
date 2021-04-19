@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Button, Alert } from 'react-native';
-import Firebase from '../config/Firebase';
+import { StyleSheet, Text, View, Image, Button, Alert, TouchableOpacity } from 'react-native';
+import Firebase, { firebaseAuth } from '../config/Firebase';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function StashCard({ navigation, route }) {
 
@@ -15,12 +16,18 @@ export default function StashCard({ navigation, route }) {
     }, []);
 
     const getStashes = async () => {
-        await Firebase.database()
+
+        try {
+            await Firebase.database()
             .ref('/stashes/' + stash.key)
             .on('value', snapshot => {
                 const data = snapshot.val();
                 setEdits(data);
             });
+        } catch (error) {
+            console.log("Error fetching stash " + error);
+
+        }
     }
 
     const archiveStash = () => {
@@ -43,6 +50,11 @@ export default function StashCard({ navigation, route }) {
 
             <View style={styles.header}>
                 <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{edited.title}</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()} >
+                    <View style={styles.backBtn}>
+                        <Ionicons name='return-up-back-outline' size={30} color='white' />
+                    </View>
+                </TouchableOpacity>
             </View>
 
             <View style={styles.image}>
@@ -51,9 +63,23 @@ export default function StashCard({ navigation, route }) {
 
             <View style={styles.description}>
                 <Text style={styles.descriptionText}>{edited.description}</Text>
-                <Button title="Edit" color='#029B76' onPress={() => navigation.navigate('EditStash', stash)} />
-                <Button title="Archive" color='#FF1B1B' onPress={() => archiveStash()} />
-                <Button title="BACK" color='#908F8F' onPress={() => navigation.goBack()} />
+                {firebaseAuth.currentUser.uid == stash.owner &&
+
+                    <View style={styles.buttons}>
+                        <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
+                            <View style={styles.editBtn}>
+                                <Text style={styles.btnText}>EDIT</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => archiveStash()}>
+                            <View style={styles.archiveBtn}>
+                                <Text style={styles.btnText}>ARCHIVE</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                }
+
             </View>
 
             <StatusBar style="auto" />
@@ -70,9 +96,9 @@ const styles = StyleSheet.create({
     },
     header: {
         flex: 1,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-
+        justifyContent: 'space-evenly'
     },
     image: {
         flex: 2
@@ -80,10 +106,44 @@ const styles = StyleSheet.create({
     description: {
         flex: 2,
         justifyContent: 'space-evenly'
+
     },
     descriptionText: {
         fontSize: 20,
-        marginBottom: 15
+        margin: 15
+    },
+    backBtn: {
+        backgroundColor: '#908F8F',
+        width: 50,
+        height: 40,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginLeft: 30,
+        justifyContent: 'center'
+    },
+    editBtn: {
+        backgroundColor: '#029B76',
+        width: 130,
+        borderRadius: 5,
+        marginBottom: 15,
+        alignItems: 'center'
+    },
+    archiveBtn: {
+        backgroundColor: '#a60225',
+        width: 130,
+        borderRadius: 5,
+        marginBottom: 15,
+        alignItems: 'center'
+    },
+    btnText: {
+        color: 'white',
+        padding: 10,
+        fontSize: 20
+    },
+    buttons: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+
     }
 
 });
