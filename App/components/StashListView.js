@@ -20,10 +20,10 @@ export default function StashListView({ navigation }) {
       .on('value', snapshot => {
         const data = snapshot.val();
         const s = Object.values(data);
-        const notDisabled = s.filter(d => d.disabled === false)
-          .filter(d => calculateDistance(d) < 1000);
+        const notDisabled = s.filter(d => d.disabled === false);
+        const nearOnes = notDisabled.filter(d => calculateDistance(d) < 1000);
 
-        setStashes(notDisabled);
+        setStashes(nearOnes);
       });
   }
 

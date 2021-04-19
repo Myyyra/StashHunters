@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
         width: 130,
         borderRadius: 5,
         marginBottom: 15,
+        marginRight: 15,
         alignItems: 'center'
     },
     archiveBtn: {
