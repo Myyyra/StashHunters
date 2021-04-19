@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Image, StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
+import { Camera } from 'expo-camera';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 
 let lat = 60.201313;
@@ -13,6 +14,26 @@ export default function CreateNewStash({ navigation }) {
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
     const [stashes, setStashes] = useState([]);
+
+    //initialize camera functions
+    const [hasCameraPermission, setPermission] = useState(null);
+    const [photoName, setPhotoName] = useState('');
+    const [photoBase64, setPhotoBase64] = useState('');
+    const [type, setType] = useState(Camera.Constants.Type.back);
+    const camera = useRef(null);
+
+    const askCameraPermission = async () => {
+        const { camStatus } = await Camera.requestPermissionsAsync();
+        setPermission(camStatus === 'granted');
+    }
+
+    const snap = async () => {
+        if (camera) {
+            const photo = await camera.current.takePictureAsync({ base64: true });
+            setPhotoName(photo.uri);
+            setPhotoBase64(photo.base64);
+        }
+    }
 
     //when save-button is pressed, save the new stash, inform the player that
     //saving was successful, and redirect to map view
@@ -119,32 +140,50 @@ export default function CreateNewStash({ navigation }) {
     useEffect(() => {
         getStashes();
         findLocation();
+        askCameraPermission();
     }, []);
 
     return (
-        <View style={styles.container}>
-            <Text>Create new stash</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={setTitle}
-                value={title}
-                placeholder='Stash name'
-            />
-            <TextInput
-                multiline
-                numberOfLines={4}
-                style={styles.inputBig}
-                onChangeText={setDesc}
-                value={desc}
-                placeholder='Description'
-            />
+        <View>
+            {hasCameraPermission ?
+                (
+                    <View style={styles.container}>
+                        <Text>Create new stash</Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={setTitle}
+                            value={title}
+                            placeholder='Stash name'
+                        />
+                        <TextInput
+                            multiline
+                            numberOfLines={4}
+                            style={styles.inputBig}
+                            onChangeText={setDesc}
+                            value={desc}
+                            placeholder='Description'
+                        />
 
-            <Button
-                onPress={saveAndRedirect}
-                title="Save"
-                color='#029B76'
-            />
+                        <Camera ref={camera} type={type} />
+                        <Button
+                            title='Take a picture'
+                            onPress={snap} />
 
+                        <Image source={{ uri: photoName }} />
+                        <Image source={{ uri: `data:image/gif;base64, ${photoBase64}` }} />
+
+                        <Button
+                            onPress={saveAndRedirect}
+                            title="Save"
+                            color='#029B76'
+                        />
+
+                    </View>
+                ) : (
+                    <View style={styles.container}>
+                        <Text>No access to camera</Text>
+                    </View>
+                )}
         </View>
     );
 }
