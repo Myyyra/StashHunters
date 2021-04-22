@@ -1,19 +1,30 @@
-import React, { useState } from 'react';
+import React, { Component, useState } from 'react';
 import { Alert } from 'react-native';
 import Firebase from '../config/Firebase';
 
-//tänne tuodaan myöhemmin toimiva versio mapscreenistä löytyvästä saman nimisestä funktiosta
+class FetchStashes {
 
-function FetchStashes() {
+    findStashes = async () => {
 
-  const [locations, setLocations] = useState([]);
+        let stashes = [];
 
-  Firebase.database()
-    .ref('/stashes/-MVGKSMRr2ArPReUCVFp')
-    .once('value')
-    .then(snapshot => {
-      Alert.alert(">>" + snapshot.val().latlong.latitude);
-    });
+        try {
+            await Firebase.database()
+                .ref('/stashes')
+                .once('value', snapshot => {
+                    const data = snapshot.val();
+                    const s = Object.values(data);
+                    const filtered = s.filter(stash => stash.disabled === false);
+                    stashes = filtered;
+                    console.log("finding done");
+                });
+        } catch (error) {
+            console.log("ALERT! Error finding stashes " + error);
+        }
 
-  return locations;
+        return stashes;
+    }
+
 }
+const fetchStashes = new FetchStashes();
+export default fetchStashes;

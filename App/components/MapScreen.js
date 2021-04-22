@@ -5,11 +5,17 @@ import MapView, { Marker, Circle } from 'react-native-maps';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
+import FetchStashes from './FetchStashes.js';
+import CreateNewStash from './CreateNewStash';
+import { useIsFocused } from "@react-navigation/native";
+
 
 
 let done = false;
 let lat = 60.201313;
 let long = 24.934041;
+
+//refactoroi nämä toiseen filuun josta ne haetaan tänne ja create stashiin
 let circleRad = 50;
 let circleColor = 'rgba(252, 138, 7, 0.35)';
 let centered = false;
@@ -17,14 +23,21 @@ let centered = false;
 export default function MapScreen({ navigation }) {
 
     const [userLocation, setUserLocation] = useState([]);
-    const [stashes, setStashes] = useState([]);
-    const [hunted, setHunted] = useState({
-        title: "",
-        latitude: 0,
-        longitude: 0
-    });
-    //hunted means the stash that the user will try to find
-    //this feature is still in progress
+    const [stashes, setStashes] = useState([
+        {
+            title: "preset",
+            latitude: 0,
+            longitude: 0
+        }
+    ]);
+    const [hunted, setHunted] = useState(
+        {
+            title: "",
+            latitude: 0,
+            longitude: 0
+        }
+    );
+
     const currentUser = firebaseAuth.currentUser ? firebaseAuth.currentUser : null;
 
     //Haaga-Helia as a preset for mapview to start from something
@@ -86,26 +99,19 @@ export default function MapScreen({ navigation }) {
         }
     }
 
-    const getStashes = async () => {
-        try {
-            await Firebase.database()
-                .ref('/stashes')
-                .on('value', snapshot => {
-                    const data = snapshot.val();
-                    const s = Object.values(data);
-                    const filtered = s.filter(stash => stash.disabled === false);
-                    setStashes(filtered);
-                });
-        } catch (error) {
-            console.log("ALERT! Error finding stashes " + error)
-        }
-    }
+    const isFocused = useIsFocused();
 
     useEffect(() => {
-        getStashes();
-        getUsers();
-        findLocation();
-    }, []);
+        (async () => {
+            getUsers();
+            findLocation();
+            let results = await FetchStashes.findStashes();
+
+            console.log(results[0].title);
+
+            setStashes(results);
+        })();
+    }, [isFocused]);
 
     const getUsers = async () => {
 
@@ -145,8 +151,6 @@ export default function MapScreen({ navigation }) {
             await Location.getCurrentPositionAsync({})
                 .then(location => {
 
-                    //setUserLocation(location.coords.latitude, location.coords.longitude);
-
                     lat = location.coords.latitude;
                     long = location.coords.longitude;
 
@@ -159,49 +163,20 @@ export default function MapScreen({ navigation }) {
 
                     setTimeout(function () { findLocation(); }, 2000);
                 });
-
-            // At the moment user location is tracked at 5 second intervals 
-            // still searching for better way to track user location in real time
-            // react native geolocation service maybe??
         }
     }
 
-    //Tästä voi olla hyötyä 
-    // että voidaan mitata oikea määrä kordinaatteja 
-    //ATM mittaa kahden pisteen välimatkan
-    //muokkaa että antaa kordinaatteina tai 
-    //suhdeukuna paljonko se pitäisi olla
-    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-        var R = 6371; // Radius of the earth in km
-        var dLat = deg2rad(lat2 - lat1);  // deg2rad below
-        var dLon = deg2rad(lon2 - lon1);
-        var a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2)
-            ;
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c; // Distance in km
-        return d;
+    //tämän voi ottaa pois kun databasen kaikkien stashien datarakenteesta löytyy circleLat 
+    const circleCenter = (target) => {
+        if (target.circleLat) {
+            console.log("löytyy");
+            return { latitude: target.circleLat, longitude: target.circleLong };
+        }
+        else {
+            console.log("ei löydy");
+            return { latitude: target.latitude, longitude: target.longitude };
+        }
     }
-
-    function deg2rad(deg) {
-        return deg * (Math.PI / 180)
-    }
-
-    //Ei vielä palauta random lokaatiota?
-    const randomCenter = (stash) => {
-
-        let latitude = stash.latitude;
-        let longitude = stash.longitude;
-        let diff = circleRad * 0.0000081;
-
-        let x = latitude + (Math.random() * (diff - (-diff) - diff));
-        let y = longitude + (Math.random() * (diff - (-diff) - diff));
-
-        return { latitude: x, longitude: y };
-    }
-
 
     return (
         <View style={styles.container}>
@@ -223,19 +198,6 @@ export default function MapScreen({ navigation }) {
                 showsMyLocationButton={true}
 
             >
-                <Marker
-                    title="hunted"
-                    coordinate={{ latitude: hunted.latitude, longitude: hunted.longitude }}
-                    pinColor='rgba(0, 234, 82, 1)'
-                />
-                <Circle
-                    center={randomCenter(hunted)}
-                    radius={circleRad}
-                    strokeColor='rgba(0, 234, 82, 1)'
-                    fillColor='rgba(0, 234, 82, 0.3)'
-
-                />
-
                 {stashes.filter(stash => stash.title !== hunted.title)
                     .map((stash, index) => (
                         <View key={index}>
@@ -274,7 +236,7 @@ export default function MapScreen({ navigation }) {
                                 }}
                             />
                             <Circle
-                                center={randomCenter(stash)}
+                                center={circleCenter(stash)}
                                 radius={circleRad}
                                 strokeColor={circleColor}
                                 fillColor={circleColor}
@@ -283,6 +245,21 @@ export default function MapScreen({ navigation }) {
 
                         </View>
                     ))}
+
+
+                <Marker
+                    title="hunted"
+                    coordinate={{ latitude: hunted.latitude, longitude: hunted.longitude }}
+                    pinColor='rgba(0, 234, 82, 1)'
+                />
+                <Circle
+                    center={circleCenter(hunted)}
+                    radius={circleRad}
+                    strokeColor='rgba(0, 234, 82, 1)'
+                    fillColor='rgba(0, 234, 82, 0.3)'
+
+                />
+
 
 
             </MapView>

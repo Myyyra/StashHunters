@@ -16,7 +16,7 @@ export default function CreateNewStash({ navigation }) {
 
     //when save-button is pressed, save the new stash, inform the player that
     //saving was successful, and redirect to map view
-    const saveAndRedirect = () => {
+    const saveAndRedirect = async () => {
         saveStash();
         setTitle('');
         setDesc('');
@@ -40,7 +40,7 @@ export default function CreateNewStash({ navigation }) {
 
     //save the created stash to database
     //checks if the are no other stahes too near
-    const saveStash = () => {
+    const saveStash = async () => {
 
         getStashes();
         findLocation().then(() => {
@@ -115,6 +115,7 @@ export default function CreateNewStash({ navigation }) {
             console.log("Error at getting stashes from firebase " + error);
         }
     }
+
 
     useEffect(() => {
         getStashes();
