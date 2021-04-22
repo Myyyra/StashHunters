@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
-import { Camera } from 'expo-camera';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 
 let lat = 60.201313;
 let long = 24.934041;
+let circleRad = 50;
 
 export default function CreateNewStash({ navigation }) {
 
@@ -18,7 +18,6 @@ export default function CreateNewStash({ navigation }) {
     useEffect(() => {
         getStashes();
         findLocation();
-        //askCameraPermission();
     }, []);
 
 
@@ -93,7 +92,9 @@ export default function CreateNewStash({ navigation }) {
                             description: desc,
                             owner: firebaseAuth.currentUser.uid,
                             disabled: false,
-                            key: key
+                            key: key,
+                            circleLat: randomCenter().latitude,
+                            circleLng: randomCenter().longitude
                         }
                     );
 
@@ -124,6 +125,18 @@ export default function CreateNewStash({ navigation }) {
         }
     }
 
+    const randomCenter = (stash) => {
+
+        let latitude = stash.latitude;
+        let longitude = stash.longitude;
+        let diff = circleRad * 0.0000081;
+
+        let x = latitude + (Math.random() * (diff - (-diff) - diff));
+        let y = longitude + (Math.random() * (diff - (-diff) - diff));
+
+        return { latitude: x, longitude: y };
+    }
+
 
     return (
 
@@ -143,6 +156,9 @@ export default function CreateNewStash({ navigation }) {
                 value={desc}
                 placeholder='Description'
             />
+
+
+
             <Button
                 onPress={() => navigation.navigate('CameraScreen')}
                 title="Take a picture"
