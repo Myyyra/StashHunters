@@ -8,16 +8,11 @@ import { getDistance } from 'geolib';
 import FetchStashes from './FetchStashes.js';
 import CreateNewStash from './CreateNewStash';
 import { useIsFocused } from "@react-navigation/native";
-
-
+import { rules } from '../GameRules.js';
 
 let done = false;
 let lat = 60.201313;
 let long = 24.934041;
-
-//refactoroi nämä toiseen filuun josta ne haetaan tänne ja create stashiin
-let circleRad = 50;
-let circleColor = 'rgba(252, 138, 7, 0.35)';
 let centered = false;
 
 export default function MapScreen({ navigation }) {
@@ -56,7 +51,6 @@ export default function MapScreen({ navigation }) {
     }
 
     const Hunt = (target) => {
-
         if (!centered) {
 
             centered = true;
@@ -103,46 +97,11 @@ export default function MapScreen({ navigation }) {
 
     useEffect(() => {
         (async () => {
-            getUsers();
             findLocation();
             let results = await FetchStashes.findStashes();
-
-            console.log(results[0].title);
-
             setStashes(results);
         })();
     }, [isFocused]);
-
-    const getUsers = async () => {
-
-        if (currentUser) {
-            try {
-                await Firebase.database()
-                    .ref('/users')
-                    .on('value', snapshot => {
-                        const data = snapshot.val();
-                        const users = Object.keys(data);
-                        let userExists = users.filter(u => u == currentUser.uid);
-
-                        if (currentUser.uid !== userExists[0]) {
-                            createUserToDatabase();
-                        }
-                    });
-            } catch (error) {
-                console.log("Error fetching user " + error)
-            }
-        }
-    }
-
-    const createUserToDatabase = () => {
-        try {
-            Firebase.database().ref('users/' + currentUser.uid).set({ username: currentUser.displayName });
-
-            Alert.alert("User saved");
-        } catch (error) {
-            console.log("Error saving user " + error);
-        }
-    }
 
     const findLocation = async () => {
 
@@ -179,17 +138,13 @@ export default function MapScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.map}>
-                <View>
+
+                <View style={styles.header}>
+                    <Text style={styles.hunted}>The Hunted Stash: {hunted.title}</Text>
                     {currentUser ?
-                        <View style={styles.header}>
-                            <Text style={styles.headerText}>{currentUser.displayName}</Text>
-                            <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
-                        </View>
+                        <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
                         :
-                        <View style={styles.header}>
-                            <Text style={styles.headerText}>anonymous</Text>
-                            <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
-                        </View>
+                        <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
                     }
                 </View>
                 <MapView
@@ -238,9 +193,9 @@ export default function MapScreen({ navigation }) {
                                 />
                                 <Circle
                                     center={circleCenter(stash)}
-                                    radius={circleRad}
-                                    strokeColor={circleColor}
-                                    fillColor={circleColor}
+                                    radius={rules.circleRad}
+                                    strokeColor={rules.circleColor}
+                                    fillColor={rules.circleColor}
 
                                 />
 
@@ -255,7 +210,7 @@ export default function MapScreen({ navigation }) {
                     />
                     <Circle
                         center={circleCenter(hunted)}
-                        radius={circleRad}
+                        radius={rules.circleRad}
                         strokeColor='rgba(0, 234, 82, 1)'
                         fillColor='rgba(0, 234, 82, 0.3)'
 
@@ -264,10 +219,6 @@ export default function MapScreen({ navigation }) {
 
 
                 </MapView>
-
-                <View>
-                    <Text>The Hunted Stash: {hunted.title}</Text>
-                </View>
 
                 <StatusBar style="auto" />
             </View>
@@ -292,6 +243,10 @@ const styles = StyleSheet.create({
     headerText: {
         color: 'white',
         fontSize: 20
+    },
+    hunted: {
+        color: 'white',
+        fontSize: 16
     },
     map: {
         ...StyleSheet.absoluteFillObject,

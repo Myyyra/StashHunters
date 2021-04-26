@@ -4,10 +4,10 @@ import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import FetchStashes from './FetchStashes.js';
+import { rules } from '../GameRules.js';
 
 let lat = '';
 let long = '';
-let circleRad = 50;
 
 export default function CreateNewStash({ navigation }) {
 
@@ -80,8 +80,6 @@ export default function CreateNewStash({ navigation }) {
             if (tooClose === false) {
                 try {
                     let key = getKey();
-                    console.log(key);
-
                     Firebase.database().ref('stashes/' + key).set(
                         {
                             latitude: lat,
@@ -114,7 +112,7 @@ export default function CreateNewStash({ navigation }) {
 
         let latitude = lat;
         let longitude = long;
-        let diff = circleRad * 0.0000081;
+        let diff = rules.circleRad * 0.0000081;
 
         let x = latitude + (Math.random() * diff);
         let y = longitude + (Math.random() * diff);
