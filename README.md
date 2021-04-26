@@ -51,9 +51,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-StashHunters was created during Haaga-Helia's Software Project II -course (10 ECTS) in spring 2021. It is a team project of a group of five students.
-</br>
-StashHunters is a mobile game for hunting virtual stashes that other players have hidden.
+StashHunters was created during Haaga-Helia's Software Project II -course (10 ECTS) in spring 2021. It is a team project of five students.
+</br></br>
+StashHunters is a mobile game for hunting virtual stashes that other players have hidden. Stashes can be almost anything (like buildings, statues, landmarks, scenic views etc.). 
 
 
 ### Building With
@@ -75,11 +75,17 @@ This section will be updated later :)
 
 ### Prerequisites
 
-This section will be updated later :)
+The game requires permission to use location on your mobile device in order to function correctly.
+</br></br>
+If you wish to add new stashes to the game, you must create a user account and give the game permission to use the camera on your mobile device.
+</br></br>
+The game operates only on Android devices.
 
 ### Installation
 
-This section will be updated later :)
+For now the game is published only in Expo Go -application, and cannot be found in Google Play Store.
+</br></br>
+Install Expo Go to your mobile device: https://expo.io/
 
 <!-- USAGE EXAMPLES -->
 ## Usage
