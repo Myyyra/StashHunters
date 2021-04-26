@@ -51,7 +51,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This section will be updated later :)
+StashHunters was created during Haaga-Helia's Software Project II -course (10 ECTS) in spring 2021. It is a team project of a group of five students.
+StashHunters is a mobile game for hunting virtual stashes that other players have hidden.
+
 
 ### Building With
 
