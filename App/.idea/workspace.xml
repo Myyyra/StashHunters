@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="170bd470-2370-4964-88f6-704c714178a4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.expo/packager-info.json" beforeDir="false" afterPath="$PROJECT_DIR$/.expo/packager-info.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/StashCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/StashCard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/MapScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/MapScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/SignUp.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/SignUp.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/StashListView.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/StashListView.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -103,10 +104,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="410" y="4" key="#test/0.0.1536.864@0.0.1536.864" timestamp="1614596952041" />
-    <state x="94" y="105" width="1200" height="624" key="AVDManager" timestamp="1618839010153">
+    <state x="30" y="85" width="1200" height="624" key="AVDManager" timestamp="1619419723933">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="94" y="105" width="1200" height="624" key="AVDManager/0.0.1536.864@0.0.1536.864" timestamp="1618839010153" />
+    <state x="30" y="85" width="1200" height="624" key="AVDManager/0.0.1536.864@0.0.1536.864" timestamp="1619419723933" />
     <state x="481" y="171" key="FileChooserDialogImpl" timestamp="1614603811321">
       <screen x="0" y="0" width="1536" height="864" />
     </state>

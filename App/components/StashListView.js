@@ -10,9 +10,13 @@ export default function StashListView({ navigation }) {
   const [stashes, setStashes] = useState([]);
 
   useEffect(() => {
-    getStashes();
-    findLocation();
+    showStashes();
   }, []);
+
+  const showStashes = async () => {
+    await findLocation()
+      .then(getStashes());
+  }
 
   const getStashes = async () => {
     await Firebase.database()
@@ -34,6 +38,7 @@ export default function StashListView({ navigation }) {
         .then(location => {
           setCurrentPosition({ latitude: location.coords.latitude, longitude: location.coords.longitude });
           console.log(location.coords.latitude);
+          return currentPosition;
         });
     } else {
       Alert.alert("Permission needed", "You need to allow the app to use your location");
