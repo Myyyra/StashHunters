@@ -3,9 +3,10 @@ import { Image, StyleSheet, Text, View, Alert, Button, TextInput } from 'react-n
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Firebase, { firebaseAuth } from '../config/Firebase';
+import FetchStashes from './FetchStashes.js';
 
-let lat = 60.201313;
-let long = 24.934041;
+let lat = '';
+let long = '';
 let circleRad = 50;
 
 export default function CreateNewStash({ navigation }) {
@@ -15,16 +16,11 @@ export default function CreateNewStash({ navigation }) {
     const [desc, setDesc] = useState('');
     const [stashes, setStashes] = useState([]);
 
-    useEffect(() => {
-        getStashes();
-        findLocation();
-    }, []);
-
 
     //when save-button is pressed, save the new stash, inform the player that
     //saving was successful, and redirect to map view
     const saveAndRedirect = async () => {
-        saveStash();
+        await saveStash();
         setTitle('');
         setDesc('');
         lat = '';
@@ -34,7 +30,7 @@ export default function CreateNewStash({ navigation }) {
 
     const findLocation = async () => {
 
-        let { status } = await Location.requestPermissionsAsync();
+        let { status } = await Location.requestForegroundPermissionsAsync();
 
         if (status === 'granted') {
             await Location.getCurrentPositionAsync({})
@@ -49,8 +45,10 @@ export default function CreateNewStash({ navigation }) {
     //checks if the are no other stahes too near
     const saveStash = async () => {
 
-        getStashes();
-        findLocation().then(() => {
+        let results = await FetchStashes.findStashes();
+        setStashes(results);
+
+        await findLocation().then(() => {
 
             let tooClose = false;
             stashes.forEach(stash => {
@@ -94,7 +92,7 @@ export default function CreateNewStash({ navigation }) {
                             disabled: false,
                             key: key,
                             circleLat: randomCenter().latitude,
-                            circleLng: randomCenter().longitude
+                            circleLong: randomCenter().longitude
                         }
                     );
 
@@ -111,30 +109,17 @@ export default function CreateNewStash({ navigation }) {
         return Firebase.database().ref('stashes/').push().getKey();
     }
 
-    const getStashes = () => {
-        try {
-            Firebase.database()
-                .ref('/stashes')
-                .on('value', snapshot => {
-                    const data = snapshot.val();
-                    const s = Object.values(data);
-                    setStashes(s);
-                });
-        } catch (error) {
-            console.log("Error at getting stashes from firebase " + error);
-        }
-    }
 
-    const randomCenter = (stash) => {
+    const randomCenter = () => {
 
-        let latitude = stash.latitude;
-        let longitude = stash.longitude;
+        let latitude = lat;
+        let longitude = long;
         let diff = circleRad * 0.0000081;
 
-        let x = latitude + (Math.random() * (diff - (-diff) - diff));
-        let y = longitude + (Math.random() * (diff - (-diff) - diff));
+        let x = latitude + (Math.random() * diff);
+        let y = longitude + (Math.random() * diff);
 
-        return { latitude: x, longitude: y };
+        return { latitude: parseFloat(x.toFixed(7)), longitude: parseFloat(y.toFixed(7)) };
     }
 
 

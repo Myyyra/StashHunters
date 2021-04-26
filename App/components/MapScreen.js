@@ -146,7 +146,7 @@ export default function MapScreen({ navigation }) {
 
     const findLocation = async () => {
 
-        let { status } = await Location.requestPermissionsAsync();
+        let { status } = await Location.requestForegroundPermissionsAsync();
         if (status === 'granted') {
             await Location.getCurrentPositionAsync({})
                 .then(location => {
@@ -169,109 +169,107 @@ export default function MapScreen({ navigation }) {
     //tämän voi ottaa pois kun databasen kaikkien stashien datarakenteesta löytyy circleLat 
     const circleCenter = (target) => {
         if (target.circleLat) {
-            console.log("löytyy");
             return { latitude: target.circleLat, longitude: target.circleLong };
         }
         else {
-            console.log("ei löydy");
             return { latitude: target.latitude, longitude: target.longitude };
         }
     }
 
     return (
         <View style={styles.container}>
-            <View style = {styles.map}>
+            <View style={styles.map}>
                 <View>
-            {currentUser ?
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>{currentUser.displayName}</Text>
-                    <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
-                </View>
-                :
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>anonymous</Text>
-                    <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
-                </View>
-            }
-            </View>
-            <MapView
-                style={styles.map}
-                region={region}
-                showsUserLocation
-                showsMyLocationButton={true}
-
-            >
-                {stashes.filter(stash => stash.title !== hunted.title)
-                    .map((stash, index) => (
-                        <View key={index}>
-
-
-                            <Marker
-                                coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
-
-                                title={stash.title}
-                                description={stash.description}
-
-                                //image={require('../assets/flag.png')}
-
-                                onPress={() => {
-                                    if (hunted.title !== stash.title) {
-                                        Alert.alert(
-                                            "Do you want to start hunting this Stash?",
-                                            "",
-                                            [
-                                                {
-                                                    text: "Yes",
-                                                    onPress: () => {
-                                                        centered = false;
-                                                        Hunt(stash);
-                                                    }
-                                                },
-                                                {
-                                                    text: "No"
-                                                }
-                                            ],
-                                            {
-                                                cancelable: true
-                                            }
-                                        )
-                                    }
-                                }}
-                            />
-                            <Circle
-                                center={circleCenter(stash)}
-                                radius={circleRad}
-                                strokeColor={circleColor}
-                                fillColor={circleColor}
-
-                            />
-
+                    {currentUser ?
+                        <View style={styles.header}>
+                            <Text style={styles.headerText}>{currentUser.displayName}</Text>
+                            <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
                         </View>
-                    ))}
+                        :
+                        <View style={styles.header}>
+                            <Text style={styles.headerText}>anonymous</Text>
+                            <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
+                        </View>
+                    }
+                </View>
+                <MapView
+                    style={styles.map}
+                    region={region}
+                    showsUserLocation
+                    showsMyLocationButton={true}
+
+                >
+                    {stashes.filter(stash => stash.title !== hunted.title)
+                        .map((stash, index) => (
+                            <View key={index}>
 
 
-                <Marker
-                    title="hunted"
-                    coordinate={{ latitude: hunted.latitude, longitude: hunted.longitude }}
-                    pinColor='rgba(0, 234, 82, 1)'
-                />
-                <Circle
-                    center={circleCenter(hunted)}
-                    radius={circleRad}
-                    strokeColor='rgba(0, 234, 82, 1)'
-                    fillColor='rgba(0, 234, 82, 0.3)'
+                                <Marker
+                                    coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
 
-                />
+                                    title={stash.title}
+                                    description={stash.description}
+
+                                    //image={require('../assets/flag.png')}
+
+                                    onPress={() => {
+                                        if (hunted.title !== stash.title) {
+                                            Alert.alert(
+                                                "Do you want to start hunting this Stash?",
+                                                "",
+                                                [
+                                                    {
+                                                        text: "Yes",
+                                                        onPress: () => {
+                                                            centered = false;
+                                                            Hunt(stash);
+                                                        }
+                                                    },
+                                                    {
+                                                        text: "No"
+                                                    }
+                                                ],
+                                                {
+                                                    cancelable: true
+                                                }
+                                            )
+                                        }
+                                    }}
+                                />
+                                <Circle
+                                    center={circleCenter(stash)}
+                                    radius={circleRad}
+                                    strokeColor={circleColor}
+                                    fillColor={circleColor}
+
+                                />
+
+                            </View>
+                        ))}
+
+
+                    <Marker
+                        title="hunted"
+                        coordinate={{ latitude: hunted.latitude, longitude: hunted.longitude }}
+                        pinColor='rgba(0, 234, 82, 1)'
+                    />
+                    <Circle
+                        center={circleCenter(hunted)}
+                        radius={circleRad}
+                        strokeColor='rgba(0, 234, 82, 1)'
+                        fillColor='rgba(0, 234, 82, 0.3)'
+
+                    />
 
 
 
-            </MapView>
+                </MapView>
 
-            <View>
-                <Text>The Hunted Stash: {hunted.title}</Text>
-            </View>
+                <View>
+                    <Text>The Hunted Stash: {hunted.title}</Text>
+                </View>
 
-            <StatusBar style="auto" />
+                <StatusBar style="auto" />
             </View>
         </View>
     );
