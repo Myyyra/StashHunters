@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a42db0af-8c52-4f20-8900-7adb9a423042" name="Default Changelist" comment="" />
+    <list default="true" id="a42db0af-8c52-4f20-8900-7adb9a423042" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/.expo/packager-info.json" beforeDir="false" afterPath="$PROJECT_DIR$/App/.expo/packager-info.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/components/MapScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/App/components/MapScreen.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -34,9 +38,9 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="411" y="100" width="1200" height="800" key="AVDManager" timestamp="1615187977755">
+    <state x="411" y="100" width="1200" height="800" key="AVDManager" timestamp="1618210824545">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="411" y="100" width="1200" height="800" key="AVDManager/0.0.1920.1040@0.0.1920.1040" timestamp="1615187977755" />
+    <state x="411" y="100" width="1200" height="800" key="AVDManager/0.0.1920.1040@0.0.1920.1040" timestamp="1618210824545" />
   </component>
 </project>

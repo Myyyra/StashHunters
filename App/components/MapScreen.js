@@ -180,6 +180,8 @@ export default function MapScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
+            <View style = {styles.map}>
+                <View>
             {currentUser ?
                 <View style={styles.header}>
                     <Text style={styles.headerText}>{currentUser.displayName}</Text>
@@ -191,6 +193,7 @@ export default function MapScreen({ navigation }) {
                     <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
                 </View>
             }
+            </View>
             <MapView
                 style={styles.map}
                 region={region}
@@ -269,6 +272,7 @@ export default function MapScreen({ navigation }) {
             </View>
 
             <StatusBar style="auto" />
+            </View>
         </View>
     );
 }
