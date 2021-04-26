@@ -14,7 +14,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h1 align="center">Project StashHunters</h1>
+  <h1 align="center">StashHunters</h1>
 
 </p>
 
@@ -25,7 +25,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#about-the-project">About StashHunters</a>
       <ul>
         <li><a href="#building-with">Building With</a></li>
       </ul>
@@ -39,7 +39,6 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
@@ -49,11 +48,11 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## About StashHunters
 
 StashHunters was created during Haaga-Helia's Software Project II -course (10 ECTS) in spring 2021. It is a team project of five students.
 </br></br>
-StashHunters is a mobile game for hunting virtual stashes that other players have hidden. Stashes can be almost anything (like buildings, statues, landmarks, scenic views etc.). 
+StashHunters is a mobile game for hunting virtual stashes that other players have hidden. Stashes can be almost anything (like buildings, statues, landmarks, scenic views etc.). Stashes are hidden somewhere inside the areas visible on the map. Your job is to find the stash with the help of the stash picture without having the exact coordinates to the stash location.
 
 
 ### Building With
