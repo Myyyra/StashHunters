@@ -12,6 +12,7 @@ import SignUp from './components/SignUp';
 import StashCard from './components/StashCard';
 import Loading from './components/Loading';
 import EditStash from './components/EditStash';
+import CameraScreen from './components/CameraScreen';
 import { firebaseAuth } from './config/Firebase';
 
 const Tab = createBottomTabNavigator();
@@ -68,6 +69,7 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false }} name="SignUp" component={SignUp} />
         <Stack.Screen options={{ headerShown: false }} name="StashCard" component={StashCard} />
         <Stack.Screen options={{ headerShown: false }} name="EditStash" component={EditStash} />
+        <Stack.Screen options={{ headerShown: false }} name="CameraScreen" component={CameraScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

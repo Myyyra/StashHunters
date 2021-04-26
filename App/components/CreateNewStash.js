@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
+import { Image, StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 
 let lat = 60.201313;
 let long = 24.934041;
+let circleRad = 50;
 
 export default function CreateNewStash({ navigation }) {
 
@@ -13,6 +14,12 @@ export default function CreateNewStash({ navigation }) {
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
     const [stashes, setStashes] = useState([]);
+
+    useEffect(() => {
+        getStashes();
+        findLocation();
+    }, []);
+
 
     //when save-button is pressed, save the new stash, inform the player that
     //saving was successful, and redirect to map view
@@ -85,7 +92,9 @@ export default function CreateNewStash({ navigation }) {
                             description: desc,
                             owner: firebaseAuth.currentUser.uid,
                             disabled: false,
-                            key: key
+                            key: key,
+                            circleLat: randomCenter().latitude,
+                            circleLng: randomCenter().longitude
                         }
                     );
 
@@ -116,12 +125,21 @@ export default function CreateNewStash({ navigation }) {
         }
     }
 
-    useEffect(() => {
-        getStashes();
-        findLocation();
-    }, []);
+    const randomCenter = (stash) => {
+
+        let latitude = stash.latitude;
+        let longitude = stash.longitude;
+        let diff = circleRad * 0.0000081;
+
+        let x = latitude + (Math.random() * (diff - (-diff) - diff));
+        let y = longitude + (Math.random() * (diff - (-diff) - diff));
+
+        return { latitude: x, longitude: y };
+    }
+
 
     return (
+
         <View style={styles.container}>
             <Text>Create new stash</Text>
             <TextInput
@@ -139,6 +157,13 @@ export default function CreateNewStash({ navigation }) {
                 placeholder='Description'
             />
 
+
+
+            <Button
+                onPress={() => navigation.navigate('CameraScreen')}
+                title="Take a picture"
+                color='#029B76'
+            />
             <Button
                 onPress={saveAndRedirect}
                 title="Save"
@@ -146,6 +171,7 @@ export default function CreateNewStash({ navigation }) {
             />
 
         </View>
+
     );
 }
 
