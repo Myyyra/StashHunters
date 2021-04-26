@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
 import * as Location from 'expo-location';
 import Firebase from '../config/Firebase';
 import { getDistance } from 'geolib';
@@ -12,20 +12,20 @@ export default function StashListView({ navigation }) {
   useEffect(() => {
     showStashes();
   }, []);
-
+ 
   const showStashes = async () => {
-    await findLocation()
-      .then(getStashes());
-  }
+    let location = await findLocation()
+    getStashes(location);
+  }  
 
-  const getStashes = async () => {
+  const getStashes = async (location) => {
     await Firebase.database()
       .ref('/stashes')
-      .on('value', snapshot => {
+      .once('value', snapshot => {
         const data = snapshot.val();
         const s = Object.values(data);
         const notDisabled = s.filter(d => d.disabled === false);
-        const nearOnes = notDisabled.filter(d => calculateDistance(d) < 1000);
+        const nearOnes = notDisabled.filter(d => calculateDistance(d, location) < 1000);
 
         setStashes(nearOnes);
       });
@@ -34,23 +34,22 @@ export default function StashListView({ navigation }) {
   const findLocation = async () => {
     let { status } = await Location.requestPermissionsAsync();
     if (status === 'granted') {
-      await Location.getCurrentPositionAsync({})
+      return await Location.getCurrentPositionAsync({})
         .then(location => {
           setCurrentPosition({ latitude: location.coords.latitude, longitude: location.coords.longitude });
-          console.log(location.coords.latitude);
-          return currentPosition;
+          return { latitude: location.coords.latitude, longitude: location.coords.longitude };
         });
     } else {
       Alert.alert("Permission needed", "You need to allow the app to use your location");
     }
+
   }
 
-  const calculateDistance = (stash) => {
-    let distance = getDistance(currentPosition, {
+  const calculateDistance = (stash, location) => {
+    let distance = getDistance(location, {
       latitude: stash.latitude,
       longitude: stash.longitude
     });
-
     return distance;
   }
 
@@ -68,7 +67,7 @@ export default function StashListView({ navigation }) {
                 <Text style={{fontSize: 24, fontWeight: 'bold'}}>{item.title}</Text>
                 <Text style={{fontSize: 18}}>{item.description}</Text>
                 <View style={styles.distance}>
-                  <Text>{calculateDistance(item)} meters away</Text>
+                  <Text>{calculateDistance(item, currentPosition)} meters away</Text>
                   <TouchableOpacity onPress={() => navigation.navigate('StashCard', item)}>
                     <View style={styles.btn}>
                       <Text style={styles.btnText}>STASH</Text>
