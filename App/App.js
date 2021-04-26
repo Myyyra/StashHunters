@@ -13,6 +13,9 @@ import StashCard from './components/StashCard';
 import Loading from './components/Loading';
 import EditStash from './components/EditStash';
 import CameraScreen from './components/CameraScreen';
+import ProfileScreen from './components/ProfileScreen';
+import HiddenStashes from './components/HiddenStashes';
+import FoundStashes from './components/FoundStashes';
 import { firebaseAuth } from './config/Firebase';
 
 const Tab = createBottomTabNavigator();
@@ -27,10 +30,11 @@ function BottomNavi() {
         iconName = 'md-home';
       } else if (route.name === 'MapScreen') {
         iconName = 'md-map';
+      } else if (route.name === 'ProfileScreen') {
+        iconName = 'person-outline';
       } else if (route.name === 'CreateNewStash') {
         iconName = 'add-circle-outline';
-      }
-      else if (route.name === 'StashListView') {
+      } else if (route.name === 'StashListView') {
         iconName = 'list';
       }
 
@@ -41,6 +45,7 @@ function BottomNavi() {
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen name='MapScreen' component={MapScreen} options={{ title: 'Map' }} />
+      <Tab.Screen name='ProfileScreen' component={ProfileScreen} options={{ title: 'Profile' }} />
       <Tab.Screen name='CreateNewStash' component={CreateNewStash} options={{ title: 'Add' }}
         listeners={{
           tabPress: e => {
@@ -70,6 +75,8 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false }} name="StashCard" component={StashCard} />
         <Stack.Screen options={{ headerShown: false }} name="EditStash" component={EditStash} />
         <Stack.Screen options={{ headerShown: false }} name="CameraScreen" component={CameraScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="HiddenStashes" component={HiddenStashes} />
+        <Stack.Screen options={{ headerShown: false }} name="FoundStashes" component={FoundStashes} />
       </Stack.Navigator>
     </NavigationContainer>
   );
