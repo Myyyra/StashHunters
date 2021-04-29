@@ -102,7 +102,7 @@ This section will be updated later :)
 <!-- AUTHORS -->
 ## Authors
 
-StashHunters was created (in aplhabetical order) by:
+StashHunters was created (in alphabetical order) by:
 * Veera Aaltonen
 * Henrik Rossi
 * Jutta Ruuskanen
