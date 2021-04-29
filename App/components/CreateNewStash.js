@@ -92,12 +92,11 @@ export default function CreateNewStash({ navigation }) {
 
 
                     uploadImage(photoCacheUri, photokey)
-                    .then(console.log('Success uploading the image'))
                     .then(() => {
-                        Alert.alert('Success in saving picture to storage');
+                        console.log('Success in saving picture to storage');
                     })             
                     .catch((error) => {
-                        Alert.alert(error);
+                        console.log('Error in saving picture to storage' + error);
                     });
 
                     Firebase.database().ref('stashes/' + key).set(

@@ -110,9 +110,11 @@ export default function MapScreen({ navigation }) {
                 await Firebase.database()
                     .ref('/users/' + firebaseAuth.currentUser.uid + "/foundStashes")
                     .once('value', snapshot => {
-                        const data = snapshot.val();
-                        let s = Object.values(data);
-                        found = s;
+                        if (snapshot.exists()) {
+                            const data = snapshot.val();
+                            let s = Object.values(data);
+                            found = s;
+                        }
                     });
             } catch (error) {
                 console.log("ALERT! Error finding found stashes " + error)
