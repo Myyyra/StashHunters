@@ -99,21 +99,24 @@ export default function MapScreen({ navigation }) {
             setTimeout(function () { Hunt(target); }, 2000);
         }
     }
+    
 
     const getFoundStashes = async () => {
 
         let found = [];
 
-        try {
-            await Firebase.database()
-                .ref('/users/' + firebaseAuth.currentUser.uid + "/foundStashes")
-                .once('value', snapshot => {
-                    const data = snapshot.val();
-                    let s = Object.values(data);
-                    found = s;
-                });
-        } catch (error) {
-            console.log("ALERT! Error finding found stashes " + error)
+        if (firebaseAuth.currentUser.uid) {
+            try {
+                await Firebase.database()
+                    .ref('/users/' + firebaseAuth.currentUser.uid + "/foundStashes")
+                    .once('value', snapshot => {
+                        const data = snapshot.val();
+                        let s = Object.values(data);
+                        found = s;
+                    });
+            } catch (error) {
+                console.log("ALERT! Error finding found stashes " + error)
+            }
         }
 
         return found;
@@ -128,11 +131,17 @@ export default function MapScreen({ navigation }) {
         let unfound = [];
 
         all.forEach(stash => {
-            found.forEach(f => {
-                if (stash.key !== f.key) {
-                    unfound.push(stash);
-                }
-            })
+
+            if (found.length > 0) {
+                found.forEach(f => {
+                    if (stash.key !== f.key) {
+                        unfound.push(stash);
+                    }
+                })
+            }
+            else {
+                unfound = all;
+            }
         });
 
         setStashes(unfound);
