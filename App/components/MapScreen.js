@@ -105,7 +105,7 @@ export default function MapScreen({ navigation }) {
 
     const findLocation = async () => {
 
-        let { status } = await Location.requestPermissionsAsync();
+        let { status } = await Location.requestForegroundPermissionsAsync();
         if (status === 'granted') {
             await Location.getCurrentPositionAsync({})
                 .then(location => {

@@ -37,7 +37,7 @@ export default function CreateNewStash({ navigation }) {
 
     const findLocation = async () => {
 
-        let { status } = await Location.requestPermissionsAsync();
+        let { status } = await Location.requestForegroundPermissionsAsync();
 
         if (status === 'granted') {
             await Location.getCurrentPositionAsync({})

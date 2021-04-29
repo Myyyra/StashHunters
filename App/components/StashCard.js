@@ -50,10 +50,8 @@ export default function StashCard({ navigation, route }) {
     };
 
     const getStashImage = () => {
-        console.log('imageref ' + imageRef);
         imageRef.getDownloadURL()
         .then((url) => {
-        console.log('image loaded ' + url.toString())
         setStashImage(url);
         setImageLoaded(true);
         })
