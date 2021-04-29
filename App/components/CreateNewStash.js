@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { Image, StyleSheet, Text, View, Alert, Button, TextInput, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import FetchStashes from './FetchStashes.js';
 import { rules } from '../GameRules.js';
+import * as ImagePicker from 'expo-image-picker';
 
 let lat = '';
 let long = '';
@@ -15,6 +16,10 @@ export default function CreateNewStash({ navigation }) {
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
     const [stashes, setStashes] = useState([]);
+    const camera = useRef(null);
+    const [photo, setPhoto] = useState(null);
+    const [done, setDone] = useState(false);
+    const [photoCacheUri, setPhotoCacheUri] = useState('');
 
 
     //when save-button is pressed, save the new stash, inform the player that
@@ -23,6 +28,8 @@ export default function CreateNewStash({ navigation }) {
         await saveStash();
         setTitle('');
         setDesc('');
+        setPhoto(null);
+        setDone(false);
         lat = '';
         long = '';
         navigation.navigate('MapScreen');
@@ -80,6 +87,19 @@ export default function CreateNewStash({ navigation }) {
             if (tooClose === false) {
                 try {
                     let key = getKey();
+                    let photokey = key //picture's name in storage
+                    let photoURL = (Firebase.storage().ref().child('images/' + photokey)).toString();
+
+
+                    uploadImage(photoCacheUri, photokey)
+                    .then(console.log('Success uploading the image'))
+                    .then(() => {
+                        Alert.alert('Success in saving picture to storage');
+                    })             
+                    .catch((error) => {
+                        Alert.alert(error);
+                    });
+
                     Firebase.database().ref('stashes/' + key).set(
                         {
                             latitude: lat,
@@ -90,7 +110,8 @@ export default function CreateNewStash({ navigation }) {
                             disabled: false,
                             key: key,
                             circleLat: randomCenter().latitude,
-                            circleLong: randomCenter().longitude
+                            circleLong: randomCenter().longitude,
+                            photoURL: photoURL
                         }
                     );
 
@@ -120,39 +141,62 @@ export default function CreateNewStash({ navigation }) {
         return { latitude: parseFloat(x.toFixed(7)), longitude: parseFloat(y.toFixed(7)) };
     }
 
+    const snap = async () => {
+        if (camera) {
+            let result = await ImagePicker.launchCameraAsync();
+            //let result = await ImagePicker.launchImageLibraryAsync();
+
+            if (!result.cancelled) {
+            setPhoto(result);
+            setDone(true);
+            setPhotoCacheUri(result.uri);
+            }
+        }
+    }
+
+    const uploadImage = async (uri, imageName) => {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+    
+        let ref = Firebase.storage().ref().child("images/" + imageName);
+        return ref.put(blob);
+      }
 
     return (
-
         <View style={styles.container}>
             <Text>Create new stash</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={setTitle}
-                value={title}
-                placeholder='Stash name'
-            />
-            <TextInput
-                multiline
-                numberOfLines={4}
-                style={styles.inputBig}
-                onChangeText={setDesc}
-                value={desc}
-                placeholder='Description'
-            />
-
-
-
-            <Button
-                onPress={() => navigation.navigate('CameraScreen')}
-                title="Take a picture"
-                color='#029B76'
-            />
-            <Button
-                onPress={saveAndRedirect}
-                title="Save"
-                color='#029B76'
-            />
-
+            <View style={styles.imageContainer}>
+                <TouchableOpacity onPress={snap}>
+                    {done ?
+                    <View style={styles.image}>
+                    <Image source={photo} style={styles.image}/>
+                    </View>
+                    :
+                    <Image source={require('../assets/no-image-icon.png')} style={styles.image} />
+                    }
+                </TouchableOpacity>
+            </View>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setTitle}
+                    value={title}
+                    placeholder='Stash name'
+                />
+                <TextInput
+                    multiline
+                    numberOfLines={4}
+                    style={styles.inputBig}
+                    onChangeText={setDesc}
+                    value={desc}
+                    placeholder='Description'
+                />
+                <Button
+                    onPress={saveAndRedirect}
+                    title="Save"
+                    color='#029B76'
+                />
+            </View>
         </View>
 
     );
@@ -160,11 +204,18 @@ export default function CreateNewStash({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        ...StyleSheet.absoluteFillObject,
+        marginTop: 20,
+        flex:1,
         height: 400,
         width: 400,
         justifyContent: 'flex-end',
         alignItems: 'center',
+    },
+    imageContainer: {
+        flex:1
+    },
+    inputContainer: {
+        flex:1
     },
     input: {
         width: 200,
@@ -181,5 +232,11 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         margin: 10
-    }
+    },
+    image: {
+        width: '100%',
+        height: undefined,
+        aspectRatio: 3/2,
+        resizeMode: 'contain'
+    },
 });

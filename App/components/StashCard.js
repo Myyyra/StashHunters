@@ -7,13 +7,18 @@ import { Ionicons } from '@expo/vector-icons';
 export default function StashCard({ navigation, route }) {
 
     const [edited, setEdits] = useState({});
+    const [stashImage, setStashImage] = useState(null);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
     const stash = route.params;
-    const key = stash.key;
+    const key = stash.key; //stash key and photo's unique name in storage
+    let imageRef = Firebase.storage().ref('images/' + key);
 
     useEffect(() => {
         getStashes();
+        getStashImage();
     }, []);
+
 
     const getStashes = async () => {
 
@@ -44,6 +49,16 @@ export default function StashCard({ navigation, route }) {
         }
     };
 
+    const getStashImage = () => {
+        console.log('imageref ' + imageRef);
+        imageRef.getDownloadURL()
+        .then((url) => {
+        console.log('image loaded ' + url.toString())
+        setStashImage(url);
+        setImageLoaded(true);
+        })
+        .catch((e) => console.log('Error retrieving stash image' + e));
+    }
 
     return (
         <View style={styles.container}>
@@ -57,8 +72,12 @@ export default function StashCard({ navigation, route }) {
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.image}>
+            <View style={styles.container}>
+                {imageLoaded === false ?
                 <Image source={require('../assets/no-image-icon.png')} />
+                :
+                <Image source={{uri:stashImage}} style={styles.image}/>
+                }
             </View>
 
             <View style={styles.description}>
@@ -101,7 +120,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly'
     },
     image: {
-        flex: 2
+        width: '100%',
+        height: undefined,
+        aspectRatio: 3/2,
+        resizeMode: 'contain'
     },
     description: {
         flex: 2,
