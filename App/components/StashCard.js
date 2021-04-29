@@ -52,7 +52,7 @@ export default function StashCard({ navigation, route }) {
                 <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{edited.title}</Text>
                 <TouchableOpacity onPress={() => navigation.goBack()} >
                     <View style={styles.backBtn}>
-                        <Ionicons name='return-up-back-outline' size={30} color='white' />
+                        <Ionicons name='arrow-back-outline' size={30} color='white' />
                     </View>
                 </TouchableOpacity>
             </View>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         margin: 15
     },
     backBtn: {
-        backgroundColor: '#908F8F',
+        backgroundColor: '#029B76',
         width: 50,
         height: 40,
         borderRadius: 5,

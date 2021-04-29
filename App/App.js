@@ -43,9 +43,22 @@ function BottomNavi() {
   });
 
   return (
-    <Tab.Navigator screenOptions={screenOptions}>
+    <Tab.Navigator screenOptions={screenOptions}
+      tabBarOptions={{
+        style: { backgroundColor: '#029B76' },
+        activeTintColor: 'white',
+        inactiveTintColor: 'white',
+        activeBackgroundColor: '#067359'
+      }}>
       <Tab.Screen name='MapScreen' component={MapScreen} options={{ title: 'Map' }} />
-      <Tab.Screen name='ProfileScreen' component={ProfileScreen} options={{ title: 'Profile' }} />
+      <Tab.Screen name='ProfileScreen' component={ProfileScreen} options={{ title: 'Profile' }}
+        listeners={{
+          tabPress: e => {
+            if (!firebaseAuth.currentUser) {
+              e.preventDefault();
+            }
+          }
+        }} />
       <Tab.Screen name='CreateNewStash' component={CreateNewStash} options={{ title: 'Add' }}
         listeners={{
           tabPress: e => {
