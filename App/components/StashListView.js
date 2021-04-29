@@ -27,7 +27,7 @@ export default function StashListView({ navigation }) {
 
 
     const findLocation = async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
+        let { status } = await Location.requestPermissionsAsync();
         if (status === 'granted') {
             return await Location.getCurrentPositionAsync({})
                 .then(location => {

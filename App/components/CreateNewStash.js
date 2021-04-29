@@ -30,7 +30,7 @@ export default function CreateNewStash({ navigation }) {
 
     const findLocation = async () => {
 
-        let { status } = await Location.requestForegroundPermissionsAsync();
+        let { status } = await Location.requestPermissionsAsync();
 
         if (status === 'granted') {
             await Location.getCurrentPositionAsync({})
@@ -69,7 +69,7 @@ export default function CreateNewStash({ navigation }) {
 
                 //muokkaa tänne parempi etäissyy arvo kun tarttee
                 //lähin testattu piilo oli 35 metrin päässä 
-                if (distance < 34) {
+                if (distance < rules.stashMinDist) {
                     Alert.alert("There is another Stash too close");
                     tooClose = true;
                 }

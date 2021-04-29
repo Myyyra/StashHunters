@@ -17,10 +17,16 @@ let centered = false;
 
 export default function MapScreen({ navigation }) {
 
-    const [userLocation, setUserLocation] = useState([]);
     const [stashes, setStashes] = useState([
         {
             title: "preset",
+            latitude: 0,
+            longitude: 0
+        }
+    ]);
+    const [foundStashes, setFoundStashes] = useState([
+        {
+            title: "found preset",
             latitude: 0,
             longitude: 0
         }
@@ -83,6 +89,7 @@ export default function MapScreen({ navigation }) {
             )
             if (distance < 10) {
                 Alert.alert("You have found " + target.title);
+                stashFound(target);
                 setHunted({ title: "" });
                 found = true;
             }
@@ -93,14 +100,66 @@ export default function MapScreen({ navigation }) {
         }
     }
 
+    const getFoundStashes = async () => {
+
+        let found = [];
+
+        try {
+            await Firebase.database()
+                .ref('/users/' + firebaseAuth.currentUser.uid + "/foundStashes")
+                .once('value', snapshot => {
+                    const data = snapshot.val();
+                    let s = Object.values(data);
+                    found = s;
+                });
+        } catch (error) {
+            console.log("ALERT! Error finding found stashes " + error)
+        }
+
+        return found;
+    }
+
+    const compareStashes = async () => {
+
+        let all = await FetchStashes.findStashes();
+
+        let found = await getFoundStashes();
+
+        let unfound = [];
+
+        all.forEach(stash => {
+            found.forEach(f => {
+                if (stash.key !== f.key) {
+                    unfound.push(stash);
+                }
+            })
+        });
+
+        setStashes(unfound);
+        setFoundStashes(found);
+    }
+
+    const stashFound = (stash) => {
+        Firebase.database().ref('users/' + firebaseAuth.currentUser.uid + "/foundStashes/" + stash.key).set(
+            {
+                latitude: stash.latitude,
+                longitude: stash.longitude,
+                title: stash.title,
+                description: stash.description,
+                owner: stash.owner,
+                disabled: stash.disabled,
+                key: stash.key,
+                circleLat: stash.circleLat,
+                circleLong: stash.circleLong
+            }
+        );
+    }
+
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        (async () => {
-            findLocation();
-            let results = await FetchStashes.findStashes();
-            setStashes(results);
-        })();
+        findLocation();
+        compareStashes();
     }, [isFocused]);
 
     const findLocation = async () => {
@@ -160,12 +219,12 @@ export default function MapScreen({ navigation }) {
 
 
                                 <Marker
-                                    coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
+                                    coordinate={circleCenter(stash)}
 
                                     title={stash.title}
                                     description={stash.description}
-
-                                    //image={require('../assets/flag.png')}
+                                    opacity={0.0}
+                                    //image={require('../assets/circle.png')}
 
                                     onPress={() => {
                                         if (hunted.title !== stash.title) {
@@ -200,14 +259,26 @@ export default function MapScreen({ navigation }) {
                                 />
 
                             </View>
-                        ))}
+                        )
+                        )
+                    }
 
+                    {foundStashes.filter(stash => stash.title !== hunted.title)
+                        .map((stash, index) => (
+                            <View key={index}>
+                                <Marker
+                                    coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
+                                    title={stash.title}
+                                    description={stash.description}
+                                    pinColor='green'
+                                //image={require('../assets/flag.png')}
 
-                    <Marker
-                        title="hunted"
-                        coordinate={{ latitude: hunted.latitude, longitude: hunted.longitude }}
-                        pinColor='rgba(0, 234, 82, 1)'
-                    />
+                                />
+                            </View>
+                        )
+                        )
+                    }
+
                     <Circle
                         center={circleCenter(hunted)}
                         radius={rules.circleRad}
