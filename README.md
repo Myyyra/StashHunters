@@ -40,7 +40,7 @@
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#authors">Authors</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
@@ -99,10 +99,15 @@ This section will be updated later :)
 
 
 
-<!-- CONTACT -->
-## Contact
+<!-- AUTHORS -->
+## Authors
 
-This section will be updated later :)
+StashHunters was created (in aplhabetical order) by:
+* Veera Aaltonen
+* Henrik Rossi
+* Jutta Ruuskanen
+* Minna Räsänen
+* Melissa Westberg
 
 
 
