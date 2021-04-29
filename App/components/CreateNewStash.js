@@ -94,7 +94,7 @@ export default function CreateNewStash({ navigation }) {
 
                     let photokey = key+'_photo';
 
-                    let photoURL = Firebase.storage().ref().child('images/' + photokey);
+                    let photoURL = (Firebase.storage().ref().child('images/' + photokey)).toString();
 
                     uploadImage(photoCacheUri, photokey)
                     .then(console.log('Success uploading the image.'))
