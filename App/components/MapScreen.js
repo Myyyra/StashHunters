@@ -89,7 +89,9 @@ export default function MapScreen({ navigation }) {
             )
             if (distance < 10) {
                 Alert.alert("You have found " + target.title);
-                stashFound(target);
+                if (currentUser) {
+                    stashFound(target);
+                }
                 setHunted({ title: "" });
                 found = true;
             }
@@ -99,13 +101,13 @@ export default function MapScreen({ navigation }) {
             setTimeout(function () { Hunt(target); }, 2000);
         }
     }
-    
+
 
     const getFoundStashes = async () => {
 
         let found = [];
 
-        if (firebaseAuth.currentUser.uid) {
+        if (currentUser) {
             try {
                 await Firebase.database()
                     .ref('/users/' + firebaseAuth.currentUser.uid + "/foundStashes")
