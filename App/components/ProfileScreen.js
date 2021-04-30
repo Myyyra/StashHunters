@@ -6,25 +6,52 @@ import Firebase, { firebaseAuth } from '../config/Firebase';
 export default function ProfileScreen({ navigation }) {
     const [user, setUser] = useState({});
     const [hiddenStashes, setHiddenStashes] = useState([]);
-    const [hiddenLength, setHiddenLength] = useState('');
+    const [hiddenLength, setHiddenLength] = useState(0);
+    const [foundStashes, setFoundStashes] = useState([]);
+    const [foundLength, setFoundLength] = useState(0);
 
     useEffect(() => {
         getUser();
         getHiddenStashes();
+        getFoundStashes();
     }, []);
 
 
     const getHiddenStashes = async () => {
-        await Firebase.database()
+        try {
+            await Firebase.database()
             .ref('/stashes')
             .once('value', snapshot => {
-                const data = snapshot.val();
-                const s = Object.values(data);
-                const hidden = s.filter(d => d.owner === firebaseAuth.currentUser.uid);
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const s = Object.values(data);
+                    const hidden = s.filter(d => d.owner === firebaseAuth.currentUser.uid);
 
-                setHiddenStashes(hidden);
-                setHiddenLength(hidden.length);
+                    setHiddenStashes(hidden);
+                    setHiddenLength(hidden.length);
+                }
+
             });
+        } catch (error) {
+            console.log("ALERT! Error finding hidden stashes " + error);
+        }
+    }
+
+    const getFoundStashes = async () => {
+        try {
+            await Firebase.database()
+                .ref('/users/' + firebaseAuth.currentUser.uid + '/foundStashes')
+                .once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        const found = Object.values(data);
+                        setFoundStashes(found);
+                        setFoundLength(found.length);
+                    }
+                });
+        } catch (error) {
+            console.log("ALERT! Error finding found stashes " + error);
+        }
     }
 
     const getUser = async () => {
@@ -34,7 +61,6 @@ export default function ProfileScreen({ navigation }) {
                 .on('value', snapshot => {
                     const data = snapshot.val();
                     setUser(data);
-                    console.log(data);
                 });
         } catch (error) {
             console.log("ALERT! Error finding user " + error)
@@ -61,9 +87,9 @@ export default function ProfileScreen({ navigation }) {
                             <Text style={styles.btnText}>Hidden ({hiddenLength})</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('FoundStashes')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('FoundStashes', foundStashes)}>
                         <View style={styles.btn}>
-                            <Text style={styles.btnText}>Found</Text>
+                            <Text style={styles.btnText}>Found ({foundLength})</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

@@ -16,7 +16,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground source={require('../assets/kartta.png')} style={styles.image, { width: '100%', height: '100%' }}>
+      <ImageBackground source={require('../assets/kartta.png')} style={styles.image}>
 
         <View style={styles.textHeader}>
           <Text style={{ fontSize: 42, fontWeight: 'bold', textAlign: 'center' }} >Let's play StashHunters!</Text>
@@ -24,6 +24,7 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         <View style={styles.textInputView}>
+          <View style={styles.inputBackground}>
           <TextInput
             style={styles.textInput}
             placeholder='email'
@@ -43,6 +44,7 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.loginBtnText}>LOGIN</Text>
             </View>
           </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.textParagraph}>
@@ -63,25 +65,36 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    opacity: 0.3
+    resizeMode: 'cover'
   },
   textHeader: {
-    flex: 3,
+    flex: 2,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'flex-end'
   },
   textParagraph: {
-    color: "black",
     textAlign: "center",
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white'
+    backgroundColor: '#f2f5f4',
+    borderTopWidth: 1
   },
   textInputView: {
     flex: 3,
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'center',
+
+  },
+  inputBackground: {
+    backgroundColor: '#f2f5f4',
+    padding: 40,
+    borderWidth: 1,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: 0.7
+
   },
   textInput: {
     backgroundColor: 'white',
@@ -91,11 +104,16 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 20,
     padding: 10,
-    borderRadius: 5
+    borderRadius: 5,
+    fontSize: 18,
   },
   loginBtn: {
     backgroundColor: '#029B76',
-    borderRadius: 5
+    borderRadius: 5,
+    width: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+
   },
   loginBtnText: {
     color: 'white',

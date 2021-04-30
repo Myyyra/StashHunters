@@ -1,51 +1,40 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
-import Firebase, { firebaseAuth } from '../config/Firebase';
+import { Ionicons } from '@expo/vector-icons';
 
 
 export default function HiddenStashes({ navigation, route }) {
 
     const stashes = route.params;
 
-    /*useEffect(() => {
-        getStashes();
-    }, []);
-
-
-    const getStashes = async () => {
-        await Firebase.database()
-            .ref('/stashes')
-            .once('value', snapshot => {
-                const data = snapshot.val();
-                const s = Object.values(data);
-                const hidden = s.filter(d => d.owner === firebaseAuth.currentUser.uid);
-
-
-                setStashes(hidden);
-            });
-    }*/
-
     return (
         <View style={styles.container}>
             <View style={styles.title}>
-                <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Your Hidden Stashes</Text>
+                <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Your Found Stashes</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()} >
+                    <View style={styles.backBtn}>
+                        <Ionicons name='arrow-back-outline' size={30} color='white' />
+                    </View>
+                </TouchableOpacity>
             </View>
             <View style={styles.list}>
                 <FlatList
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) =>
-                        <View style={styles.listcontainer}>
+                    <View style={styles.listcontainer}>
+                            <View>
                             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{item.title}</Text>
                             <Text style={{ fontSize: 18 }}>{item.description}</Text>
-                            <View style={styles.distance}>
-                                <TouchableOpacity onPress={() => navigation.navigate('StashCard', item)}>
-                                    <View style={styles.btn}>
-                                        <Text style={styles.btnText}>STASH</Text>
-                                    </View>
-                                </TouchableOpacity>
                             </View>
-                        </View>}
+                            <View style={styles.stashBtnPosition}>
+                            <TouchableOpacity onPress={() => navigation.navigate('StashCard', item)}>
+                                <View style={styles.btn}>
+                                    <Text style={styles.btnText}>STASH</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>}
                     data={stashes}
                 />
             </View>
@@ -60,6 +49,7 @@ const styles = StyleSheet.create({
     },
     title: {
         flex: 1,
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -73,12 +63,11 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         marginBottom: 10,
         padding: 5,
-        borderColor: '#029B76'
+        borderColor: '#029B76',
     },
-    distance: {
+    stashBtnPosition: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'flex-end'
     },
     btn: {
         backgroundColor: '#029B76',
@@ -88,8 +77,14 @@ const styles = StyleSheet.create({
         color: 'white',
         padding: 10,
         fontSize: 20
+    },
+    backBtn: {
+        backgroundColor: '#029B76',
+        width: 50,
+        height: 40,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginLeft: 30,
+        justifyContent: 'center'
     }
-
-
-
 });
