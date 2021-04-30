@@ -22,16 +22,15 @@ export default function ProfileScreen({ navigation }) {
             await Firebase.database()
             .ref('/stashes')
             .once('value', snapshot => {
-                const data = snapshot.val();
-                const s = Object.values(data);
-                const hidden = s.filter(d => d.owner === firebaseAuth.currentUser.uid);
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const s = Object.values(data);
+                    const hidden = s.filter(d => d.owner === firebaseAuth.currentUser.uid);
 
-                console.log(firebaseAuth.currentUser.uid);
-
-                if (hidden) {
                     setHiddenStashes(hidden);
                     setHiddenLength(hidden.length);
                 }
+
             });
         } catch (error) {
             console.log("ALERT! Error finding hidden stashes " + error);
@@ -43,14 +42,9 @@ export default function ProfileScreen({ navigation }) {
             await Firebase.database()
                 .ref('/users/' + firebaseAuth.currentUser.uid + '/foundStashes')
                 .once('value', snapshot => {
-                    const data = snapshot.val();
-                    console.log(data);
-
-
-
-                    if (data) {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
                         const found = Object.values(data);
-                        console.log(found);
                         setFoundStashes(found);
                         setFoundLength(found.length);
                     }
@@ -59,7 +53,6 @@ export default function ProfileScreen({ navigation }) {
             console.log("ALERT! Error finding found stashes " + error);
         }
     }
-
 
     const getUser = async () => {
         try {
