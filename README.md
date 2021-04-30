@@ -14,7 +14,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h1 align="center">Project StashHunters</h1>
+  <h1 align="center">StashHunters</h1>
 
 </p>
 
@@ -25,7 +25,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#about-the-project">About StashHunters</a>
       <ul>
         <li><a href="#building-with">Building With</a></li>
       </ul>
@@ -39,9 +39,8 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#authors">Authors</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
@@ -49,9 +48,12 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## About StashHunters
 
-This section will be updated later :)
+StashHunters was created during Haaga-Helia's Software Project II -course (10 ECTS) in spring 2021. It is a team project of five students.
+</br></br>
+StashHunters is a mobile game for hunting virtual stashes that other players have hidden. Stashes can be almost anything (like buildings, statues, landmarks, scenic views etc.). Stashes are hidden somewhere inside the areas visible on the map. Your job is to find the stash with the help of the stash picture without having the exact coordinates to the stash location.
+
 
 ### Building With
 
@@ -72,11 +74,17 @@ This section will be updated later :)
 
 ### Prerequisites
 
-This section will be updated later :)
+The game requires permission to use location on your mobile device in order to function correctly.
+</br></br>
+If you wish to add new stashes to the game, you must create a user account and give the game permission to use the camera on your mobile device.
+</br></br>
+The game operates only on Android devices.
 
 ### Installation
 
-This section will be updated later :)
+For now the game is published only in Expo Go -application, and cannot be found in Google Play Store.
+</br></br>
+Install Expo Go to your mobile device: https://expo.io/
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -91,10 +99,15 @@ This section will be updated later :)
 
 
 
-<!-- CONTACT -->
-## Contact
+<!-- AUTHORS -->
+## Authors
 
-This section will be updated later :)
+StashHunters was created (in alphabetical order) by:
+* Veera Aaltonen
+* Henrik Rossi
+* Jutta Ruuskanen
+* Minna Räsänen
+* Melissa Westberg
 
 
 

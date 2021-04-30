@@ -31,7 +31,7 @@ export default function EditStash({ navigation, route }) {
       Alert.alert("Editing successful!");
 
     } catch (error) {
-      console.log("Error saving stash " + error);
+      console.log("Error saving edited stash " + error);
     }
   };
 

@@ -3,8 +3,6 @@ import { Image, StyleSheet, Text, View, Alert, Button } from 'react-native';
 import { Camera } from 'expo-camera';
 import Firebase from '../config/Firebase';
 
-
-
 export default function CameraScreen({ navigation }) {
 
 
@@ -14,8 +12,6 @@ export default function CameraScreen({ navigation }) {
     const [photoBase64, setPhotoBase64] = useState('');
     const [type, setType] = useState(Camera.Constants.Type.back);
     const camera = useRef(null);
-
-
 
     useEffect(() => {
         askCameraPermission();
