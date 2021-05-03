@@ -70,15 +70,15 @@ We have established a development plan starting with a minimum viable product (M
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This section will be updated later :)
+For now the game operates only on Android devices.
+</br></br>
+
 
 ### Prerequisites
 
 The game requires permission to use location on your mobile device in order to function correctly.
 </br></br>
 If you wish to add new stashes to the game, you must create a user account and give the game permission to use the camera on your mobile device.
-</br></br>
-The game operates only on Android devices.
 
 ### Installation
 
@@ -95,7 +95,9 @@ This section will be updated later :)
 <!-- LICENSE -->
 ## License
 
-This section will be updated later :)
+![alt text](https://github.com/Myyyra/StashHunters/blob/development/licence.png?raw=true)
+</br></br>
+This software is published under Creative Commons license BY-NC-SA: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 
 
