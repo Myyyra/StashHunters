@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, Alert, TouchableOpacity } from 'react-native';
 import Firebase, { firebaseAuth } from '../config/Firebase';
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 export default function StashCard({ navigation, route }) {
 
@@ -94,11 +95,20 @@ export default function StashCard({ navigation, route }) {
         }
     }
 
+    //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             
             <View style={styles.header}>
-                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{edited.title}</Text>
+                <Text style={styles.headerFont}>{edited.title}</Text>
             </View>
 
             <View style={styles.container}>
@@ -219,6 +229,10 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+    },
+    headerFont: {
+        fontFamily: 'PressStart2P_400Regular',
+        fontSize: 20,
+        margin: 10
     }
-
 });

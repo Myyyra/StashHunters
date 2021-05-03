@@ -7,6 +7,7 @@ import { getDistance } from 'geolib';
 import FetchStashes from './FetchStashes.js';
 import { rules } from '../GameRules.js';
 import { useIsFocused } from "@react-navigation/native";
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 export default function StashListView({ navigation }) {
     const [currentPosition, setCurrentPosition] = useState({});
@@ -51,11 +52,19 @@ export default function StashListView({ navigation }) {
         return distance;
     }
 
+    //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
 
     return (
         <View style={styles.container}>
             <View style={styles.title}>
-                <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Nearby Stashes</Text>
+                <Text style={styles.headerFont}>Nearby Stashes</Text>
             </View>
             <View style={styles.list}>
                 <FlatList
@@ -115,8 +124,9 @@ const styles = StyleSheet.create({
         color: 'white',
         padding: 10,
         fontSize: 20
+    },
+    headerFont: {
+        fontFamily: 'PressStart2P_400Regular',
+        fontSize: 20
     }
-
-
-
 });

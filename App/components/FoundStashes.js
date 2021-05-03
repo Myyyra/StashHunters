@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import { useIsFocused } from "@react-navigation/native";
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 export default function HiddenStashes({ navigation }) {
 
@@ -30,10 +31,19 @@ export default function HiddenStashes({ navigation }) {
         }
     }
 
+    //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.title}>
-                <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Your Found Stashes</Text>
+                <Text style={styles.headerFont}>Your Found Stashes</Text>
                 <TouchableOpacity onPress={() => navigation.goBack()} >
                     <View style={styles.backBtn}>
                         <Ionicons name='arrow-back-outline' size={30} color='white' />
@@ -108,5 +118,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginLeft: 30,
         justifyContent: 'center'
+    },
+    headerFont: {
+        fontFamily: 'PressStart2P_400Regular',
+        fontSize: 14
     }
 });

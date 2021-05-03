@@ -7,6 +7,7 @@ import FetchStashes from './FetchStashes.js';
 import { rules } from '../GameRules.js';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 let lat = '';
 let long = '';
@@ -209,10 +210,19 @@ export default function CreateNewStash({ navigation }) {
         return manipImage.uri;
     }
 
+    //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             <View style = {styles.header}>
-                <Text style={styles.headerText}>Create new stash</Text>
+                <Text style={styles.headerFont}>Create new stash</Text>
             </View>
             <View style={styles.imageContainer}>
                 <TouchableOpacity onPress={snap}>
@@ -336,4 +346,8 @@ const styles = StyleSheet.create({
         padding: 10,
         fontSize: 20
     },
+    headerFont: {
+        fontFamily: 'PressStart2P_400Regular',
+        fontSize: 20
+    }
 });

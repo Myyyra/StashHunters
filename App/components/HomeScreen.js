@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { firebaseAuth } from '../config/Firebase';
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 export default function HomeScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -14,12 +15,21 @@ export default function HomeScreen({ navigation }) {
       .catch(error => setErrorMsg(error));
   }
 
+   //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
   return (
     <View style={styles.container}>
       <ImageBackground source={require('../assets/kartta.png')} style={styles.image}>
 
         <View style={styles.textHeader}>
-          <Text style={{ fontSize: 42, fontWeight: 'bold', textAlign: 'center' }} >Let's play StashHunters!</Text>
+          <Text style={styles.headerFont} >Let's play StashHunters!</Text>
           <Text style={{ fontSize: 18, color: 'red' }}>{errorMsg}</Text>
         </View>
 
@@ -126,5 +136,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     marginTop: 15
-  }
+  },
+  headerFont: {
+    fontFamily: 'PressStart2P_400Regular',
+    fontSize: 27,
+    textAlign: 'center'
+}
+
 });
