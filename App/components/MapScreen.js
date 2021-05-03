@@ -59,6 +59,7 @@ export default function MapScreen({ navigation, route }) {
     }
 
     const Hunt = (target) => {
+
         if (!centered) {
 
             centered = true;
@@ -102,6 +103,7 @@ export default function MapScreen({ navigation, route }) {
                     circleLong: 0
                 });
                 found = true;
+
                 route.params = null;
             }
         }
@@ -141,32 +143,33 @@ export default function MapScreen({ navigation, route }) {
 
         let found = await getFoundStashes();
 
-        let unfound = [];
+        let unfound = all;
 
-        all.forEach(stash => {
+        all.forEach(s => {
             if (found.length > 0) {
                 found.forEach(f => {
-                    if (stash.key !== f.key) {
-                        unfound.push(stash);
+                    if (s.key === f.key) {
+                        unfound = unfound.filter(stash => stash.key !== s.key);
                     }
                 })
             }
-            else {
-                unfound = all;
-            }
         });
+
 
         setStashes(unfound);
         setFoundStashes(found);
 
         //set hunted at load
         //Refactor this to better place
+
         if (route.params) {
 
-            let huntedStash = [route.params];
+            let huntedStash = route.params;
 
-            if (checkIfContains(huntedStash, found).length === 0) {
-                Hunt(huntedStash[0]);
+            if (checkIfContains([huntedStash], found).length === 0) {
+                console.log("start hunting " + huntedStash.title);
+                centered = false;
+                Hunt(huntedStash);
             }
         }
     }
@@ -279,6 +282,7 @@ export default function MapScreen({ navigation, route }) {
 
                                     onPress={() => {
                                         if (hunted.title !== stash.title) {
+                                            route.params = null;
                                             navigation.navigate('StashCard', stash)
                                             /*Alert.alert(
                                                 "Do you want to start hunting this Stash?",
