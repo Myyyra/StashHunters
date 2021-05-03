@@ -66,7 +66,8 @@ You will find general instructions concerning StashHunters on this page. If you 
 ## Roadmap
 
 We have established a development plan starting with a minimum viable product (MVP) and building up from there. You will find a list of features included in each version of the game in our wiki: https://github.com/Myyyra/StashHunters/wiki/Roadmap
-
+</br></br>
+We would love to hear your ideas and feature preferences for further developing the game, so don't hesitate to be in touch if you have any feedback about the game.
 
 <!-- GETTING STARTED -->
 ## Getting Started
