@@ -95,7 +95,7 @@ This section will be updated later :)
 <!-- LICENSE -->
 ## License
 
-This section will be updated later :)
+This software is published under Creative Commons licence BY-NC-SA: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 
 
