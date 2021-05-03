@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, Alert, TouchableOpacity } from 'react-native';
-import Firebase from '../config/Firebase';
+import Firebase, { firebaseAuth } from '../config/Firebase';
 
 export default function StashCard({ navigation, route }) {
 
@@ -26,6 +26,7 @@ export default function StashCard({ navigation, route }) {
                 .ref('/stashes/' + stash.key)
                 .on('value', snapshot => {
                     const data = snapshot.val();
+                    console.log(data);
                     setEdits(data);
                 });
         } catch (error) {
@@ -110,6 +111,7 @@ export default function StashCard({ navigation, route }) {
 
             <View style={styles.description}>
                 <Text style={styles.descriptionText}>{edited.description}</Text>
+                {firebaseAuth.currentUser.uid == stash.owner &&
                 <View style={styles.buttons}>
                     <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
                         <View style={styles.editBtn}>
@@ -117,7 +119,7 @@ export default function StashCard({ navigation, route }) {
                         </View>
                     </TouchableOpacity>
                     <ActivateOrArchive />
-                </View>
+                    </View>}
                 <View style={styles.buttons}>
                     <TouchableOpacity onPress={() => navigation.navigate('MapScreen', stash)}>
                         <View style={styles.huntBtn}>

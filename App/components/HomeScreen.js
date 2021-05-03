@@ -14,14 +14,6 @@ export default function HomeScreen({ navigation }) {
       .catch(error => setErrorMsg(error));
   }
 
-  const resetPassword = () => {
-    firebaseAuth.sendPasswordResetEmail(email).then(function () {
-      // Email sent.
-    }).catch(function (error) {
-      // An error happened.
-    });
-  }
-
   return (
     <View style={styles.container}>
       <ImageBackground source={require('../assets/kartta.png')} style={styles.image}>
@@ -33,33 +25,37 @@ export default function HomeScreen({ navigation }) {
 
         <View style={styles.textInputView}>
           <View style={styles.inputBackground}>
-          <TextInput
-            style={styles.textInput}
-            placeholder='email'
-            value={email}
-            onChangeText={setEmail}
-            keyboardType='email-address'
-          />
-          <TextInput
-            secureTextEntry
-            style={styles.textInput}
-            placeholder='password'
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity onPress={handleLogin}>
-            <View style={styles.loginBtn}>
-              <Text style={styles.loginBtnText}>LOGIN</Text>
-            </View>
-          </TouchableOpacity>
 
-            <Text style={{ fontSize: 20, marginTop: 10 }} onPress={() => navigation.navigate('ForgotPassword')}>Forgot your password?</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder='email'
+              value={email}
+              onChangeText={setEmail}
+              keyboardType='email-address'
+            />
+
+            <TextInput
+              secureTextEntry
+              style={styles.textInput}
+              placeholder='password'
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <TouchableOpacity onPress={handleLogin}>
+              <View style={styles.loginBtn}>
+                <Text style={styles.loginBtnText}>LOGIN</Text>
+              </View>
+            </TouchableOpacity>
+
+            <Text style={styles.text} onPress={() => navigation.navigate('ForgotPassword')}>Forgot your password?</Text>
+
           </View>
         </View>
 
         <View style={styles.textParagraph}>
-          <Text style={{ fontSize: 20, marginBottom: 10 }} onPress={() => navigation.navigate('SignUp')}>Create a new account</Text>
-          <Text style={{ fontSize: 20 }} onPress={() => navigation.navigate('BottomNavi')}>Continue without login</Text>
+          <Text style={styles.text} onPress={() => navigation.navigate('SignUp')}>Create a new account</Text>
+          <Text style={styles.text} onPress={() => navigation.navigate('BottomNavi')}>Continue without login</Text>
         </View>
 
       </ImageBackground>
@@ -94,7 +90,6 @@ const styles = StyleSheet.create({
     flex: 3,
     alignItems: 'center',
     justifyContent: 'center',
-
   },
   inputBackground: {
     backgroundColor: '#f2f5f4',
@@ -104,7 +99,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     opacity: 0.7
-
   },
   textInput: {
     backgroundColor: 'white',
@@ -123,11 +117,14 @@ const styles = StyleSheet.create({
     width: 100,
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   loginBtnText: {
     color: 'white',
     padding: 10,
     fontSize: 20
+  },
+  text: {
+    fontSize: 20,
+    marginTop: 15
   }
 });
