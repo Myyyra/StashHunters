@@ -34,13 +34,7 @@ export default function CreateNewStash({ navigation }) {
     const saveAndRedirect = async () => {
         if(checkAllFieldsFilled()) {
             await saveStash();
-            setTitle('');
-            setDesc('');
-            setPhoto(null);
-            setDone(false);
-            setPhotoCacheUri('');
-            lat = '';
-            long = '';
+           clearFields();
             navigation.navigate('MapScreen');
         } else {
             Alert.alert('Please fill all the fields.');
@@ -55,6 +49,16 @@ export default function CreateNewStash({ navigation }) {
         } else {
             return false;
         }
+    }
+
+    const clearFields = () => {
+        setTitle('');
+        setDesc('');
+        setPhoto(null);
+        setDone(false);
+        setPhotoCacheUri('');
+        lat = '';
+        long = '';
     }
     
     const findLocation = async () => {
@@ -184,7 +188,7 @@ export default function CreateNewStash({ navigation }) {
             if (!result.cancelled) {
                 setPhotoCacheUri(result.uri);
                 setPhoto(result);
-                setDone(true); // When picture is taken succesfully, renders taken picture to its slot.
+                setDone(true); // When picture is taken succesfully, signals that rendering taken picture to its slot is possible now.
             }
         }
     }
@@ -198,7 +202,7 @@ export default function CreateNewStash({ navigation }) {
         return ref.put(blob);
     }
 
-    // 
+    // takes image uri from local cache and returns a new local cache image uri
     const manipulateImage = async (uri) => {
         // ImageManipulator can be used to manipulate an image in many ways. Now, we only compress the image.
         let manipImage = await ImageManipulator.manipulateAsync(uri, [], { compress: 0.5});
@@ -207,7 +211,9 @@ export default function CreateNewStash({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text>Create new stash</Text>
+            <View style = {styles.header}>
+                <Text style={styles.headerText}>Create new stash</Text>
+            </View>
             <View style={styles.imageContainer}>
                 <TouchableOpacity onPress={snap}>
                     {done ?
@@ -234,12 +240,20 @@ export default function CreateNewStash({ navigation }) {
                     value={desc}
                     placeholder='Description'
                 />
-                <Button
-                    onPress={saveAndRedirect}
-                    title="Save"
-                    color='#029B76'
-                />
-            </View>
+                </View>
+                <View style={styles.buttons}>
+                    <TouchableOpacity onPress={saveAndRedirect}>
+                        <View style={styles.saveBtn}>
+                            <Text style={styles.btnText}>Save</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={clearFields}>
+                        <View style={styles.clearBtn}>
+                            <Text style={styles.btnText}>Clear</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            
         </View>
 
     );
@@ -247,28 +261,38 @@ export default function CreateNewStash({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 20,
         flex: 1,
-        height: 400,
-        width: 400,
-        justifyContent: 'flex-end',
+        backgroundColor: '#fff',
         alignItems: 'center',
+        justifyContent: 'center',
+    },
+    header: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly'
+    },
+    headerText: {
+        fontSize: 30, 
+        fontWeight: 'bold'
     },
     imageContainer: {
-        flex: 1
+        flex: 2,
     },
     inputContainer: {
-        flex: 1
+        flex: 2
     },
     input: {
-        width: 200,
+        flex: 0.5,
+        width: 275,
         borderColor: 'gray',
         borderWidth: 1,
         paddingLeft: 10,
         margin: 10
     },
     inputBig: {
-        width: 200,
+        flex: 1,
+        width: 275,
         height: 75,
         borderColor: 'gray',
         borderWidth: 1,
@@ -276,10 +300,40 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         margin: 10
     },
-    image: {
+    image: {        
+        flex: 2,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
         width: '100%',
         height: undefined,
         aspectRatio: 3 / 2,
         resizeMode: 'contain'
+    },
+    buttons: {
+
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'flex-end'
+    },
+    clearBtn: {
+        backgroundColor: '#a60225',
+        width: 130,
+        borderRadius: 5,
+        marginBottom: 15,
+        alignItems: 'center'
+    },
+    saveBtn: {
+        backgroundColor: '#029B76',
+        width: 130,
+        borderRadius: 5,
+        marginBottom: 15,
+        alignItems: 'center',
+        marginRight: 15
+    },
+    btnText: {
+        color: 'white',
+        padding: 10,
+        fontSize: 20
     },
 });

@@ -136,7 +136,6 @@ const styles = StyleSheet.create({
     description: {
         flex: 2,
         justifyContent: 'space-evenly'
-
     },
     descriptionText: {
         fontSize: 20,
