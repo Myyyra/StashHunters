@@ -6,6 +6,7 @@ import Firebase, { firebaseAuth } from '../config/Firebase';
 import FetchStashes from './FetchStashes.js';
 import { rules } from '../GameRules.js';
 import * as ImagePicker from 'expo-image-picker';
+import { useIsFocused } from "@react-navigation/native";
 
 let lat = '';
 let long = '';
@@ -15,7 +16,6 @@ export default function CreateNewStash({ navigation }) {
     //initialize states for creating a new stash
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
-    const [stashes, setStashes] = useState([]);
     const camera = useRef(null);
     const [photo, setPhoto] = useState(null);
     const [done, setDone] = useState(false);
@@ -51,13 +51,51 @@ export default function CreateNewStash({ navigation }) {
     //save the created stash to database
     //checks if the are no other stahes too near
     const saveStash = async () => {
+        try {
+            let key = getKey();
+            let photokey = key //picture's name in storage
+            let photoURL = (Firebase.storage().ref().child('images/' + photokey)).toString();
 
-        let results = await FetchStashes.findStashes();
-        setStashes(results);
+
+            uploadImage(photoCacheUri, photokey)
+                .then(console.log('Success uploading the image'))
+                .then(() => {
+                    Alert.alert('Success in saving picture to storage');
+                })
+                .catch((error) => {
+                    Alert.alert(error);
+                });
+
+            Firebase.database().ref('stashes/' + key).set(
+                {
+                    latitude: lat,
+                    longitude: long,
+                    title: title,
+                    description: desc,
+                    owner: firebaseAuth.currentUser.uid,
+                    disabled: false,
+                    key: key,
+                    circleLat: randomCenter().latitude,
+                    circleLong: randomCenter().longitude,
+                    photoURL: photoURL
+                }
+            );
+
+            Alert.alert("Stash saved");
+
+        } catch (error) {
+            console.log("Error saving stash " + error);
+        }
+    }
+
+    const checkDistances = async () => {
+
+        let stashes = await FetchStashes.findStashes();
+
+        let tooClose = false;
 
         await findLocation().then(() => {
 
-            let tooClose = false;
             stashes.forEach(stash => {
 
                 //distance between stash and user location in meters
@@ -74,58 +112,45 @@ export default function CreateNewStash({ navigation }) {
                     }
                 )
 
+                //muokkaa tänne parempi etäissyy arvo kun tarttee
+                //lähin testattu piilo oli 35 metrin päässä 
+                if (distance < rules.stashMinDist) {
 
-                if (distance < 50) {
-                    Alert.alert("There is another Stash too close");
                     tooClose = true;
                 }
-
-            })
-
-            //if there is no close stashes save location to firebase
-            if (tooClose === false) {
-                try {
-                    let key = getKey();
-                    let photokey = key //picture's name in storage
-                    let photoURL = (Firebase.storage().ref().child('images/' + photokey)).toString();
+            });
 
 
-                    uploadImage(photoCacheUri, photokey)
-                    .then(console.log('Success uploading the image'))
-                    .then(() => {
-                        Alert.alert('Success in saving picture to storage');
-                    })             
-                    .catch((error) => {
-                        Alert.alert(error);
-                    });
-
-                    Firebase.database().ref('stashes/' + key).set(
-                        {
-                            latitude: lat,
-                            longitude: long,
-                            title: title,
-                            description: desc,
-                            owner: firebaseAuth.currentUser.uid,
-                            disabled: false,
-                            key: key,
-                            circleLat: randomCenter().latitude,
-                            circleLong: randomCenter().longitude,
-                            photoURL: photoURL
-                        }
-                    );
-
-                    Alert.alert("Stash saved");
-
-                } catch (error) {
-                    console.log("Error saving stash " + error);
-                }
-            }
         });
+
+        if (tooClose) {
+            Alert.alert(
+                "Stash too close!",
+                "You need to be further away from another stash.",
+                [
+                    {
+                        text: "Ok",
+                        onPress: () => navigation.navigate('MapScreen'),
+                        style: "cancel",
+                    },
+                ],
+                {
+                    cancelable: true,
+                    onDismiss: () => navigation.navigate('MapScreen')
+                }
+            );
+        }
     }
 
     const getKey = () => {
         return Firebase.database().ref('stashes/').push().getKey();
     }
+
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        checkDistances();
+    }, [isFocused]);
 
 
     const randomCenter = () => {
@@ -146,9 +171,9 @@ export default function CreateNewStash({ navigation }) {
             //let result = await ImagePicker.launchImageLibraryAsync();
 
             if (!result.cancelled) {
-            setPhoto(result);
-            setDone(true);
-            setPhotoCacheUri(result.uri);
+                setPhoto(result);
+                setDone(true);
+                setPhotoCacheUri(result.uri);
             }
         }
     }
@@ -156,10 +181,12 @@ export default function CreateNewStash({ navigation }) {
     const uploadImage = async (uri, imageName) => {
         const response = await fetch(uri);
         const blob = await response.blob();
-    
+
         let ref = Firebase.storage().ref().child("images/" + imageName);
         return ref.put(blob);
-      }
+    }
+
+    useEffect
 
     return (
         <View style={styles.container}>
@@ -167,11 +194,11 @@ export default function CreateNewStash({ navigation }) {
             <View style={styles.imageContainer}>
                 <TouchableOpacity onPress={snap}>
                     {done ?
-                    <View style={styles.image}>
-                    <Image source={photo} style={styles.image}/>
-                    </View>
-                    :
-                    <Image source={require('../assets/no-image-icon.png')} style={styles.image} />
+                        <View style={styles.image}>
+                            <Image source={photo} style={styles.image} />
+                        </View>
+                        :
+                        <Image source={require('../assets/no-image-icon.png')} style={styles.image} />
                     }
                 </TouchableOpacity>
             </View>
@@ -204,17 +231,17 @@ export default function CreateNewStash({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         marginTop: 20,
-        flex:1,
+        flex: 1,
         height: 400,
         width: 400,
         justifyContent: 'flex-end',
         alignItems: 'center',
     },
     imageContainer: {
-        flex:1
+        flex: 1
     },
     inputContainer: {
-        flex:1
+        flex: 1
     },
     input: {
         width: 200,
@@ -235,7 +262,7 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: undefined,
-        aspectRatio: 3/2,
+        aspectRatio: 3 / 2,
         resizeMode: 'contain'
     },
 });

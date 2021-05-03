@@ -6,14 +6,17 @@ import Firebase from '../config/Firebase';
 import { getDistance } from 'geolib';
 import FetchStashes from './FetchStashes.js';
 import { rules } from '../GameRules.js';
+import { useIsFocused } from "@react-navigation/native";
 
 export default function StashListView({ navigation }) {
     const [currentPosition, setCurrentPosition] = useState({});
     const [stashes, setStashes] = useState([]);
 
+    const isFocused = useIsFocused();
+
     useEffect(() => {
         showStashes();
-    }, []);
+    }, [isFocused]);
 
     const showStashes = async () => {
         let location = await findLocation();

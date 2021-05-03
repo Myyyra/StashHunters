@@ -15,12 +15,18 @@ let lat = 60.201313;
 let long = 24.934041;
 let centered = false;
 
-export default function MapScreen({ navigation }) {
+export default function MapScreen({ navigation, route }) {
 
-    const [userLocation, setUserLocation] = useState([]);
     const [stashes, setStashes] = useState([
         {
             title: "preset",
+            latitude: 0,
+            longitude: 0
+        }
+    ]);
+    const [foundStashes, setFoundStashes] = useState([
+        {
+            title: "found preset",
             latitude: 0,
             longitude: 0
         }
@@ -29,7 +35,9 @@ export default function MapScreen({ navigation }) {
         {
             title: "",
             latitude: 0,
-            longitude: 0
+            longitude: 0,
+            circleLat: 0,
+            circleLong: 0
         }
     );
 
@@ -83,8 +91,18 @@ export default function MapScreen({ navigation }) {
             )
             if (distance < 10) {
                 Alert.alert("You have found " + target.title);
-                setHunted({ title: "" });
+                if (currentUser) {
+                    stashFound(target);
+                }
+                setHunted({
+                    title: "",
+                    latitude: 0,
+                    longitude: 0,
+                    circleLat: 0,
+                    circleLong: 0
+                });
                 found = true;
+                route.params = null;
             }
         }
 
@@ -93,15 +111,107 @@ export default function MapScreen({ navigation }) {
         }
     }
 
+
+    const getFoundStashes = async () => {
+
+        let found = [];
+
+        if (currentUser) {
+            try {
+                await Firebase.database()
+                    .ref('/users/' + firebaseAuth.currentUser.uid + "/foundStashes")
+                    .once('value', snapshot => {
+                        if (snapshot.exists()) {
+                            const data = snapshot.val();
+                            let s = Object.values(data);
+                            found = s;
+                        }
+                    });
+            } catch (error) {
+                console.log("ALERT! Error finding found stashes " + error)
+            }
+        }
+
+        return found;
+    }
+
+    const compareStashes = async () => {
+
+        let all = await FetchStashes.findStashes();
+
+        let found = await getFoundStashes();
+
+        let unfound = [];
+
+        all.forEach(stash => {
+            if (found.length > 0) {
+                found.forEach(f => {
+                    if (stash.key !== f.key) {
+                        unfound.push(stash);
+                    }
+                })
+            }
+            else {
+                unfound = all;
+            }
+        });
+
+        setStashes(unfound);
+        setFoundStashes(found);
+
+        //set hunted at load
+        //Refactor this to better place
+        if (route.params) {
+
+            let huntedStash = [route.params];
+
+            if (checkIfContains(huntedStash, found).length === 0) {
+                Hunt(huntedStash[0]);
+            }
+        }
+    }
+
+    const stashFound = (stash) => {
+        Firebase.database().ref('users/' + firebaseAuth.currentUser.uid + "/foundStashes/" + stash.key).set(
+            {
+                latitude: stash.latitude,
+                longitude: stash.longitude,
+                title: stash.title,
+                description: stash.description,
+                owner: stash.owner,
+                disabled: stash.disabled,
+                key: stash.key,
+                circleLat: stash.circleLat,
+                circleLong: stash.circleLong
+            }
+        );
+    }
+
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        (async () => {
-            findLocation();
-            let results = await FetchStashes.findStashes();
-            setStashes(results);
-        })();
-    }, [isFocused]);
+
+        findLocation();
+        compareStashes();
+
+    }, [isFocused, hunted]);
+
+    const checkIfContains = (x, y) => {
+
+        let onY = [];
+
+        x.forEach(xItem => {
+            if (y.length > 0) {
+                y.forEach(yItem => {
+                    if (xItem.key == yItem.key) {
+                        onY.push(xItem);
+                    }
+                })
+            }
+        });
+
+        return onY;
+    }
 
     const findLocation = async () => {
 
@@ -160,16 +270,17 @@ export default function MapScreen({ navigation }) {
 
 
                                 <Marker
-                                    coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
+                                    coordinate={circleCenter(stash)}
 
                                     title={stash.title}
                                     description={stash.description}
-
-                                    //image={require('../assets/flag.png')}
+                                    opacity={0.0}
+                                    //image={require('../assets/circle.png')}
 
                                     onPress={() => {
                                         if (hunted.title !== stash.title) {
-                                            Alert.alert(
+                                            navigation.navigate('StashCard', stash)
+                                            /*Alert.alert(
                                                 "Do you want to start hunting this Stash?",
                                                 "",
                                                 [
@@ -177,7 +288,8 @@ export default function MapScreen({ navigation }) {
                                                         text: "Yes",
                                                         onPress: () => {
                                                             centered = false;
-                                                            Hunt(stash);
+                                                            navigation.navigate('StashCard', stash)
+                                                            //Hunt(stash);
                                                         }
                                                     },
                                                     {
@@ -187,7 +299,7 @@ export default function MapScreen({ navigation }) {
                                                 {
                                                     cancelable: true
                                                 }
-                                            )
+                                            )*/
                                         }
                                     }}
                                 />
@@ -200,20 +312,31 @@ export default function MapScreen({ navigation }) {
                                 />
 
                             </View>
-                        ))}
+                        )
+                        )
+                    }
 
+                    {foundStashes.filter(stash => stash.title !== hunted.title)
+                        .map((stash, index) => (
+                            <View key={index}>
+                                <Marker
+                                    coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
+                                    title={stash.title}
+                                    description={stash.description}
+                                    pinColor='green'
+                                //image={require('../assets/flag.png')}
 
-                    <Marker
-                        title="hunted"
-                        coordinate={{ latitude: hunted.latitude, longitude: hunted.longitude }}
-                        pinColor='rgba(0, 234, 82, 1)'
-                    />
+                                />
+                            </View>
+                        )
+                        )
+                    }
+
                     <Circle
                         center={circleCenter(hunted)}
                         radius={rules.circleRad}
                         strokeColor='rgba(0, 234, 82, 1)'
                         fillColor='rgba(0, 234, 82, 0.3)'
-
                     />
 
 
