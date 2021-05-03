@@ -6,6 +6,7 @@ import Firebase, { firebaseAuth } from '../config/Firebase';
 import FetchStashes from './FetchStashes.js';
 import { rules } from '../GameRules.js';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { useIsFocused } from "@react-navigation/native";
 
 let lat = '';
@@ -56,14 +57,14 @@ export default function CreateNewStash({ navigation }) {
             let photokey = key //picture's name in storage
             let photoURL = (Firebase.storage().ref().child('images/' + photokey)).toString();
 
-
-            uploadImage(photoCacheUri, photokey)
+            let comprImageUri = await manipulateImage(photoCacheUri);
+            uploadImage(comprImageUri, photokey)
                 .then(console.log('Success uploading the image'))
                 .then(() => {
-                    Alert.alert('Success in saving picture to storage');
+                    console.log('Success in saving picture to storage');
                 })
                 .catch((error) => {
-                    Alert.alert(error);
+                    console.log('Error in uploading picture to the storage: ' + error);
                 });
 
             Firebase.database().ref('stashes/' + key).set(
@@ -168,12 +169,11 @@ export default function CreateNewStash({ navigation }) {
     const snap = async () => {
         if (camera) {
             let result = await ImagePicker.launchCameraAsync();
-            //let result = await ImagePicker.launchImageLibraryAsync();
 
             if (!result.cancelled) {
+                setPhotoCacheUri(result.uri);
                 setPhoto(result);
                 setDone(true);
-                setPhotoCacheUri(result.uri);
             }
         }
     }
@@ -184,6 +184,13 @@ export default function CreateNewStash({ navigation }) {
 
         let ref = Firebase.storage().ref().child("images/" + imageName);
         return ref.put(blob);
+    }
+
+    const manipulateImage = async (uri) => {
+        console.log('image to be manipulated: ' + uri);
+        let manipImage = await ImageManipulator.manipulateAsync(uri, [], { compress: 0.5});
+        console.log('image that has been manipulated: ' + manipImage.uri);
+        return manipImage.uri;
     }
 
     useEffect
