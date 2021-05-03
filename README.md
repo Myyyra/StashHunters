@@ -53,7 +53,7 @@ StashHunters was created during Haaga-Helia's Software Project II -course (10 EC
 </br></br>
 StashHunters is a mobile game for hunting virtual stashes that other players have hidden. Stashes can be almost anything (like buildings, statues, landmarks, scenic views etc.). Stashes are hidden somewhere inside the areas visible on the map. Your job is to find the stash with the help of the stash picture without having the exact coordinates to the stash location.
 </br></br>
-You will find general instructions concerning StashHunters on this page. If you are interested in developing the game further, please refer to our Wiki for detailed information about technologies, installations and code of conduct.
+You will find general information and instructions concerning StashHunters on this page. If you are interested in developing the game further, please refer to our Wiki for detailed information about technologies, installations and code of conduct.
 
 
 ### Building With
@@ -92,10 +92,9 @@ Install Expo Go to your mobile device: https://expo.io/
 
 You can find the latest published version of StashHunters from Expo Go: https://expo.io/@myyyrat/projects/stashhunt
 </br></br>
-You can hunt for stashes created by other players without creating a user account. Simply click "Continue without login" on the frontpage to start playing without an account. Please note, that without a user account it is not possible to keep score of the stashes you have found or create new stashes.
+You can hunt for stashes created by other players without creating a user account. Simply click "Continue without login" on the frontpage to start playing without an account. Please note, that without a user account it is not possible to create new stashes or keep score of the stashes you have found.
 </br></br>
-If you wish to create new stashes and keep score of the stashes you have found, you need to create a user account. 
-
+If you wish to create new stashes and keep score of the stashes you have found, you need to create a user account and sign in. You can browse for stashes on the map view and get details of a specific stash by touching the stash area. You can select a stash you wish to hunt and it will be highlighted on the map. You can add new stashes to the map if there are no other stashes within a distance of 100 meters (109.2 yards) of your current location. Give your stash a cool name, write a short description and take a picture of the stash as a clue for the hunters. 
 
 
 <!-- AUTHORS -->
