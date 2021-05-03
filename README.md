@@ -39,9 +39,8 @@
       </ul>
     </li>
     <li><a href="#instructions">Instructions for players</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#authors">Authors</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
+    <li><a href="#license">License</a></li>
   </ol>
 </details>
 
@@ -98,12 +97,6 @@ You can hunt for stashes created by other players without creating a user accoun
 If you wish to create new stashes and keep score of the stashes you have found, you need to create a user account. 
 
 
-<!-- LICENSE -->
-## License
-
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
-
-
 
 <!-- AUTHORS -->
 ## Authors
@@ -115,12 +108,8 @@ StashHunters was created (in alphabetical order) by:
 * Minna Räsänen
 * Melissa Westberg
 
+<!-- LICENSE -->
+## License
 
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-
-This section will be updated later :)
-
-
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
