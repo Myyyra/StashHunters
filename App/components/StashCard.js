@@ -1,8 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, Alert, TouchableOpacity } from 'react-native';
-import Firebase, { firebaseAuth } from '../config/Firebase';
-import { Ionicons } from '@expo/vector-icons';
+import Firebase from '../config/Firebase';
 
 export default function StashCard({ navigation, route }) {
 
@@ -43,10 +42,23 @@ export default function StashCard({ navigation, route }) {
                 }
             );
             Alert.alert('Please note!', 'Your stash will be removed from the map!');
-            navigation.goBack();
         } catch (error) {
             console.log("Error archiving stash " + error);
         }
+        setEdits({ ...edited, disabled: true });
+    };
+
+    const activateStash = () => {
+        try {
+            Firebase.database().ref('stashes/' + key).update(
+                {
+                    disabled: false
+                }
+            );
+        } catch (error) {
+            console.log("Error archiving stash " + error);
+        }
+        setEdits({ ...edited, disabled: false });
     };
 
     const getStashImage = () => {
@@ -55,19 +67,37 @@ export default function StashCard({ navigation, route }) {
                 setStashImage(url);
                 setImageLoaded(true);
             })
-            .catch((e) => console.log('Error retrieving stash image' + e));
+            .catch((e) => console.log('Error retrieving stash image ' + e));
+    }
+    function ArchiveButton() {
+        return (<TouchableOpacity onPress={() => archiveStash()}>
+            <View style={styles.archiveBtn}>
+                <Text style={styles.btnText}>ARCHIVE</Text>
+            </View>
+        </TouchableOpacity>);
+    }
+
+    function ActivateButton() {
+        return (<TouchableOpacity onPress={() => activateStash()}>
+            <View style={styles.activateBtn}>
+                <Text style={styles.btnText}>ACTIVATE</Text>
+            </View>
+        </TouchableOpacity>);
+    }
+
+    function ActivateOrArchive() {
+        if (edited.disabled) {
+            return <ActivateButton />
+        } else {
+            return <ArchiveButton />
+        }
     }
 
     return (
         <View style={styles.container}>
-
+            
             <View style={styles.header}>
                 <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{edited.title}</Text>
-                <TouchableOpacity onPress={() => navigation.goBack()} >
-                    <View style={styles.backBtn}>
-                        <Ionicons name='arrow-back-outline' size={30} color='white' />
-                    </View>
-                </TouchableOpacity>
             </View>
 
             <View style={styles.container}>
@@ -80,33 +110,26 @@ export default function StashCard({ navigation, route }) {
 
             <View style={styles.description}>
                 <Text style={styles.descriptionText}>{edited.description}</Text>
-                {firebaseAuth.currentUser.uid == stash.owner &&
-                    <View>
-                        <View style={styles.buttons}>
-                            <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
-                                <View style={styles.editBtn}>
-                                    <Text style={styles.btnText}>EDIT</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => archiveStash()}>
-                                <View style={styles.archiveBtn}>
-                                    <Text style={styles.btnText}>ARCHIVE</Text>
-                                </View>
-                            </TouchableOpacity>
-
-
+                <View style={styles.buttons}>
+                    <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
+                        <View style={styles.editBtn}>
+                            <Text style={styles.btnText}>EDIT</Text>
                         </View>
-                        <View container>
-                            <TouchableOpacity onPress={() => navigation.navigate('MapScreen', stash)}>
-                                <View style={styles.huntBtn}>
-                                    <Text style={styles.btnText}>Hunt</Text>
-                                </View>
-                            </TouchableOpacity>
+                    </TouchableOpacity>
+                    <ActivateOrArchive />
+                </View>
+                <View style={styles.buttons}>
+                    <TouchableOpacity onPress={() => navigation.navigate('MapScreen', stash)}>
+                        <View style={styles.huntBtn}>
+                            <Text style={styles.btnText}>HUNT</Text>
                         </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.goBack()} >
+                        <View style={styles.backBtn}>
+                            <Text style={styles.btnText}>GO BACK</Text>
                     </View>
-
-                }
-
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <StatusBar style="auto" />
@@ -121,11 +144,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    back: {
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        margin: 20
+    },
     header: {
         flex: 1,
-        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-evenly'
+        justifyContent: 'center'
+    },
+    img: {
+        flex: 2
     },
     image: {
         width: '100%',
@@ -136,26 +166,26 @@ const styles = StyleSheet.create({
     description: {
         flex: 2,
         justifyContent: 'space-evenly'
-
     },
     descriptionText: {
         fontSize: 20,
         margin: 15
     },
-    backBtn: {
-        backgroundColor: '#029B76',
-        width: 50,
-        height: 40,
-        borderRadius: 5,
+    hunt: {
         alignItems: 'center',
-        marginLeft: 30,
-        justifyContent: 'center'
+        justifyContent: 'flex-start'
     },
-    editBtn: {
+    backBtn: {
         backgroundColor: '#029B76',
         width: 130,
         borderRadius: 5,
-        marginBottom: 15,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    editBtn: {
+        backgroundColor: '#eb8221',
+        width: 130,
+        borderRadius: 5,
         marginRight: 15,
         alignItems: 'center'
     },
@@ -163,12 +193,17 @@ const styles = StyleSheet.create({
         backgroundColor: 'green',
         width: 130,
         borderRadius: 5,
-        marginBottom: 15,
         marginRight: 15,
         alignItems: 'center'
     },
     archiveBtn: {
         backgroundColor: '#a60225',
+        width: 130,
+        borderRadius: 5,
+        alignItems: 'center'
+    },
+    activateBtn: {
+        backgroundColor: '#029B76',
         width: 130,
         borderRadius: 5,
         marginBottom: 15,
@@ -182,7 +217,6 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-
     }
 
 });

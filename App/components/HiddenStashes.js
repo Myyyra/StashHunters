@@ -1,11 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useIsFocused } from "@react-navigation/native";
+import Firebase, { firebaseAuth } from '../config/Firebase';
 
+export default function HiddenStashes({ navigation }) {
+    const [stashes, setStashes] = useState([]);
+    const isFocused = useIsFocused();
 
-export default function HiddenStashes({ navigation, route }) {
-    const stashes = route.params;
+    useEffect(() => {
+        getHiddenStashes();
+    }, [isFocused]);
+
+    const getHiddenStashes = async () => {
+        try {
+            await Firebase.database()
+                .ref('/stashes')
+                .once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        const s = Object.values(data);
+                        const hidden = s.filter(d => d.owner === firebaseAuth.currentUser.uid);
+
+                        setStashes(hidden);
+                    }
+                });
+        } catch (error) {
+            console.log("ALERT! Error finding hidden stashes " + error);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -22,16 +46,17 @@ export default function HiddenStashes({ navigation, route }) {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) =>
                     <View style={styles.listcontainer}>
-                            <View>
+                        <View>
                             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{item.title}</Text>
                             <Text style={{ fontSize: 18 }}>{item.description}</Text>
                             </View>
-                            <View style={styles.stashBtnPosition}>
+                        <View style={styles.stashBtnPosition}>                                
                             <TouchableOpacity onPress={() => navigation.navigate('StashCard', item)}>
                                 <View style={styles.btn}>
                                     <Text style={styles.btnText}>STASH</Text>
                                 </View>
                             </TouchableOpacity>
+                                {item.disabled === true && <Text style={styles.disabledText}>ARCHIVED</Text>}
                         </View>
                     </View>}
                     data={stashes}
@@ -61,12 +86,14 @@ const styles = StyleSheet.create({
         width: 350,
         borderWidth: 2,
         marginBottom: 10,
-        padding: 5,
+        padding: 10,
         borderColor: '#029B76',
     },
     stashBtnPosition: {
         flexDirection: 'row',
-        justifyContent: 'flex-end'
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingTop: 5
     },
     btn: {
         backgroundColor: '#029B76',
@@ -85,6 +112,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginLeft: 30,
         justifyContent: 'center'
+    },
+    disabledText: {
+        color: 'red',
+        fontSize: 22,
+        fontWeight: 'bold'
     }
 
 

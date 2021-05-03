@@ -1,12 +1,34 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Firebase, { firebaseAuth } from '../config/Firebase';
+import { useIsFocused } from "@react-navigation/native";
 
+export default function HiddenStashes({ navigation }) {
 
-export default function HiddenStashes({ navigation, route }) {
+    const [stashes, setStashes] = useState([]);
+    const isFocused = useIsFocused();
 
-    const stashes = route.params;
+    useEffect(() => {
+        getFoundStashes();
+    }, [isFocused]);
+
+    const getFoundStashes = async () => {
+        try {
+            await Firebase.database()
+                .ref('/users/' + firebaseAuth.currentUser.uid + '/foundStashes')
+                .once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        const found = Object.values(data);
+                        setStashes(found);
+                    }
+                });
+        } catch (error) {
+            console.log("ALERT! Error finding found stashes " + error);
+        }
+    }
 
     return (
         <View style={styles.container}>
