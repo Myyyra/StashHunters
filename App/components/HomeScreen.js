@@ -14,6 +14,14 @@ export default function HomeScreen({ navigation }) {
       .catch(error => setErrorMsg(error));
   }
 
+  const resetPassword = () => {
+    firebaseAuth.sendPasswordResetEmail(email).then(function () {
+      // Email sent.
+    }).catch(function (error) {
+      // An error happened.
+    });
+  }
+
   return (
     <View style={styles.container}>
       <ImageBackground source={require('../assets/kartta.png')} style={styles.image}>
@@ -44,6 +52,8 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.loginBtnText}>LOGIN</Text>
             </View>
           </TouchableOpacity>
+
+            <Text style={{ fontSize: 20, marginTop: 10 }} onPress={() => navigation.navigate('ForgotPassword')}>Forgot your password?</Text>
           </View>
         </View>
 

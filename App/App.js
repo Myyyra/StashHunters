@@ -16,6 +16,7 @@ import CameraScreen from './components/CameraScreen';
 import ProfileScreen from './components/ProfileScreen';
 import HiddenStashes from './components/HiddenStashes';
 import FoundStashes from './components/FoundStashes';
+import ForgotPassword from './components/ForgotPassword';
 import { firebaseAuth } from './config/Firebase';
 
 const Tab = createBottomTabNavigator();
@@ -90,6 +91,7 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false }} name="CameraScreen" component={CameraScreen} />
         <Stack.Screen options={{ headerShown: false }} name="HiddenStashes" component={HiddenStashes} />
         <Stack.Screen options={{ headerShown: false }} name="FoundStashes" component={FoundStashes} />
+        <Stack.Screen options={{ headerShown: false }} name="ForgotPassword" component={ForgotPassword} />
       </Stack.Navigator>
     </NavigationContainer>
   );
