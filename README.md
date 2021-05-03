@@ -90,7 +90,7 @@ Install Expo Go to your mobile device: https://expo.io/
 <!-- INSTRUCTIONS -->
 ## Instructions for players
 
-You can find the latest published version of StashHunters from Expo Go: LINKKI
+You can find the latest published version of StashHunters from Expo Go: https://expo.io/@myyyrat/projects/stashhunt
 </br></br>
 You can hunt for stashes created by other players without creating a user account. Simply click "Continue without login" on the frontpage to start playing without an account. Please note, that without a user account it is not possible to keep score of the stashes you have found or create new stashes.
 </br></br>
