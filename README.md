@@ -38,7 +38,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
+    <li><a href="#instructions">Instructions for players</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#authors">Authors</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
@@ -53,13 +53,14 @@
 StashHunters was created during Haaga-Helia's Software Project II -course (10 ECTS) in spring 2021. It is a team project of five students.
 </br></br>
 StashHunters is a mobile game for hunting virtual stashes that other players have hidden. Stashes can be almost anything (like buildings, statues, landmarks, scenic views etc.). Stashes are hidden somewhere inside the areas visible on the map. Your job is to find the stash with the help of the stash picture without having the exact coordinates to the stash location.
+</br></br>
+You will find general instructions concerning StashHunters on this page. If you are interested in developing the game further, please refer to our Wiki for detailed information about technologies, installations and code of conduct.
 
 
 ### Building With
 
 * [ReactNative](https://reactnative.dev/)
 * [Firebase](https://firebase.google.com)
-* [Node.js](https://nodejs.org/en/)
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -86,10 +87,14 @@ For now the game is published only in Expo Go -application, and cannot be found 
 </br></br>
 Install Expo Go to your mobile device: https://expo.io/
 
-<!-- USAGE EXAMPLES -->
-## Usage
+<!-- INSTRUCTIONS -->
+## Instructions for players
 
-This section will be updated later :)
+You can find the latest published version of StashHunters from Expo Go: LINKKI
+</br></br>
+You can hunt for stashes created by other players without creating a user account. Simply click "Continue without login" on the frontpage to start playing without an account. Please note, that without a user account it is not possible to keep score of the stashes you have found or create new stashes.
+</br></br>
+If you wish to create new stashes and keep score of the stashes you have found, you need to create a user account. 
 
 
 <!-- LICENSE -->
