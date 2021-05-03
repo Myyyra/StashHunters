@@ -24,6 +24,29 @@ class FetchStashes {
         return stashes;
     }
 
+    getFoundStashes = async (currentUser) => {
+
+        let found = [];
+
+        if (currentUser) {
+            try {
+                await Firebase.database()
+                    .ref('/users/' + currentUser.uid + "/foundStashes")
+                    .once('value', snapshot => {
+                        if (snapshot.exists()) {
+                            const data = snapshot.val();
+                            let s = Object.values(data);
+                            found = s;
+                        }
+                    });
+            } catch (error) {
+                console.log("ALERT! Error finding found stashes " + error)
+            }
+        }
+
+        return found;
+    }
+
 }
 const fetchStashes = new FetchStashes();
 export default fetchStashes;
