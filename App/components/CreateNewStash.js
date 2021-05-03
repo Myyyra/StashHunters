@@ -149,7 +149,6 @@ export default function CreateNewStash({ navigation }) {
     const isFocused = useIsFocused();
 
     useEffect(() => {
-
         checkDistances();
     }, [isFocused]);
 

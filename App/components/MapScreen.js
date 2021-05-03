@@ -15,7 +15,7 @@ let lat = 60.201313;
 let long = 24.934041;
 let centered = false;
 
-export default function MapScreen({ navigation }) {
+export default function MapScreen({ navigation, route }) {
 
     const [stashes, setStashes] = useState([
         {
@@ -35,7 +35,9 @@ export default function MapScreen({ navigation }) {
         {
             title: "",
             latitude: 0,
-            longitude: 0
+            longitude: 0,
+            circleLat: 0,
+            circleLong: 0
         }
     );
 
@@ -92,8 +94,15 @@ export default function MapScreen({ navigation }) {
                 if (currentUser) {
                     stashFound(target);
                 }
-                setHunted({ title: "" });
+                setHunted({
+                    title: "",
+                    latitude: 0,
+                    longitude: 0,
+                    circleLat: 0,
+                    circleLong: 0
+                });
                 found = true;
+                route.params = null;
             }
         }
 
@@ -135,7 +144,6 @@ export default function MapScreen({ navigation }) {
         let unfound = [];
 
         all.forEach(stash => {
-
             if (found.length > 0) {
                 found.forEach(f => {
                     if (stash.key !== f.key) {
@@ -150,6 +158,17 @@ export default function MapScreen({ navigation }) {
 
         setStashes(unfound);
         setFoundStashes(found);
+
+        //set hunted at load
+        //Refactor this to better place
+        if (route.params) {
+
+            let huntedStash = [route.params];
+
+            if (checkIfContains(huntedStash, found).length === 0) {
+                Hunt(huntedStash[0]);
+            }
+        }
     }
 
     const stashFound = (stash) => {
@@ -171,9 +190,28 @@ export default function MapScreen({ navigation }) {
     const isFocused = useIsFocused();
 
     useEffect(() => {
+
         findLocation();
         compareStashes();
-    }, [isFocused]);
+
+    }, [isFocused, hunted]);
+
+    const checkIfContains = (x, y) => {
+
+        let onY = [];
+
+        x.forEach(xItem => {
+            if (y.length > 0) {
+                y.forEach(yItem => {
+                    if (xItem.key == yItem.key) {
+                        onY.push(xItem);
+                    }
+                })
+            }
+        });
+
+        return onY;
+    }
 
     const findLocation = async () => {
 
@@ -241,7 +279,8 @@ export default function MapScreen({ navigation }) {
 
                                     onPress={() => {
                                         if (hunted.title !== stash.title) {
-                                            Alert.alert(
+                                            navigation.navigate('StashCard', stash)
+                                            /*Alert.alert(
                                                 "Do you want to start hunting this Stash?",
                                                 "",
                                                 [
@@ -249,7 +288,8 @@ export default function MapScreen({ navigation }) {
                                                         text: "Yes",
                                                         onPress: () => {
                                                             centered = false;
-                                                            Hunt(stash);
+                                                            navigation.navigate('StashCard', stash)
+                                                            //Hunt(stash);
                                                         }
                                                     },
                                                     {
@@ -259,7 +299,7 @@ export default function MapScreen({ navigation }) {
                                                 {
                                                     cancelable: true
                                                 }
-                                            )
+                                            )*/
                                         }
                                     }}
                                 />
@@ -297,7 +337,6 @@ export default function MapScreen({ navigation }) {
                         radius={rules.circleRad}
                         strokeColor='rgba(0, 234, 82, 1)'
                         fillColor='rgba(0, 234, 82, 0.3)'
-
                     />
 
 

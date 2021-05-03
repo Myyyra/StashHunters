@@ -24,11 +24,11 @@ export default function StashCard({ navigation, route }) {
 
         try {
             await Firebase.database()
-            .ref('/stashes/' + stash.key)
-            .on('value', snapshot => {
-                const data = snapshot.val();
-                setEdits(data);
-            });
+                .ref('/stashes/' + stash.key)
+                .on('value', snapshot => {
+                    const data = snapshot.val();
+                    setEdits(data);
+                });
         } catch (error) {
             console.log("Error fetching stash " + error);
 
@@ -51,11 +51,11 @@ export default function StashCard({ navigation, route }) {
 
     const getStashImage = () => {
         imageRef.getDownloadURL()
-        .then((url) => {
-        setStashImage(url);
-        setImageLoaded(true);
-        })
-        .catch((e) => console.log('Error retrieving stash image' + e));
+            .then((url) => {
+                setStashImage(url);
+                setImageLoaded(true);
+            })
+            .catch((e) => console.log('Error retrieving stash image' + e));
     }
 
     return (
@@ -72,27 +72,37 @@ export default function StashCard({ navigation, route }) {
 
             <View style={styles.container}>
                 {imageLoaded === false ?
-                <Image source={require('../assets/no-image-icon.png')} />
-                :
-                <Image source={{uri:stashImage}} style={styles.image}/>
+                    <Image source={require('../assets/no-image-icon.png')} />
+                    :
+                    <Image source={{ uri: stashImage }} style={styles.image} />
                 }
             </View>
 
             <View style={styles.description}>
                 <Text style={styles.descriptionText}>{edited.description}</Text>
                 {firebaseAuth.currentUser.uid == stash.owner &&
+                    <View>
+                        <View style={styles.buttons}>
+                            <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
+                                <View style={styles.editBtn}>
+                                    <Text style={styles.btnText}>EDIT</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => archiveStash()}>
+                                <View style={styles.archiveBtn}>
+                                    <Text style={styles.btnText}>ARCHIVE</Text>
+                                </View>
+                            </TouchableOpacity>
 
-                    <View style={styles.buttons}>
-                        <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
-                            <View style={styles.editBtn}>
-                                <Text style={styles.btnText}>EDIT</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => archiveStash()}>
-                            <View style={styles.archiveBtn}>
-                                <Text style={styles.btnText}>ARCHIVE</Text>
-                            </View>
-                        </TouchableOpacity>
+
+                        </View>
+                        <View container>
+                            <TouchableOpacity onPress={() => navigation.navigate('MapScreen', stash)}>
+                                <View style={styles.huntBtn}>
+                                    <Text style={styles.btnText}>Hunt</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                 }
@@ -120,7 +130,7 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: undefined,
-        aspectRatio: 3/2,
+        aspectRatio: 3 / 2,
         resizeMode: 'contain'
     },
     description: {
@@ -143,6 +153,14 @@ const styles = StyleSheet.create({
     },
     editBtn: {
         backgroundColor: '#029B76',
+        width: 130,
+        borderRadius: 5,
+        marginBottom: 15,
+        marginRight: 15,
+        alignItems: 'center'
+    },
+    huntBtn: {
+        backgroundColor: 'green',
         width: 130,
         borderRadius: 5,
         marginBottom: 15,

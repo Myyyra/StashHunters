@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import Firebase, { firebaseAuth } from '../config/Firebase';
+import { useIsFocused } from "@react-navigation/native";
 
 export default function ProfileScreen({ navigation }) {
     const [user, setUser] = useState({});
@@ -10,28 +11,31 @@ export default function ProfileScreen({ navigation }) {
     const [foundStashes, setFoundStashes] = useState([]);
     const [foundLength, setFoundLength] = useState(0);
 
+
+    const isFocused = useIsFocused();
+
     useEffect(() => {
         getUser();
         getHiddenStashes();
         getFoundStashes();
-    }, []);
+    }, [isFocused]);
 
 
     const getHiddenStashes = async () => {
         try {
             await Firebase.database()
-            .ref('/stashes')
-            .once('value', snapshot => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    const s = Object.values(data);
-                    const hidden = s.filter(d => d.owner === firebaseAuth.currentUser.uid);
+                .ref('/stashes')
+                .once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        const s = Object.values(data);
+                        const hidden = s.filter(d => d.owner === firebaseAuth.currentUser.uid);
 
-                    setHiddenStashes(hidden);
-                    setHiddenLength(hidden.length);
-                }
+                        setHiddenStashes(hidden);
+                        setHiddenLength(hidden.length);
+                    }
 
-            });
+                });
         } catch (error) {
             console.log("ALERT! Error finding hidden stashes " + error);
         }
