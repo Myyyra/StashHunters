@@ -7,7 +7,6 @@ import FetchStashes from './FetchStashes.js';
 import { rules } from '../GameRules.js';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { useIsFocused } from "@react-navigation/native";
 
 let lat = '';
 let long = '';
@@ -20,26 +19,46 @@ export default function CreateNewStash({ navigation }) {
     const camera = useRef(null);
     const [photo, setPhoto] = useState(null);
     const [done, setDone] = useState(false);
-    const [photoCacheUri, setPhotoCacheUri] = useState('');
+    const [photoCacheUri, setPhotoCacheUri] = useState(''); // local storage uri after player has taken a picture
 
+    // When this component is on the foreground
+    useEffect(() => {
+        const enter = navigation.addListener('focus', () => {
+            checkDistances();
+        });
+        return enter;
+    }, [navigation]);
 
     //when save-button is pressed, save the new stash, inform the player that
-    //saving was successful, and redirect to map view
+    //saving was successful, set states back to empty and redirect to map view
     const saveAndRedirect = async () => {
-        await saveStash();
-        setTitle('');
-        setDesc('');
-        setPhoto(null);
-        setDone(false);
-        lat = '';
-        long = '';
-        navigation.navigate('MapScreen');
+        if(checkAllFieldsFilled()) {
+            await saveStash();
+            setTitle('');
+            setDesc('');
+            setPhoto(null);
+            setDone(false);
+            setPhotoCacheUri('');
+            lat = '';
+            long = '';
+            navigation.navigate('MapScreen');
+        } else {
+            Alert.alert('Please fill all the fields.');
+        }
+
     }
 
+    // All fields are required for creating a stash.
+    const checkAllFieldsFilled = () => {
+        if (title.length > 0 && desc.length > 0 && photo !== null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     const findLocation = async () => {
-
         let { status } = await Location.requestForegroundPermissionsAsync();
-
         if (status === 'granted') {
             await Location.getCurrentPositionAsync({})
                 .then(location => {
@@ -49,15 +68,20 @@ export default function CreateNewStash({ navigation }) {
         }
     }
 
+    // Get stash unique identifier from Firebase database
+    const getKey = () => {
+        return Firebase.database().ref('stashes/').push().getKey();
+    }
+
     //save the created stash to database
-    //checks if the are no other stahes too near
     const saveStash = async () => {
         try {
-            let key = getKey();
-            let photokey = key //picture's name in storage
-            let photoURL = (Firebase.storage().ref().child('images/' + photokey)).toString();
+            let key = getKey(); // get stash' unique key from database 
+            let photokey = key // picture's unique name-to-be in cloud storage
+            let photoURL = (Firebase.storage().ref().child('images/' + photokey)).toString(); //image's cloud storage address
 
-            let comprImageUri = await manipulateImage(photoCacheUri);
+            let comprImageUri = await manipulateImage(photoCacheUri); // compress image, returns new uri for compressed image
+
             uploadImage(comprImageUri, photokey)
                 .then(console.log('Success uploading the image'))
                 .then(() => {
@@ -67,6 +91,7 @@ export default function CreateNewStash({ navigation }) {
                     console.log('Error in uploading picture to the storage: ' + error);
                 });
 
+            // finally, set all needed data to firebase database
             Firebase.database().ref('stashes/' + key).set(
                 {
                     latitude: lat,
@@ -78,7 +103,8 @@ export default function CreateNewStash({ navigation }) {
                     key: key,
                     circleLat: randomCenter().latitude,
                     circleLong: randomCenter().longitude,
-                    photoURL: photoURL
+                    photoURL: photoURL,
+                    created: new Date().toString()
                 }
             );
 
@@ -89,16 +115,13 @@ export default function CreateNewStash({ navigation }) {
         }
     }
 
+    //Checks if the are no other stahes too near. GameRules dictate what is too close.
     const checkDistances = async () => {
-
         let stashes = await FetchStashes.findStashes();
-
         let tooClose = false;
 
         await findLocation().then(() => {
-
             stashes.forEach(stash => {
-
                 //distance between stash and user location in meters
                 let distance = getDistance(
                     {
@@ -111,19 +134,16 @@ export default function CreateNewStash({ navigation }) {
                         latitude: stash.latitude,
                         longitude: stash.longitude,
                     }
-                )
+                );
 
-                //muokkaa tänne parempi etäissyy arvo kun tarttee
-                //lähin testattu piilo oli 35 metrin päässä 
+                // Compares to GameRules
                 if (distance < rules.stashMinDist) {
-
                     tooClose = true;
                 }
             });
-
-
         });
 
+        // If player is too close to an existing stash, alert and redirect back to MapScreen.
         if (tooClose) {
             Alert.alert(
                 "Stash too close!",
@@ -143,29 +163,20 @@ export default function CreateNewStash({ navigation }) {
         }
     }
 
-    const getKey = () => {
-        return Firebase.database().ref('stashes/').push().getKey();
-    }
-
-    const isFocused = useIsFocused();
-
-    useEffect(() => {
-        checkDistances();
-    }, [isFocused]);
-
-
+    // Creates a circle around the stash with a randomized origo and makes sure the stash remains inside the circle 
+    // i.e. creates a stash area
     const randomCenter = () => {
-
         let latitude = lat;
         let longitude = long;
-        let diff = rules.circleRad * 0.0000081;
+        let diff = rules.circleRad * 0.0000081; // constant number was calculated to adjust lat and long numbers to meters
 
         let x = latitude + (Math.random() * diff);
         let y = longitude + (Math.random() * diff);
 
-        return { latitude: parseFloat(x.toFixed(7)), longitude: parseFloat(y.toFixed(7)) };
+        return { latitude: parseFloat(x.toFixed(7)), longitude: parseFloat(y.toFixed(7)) }; // modifies randomized numbers to adhere to convention of showing lat and long with 7 decimal points
     }
 
+    // Launch camera, check if player is satisfied with picture and take a photo snapshot
     const snap = async () => {
         if (camera) {
             let result = await ImagePicker.launchCameraAsync();
@@ -173,11 +184,12 @@ export default function CreateNewStash({ navigation }) {
             if (!result.cancelled) {
                 setPhotoCacheUri(result.uri);
                 setPhoto(result);
-                setDone(true);
+                setDone(true); // When picture is taken succesfully, renders taken picture to its slot.
             }
         }
     }
 
+    // Gets image from local cache, transforms to "blob" and uploads to cloud storage.
     const uploadImage = async (uri, imageName) => {
         const response = await fetch(uri);
         const blob = await response.blob();
@@ -186,14 +198,12 @@ export default function CreateNewStash({ navigation }) {
         return ref.put(blob);
     }
 
+    // 
     const manipulateImage = async (uri) => {
-        console.log('image to be manipulated: ' + uri);
+        // ImageManipulator can be used to manipulate an image in many ways. Now, we only compress the image.
         let manipImage = await ImageManipulator.manipulateAsync(uri, [], { compress: 0.5});
-        console.log('image that has been manipulated: ' + manipImage.uri);
         return manipImage.uri;
     }
-
-    useEffect
 
     return (
         <View style={styles.container}>
