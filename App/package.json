@@ -17,6 +17,7 @@
     "dotenv": "^8.2.0",
     "expo": "^41.0.1",
     "expo-camera": "~11.0.2",
+    "expo-image-manipulator": "~9.1.0",
     "expo-image-picker": "~10.1.4",
     "expo-location": "~12.0.4",
     "expo-permissions": "~12.0.1",
