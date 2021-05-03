@@ -95,8 +95,8 @@ This section will be updated later :)
 <!-- LICENSE -->
 ## License
 
-![alt text](https://github.com/Myyyra/StashHunters/blob/development/App/assets/licence.png)
-</br></br>
+<img src="https://github.com/Myyyra/StashHunters/blob/development/App/assets/licence.png" alt="License logo" />
+</br>
 This software is published under Creative Commons license BY-NC-SA: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 
