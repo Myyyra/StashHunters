@@ -51,11 +51,11 @@ export default function StashCard({ navigation, route }) {
 
     const getStashImage = () => {
         imageRef.getDownloadURL()
-            .then((url) => {
-                setStashImage(url);
-                setImageLoaded(true);
-            })
-            .catch((e) => console.log('Error retrieving stash image' + e));
+        .then((url) => {
+        setStashImage(url);
+        setImageLoaded(true);
+        })
+        .catch((e) => console.log('Error retrieving stash image' + e));
     }
 
     return (
@@ -136,7 +136,6 @@ const styles = StyleSheet.create({
     description: {
         flex: 2,
         justifyContent: 'space-evenly'
-
     },
     descriptionText: {
         fontSize: 20,
