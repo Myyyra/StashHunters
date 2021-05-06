@@ -100,7 +100,7 @@ If you wish to create new stashes and keep score of the stashes you have found, 
 <!-- AUTHORS -->
 ## Authors
 
-StashHunters was created by:
+**StashHunters was created by:**
 </br>
 (in alphabetical order)
 </br>
