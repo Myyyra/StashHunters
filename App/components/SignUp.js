@@ -1,21 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
-import { firebaseAuth } from '../config/Firebase';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import Firebase, { firebaseAuth } from '../config/Firebase';
 
 export default function SignUp({ navigation }) {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [errorMsg, setErrorMsg] = useState('');
+    const [password2, setPassword2] = useState('');
 
     const handleSignUp = () => {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .then((res) => {
-                return res.user.updateProfile({ displayName: username })
+            .then(newUser => {
+                Firebase.database().ref('users').child(newUser.user.uid).set({
+                    username: username
+                })
             })
-            .then(() => navigation.navigate('Home'))
-            .catch(error => setErrorMsg(error));
+            .catch(error => console.log(error));
+    }
+    const checkPassword = () => {
+        let check = password.localeCompare(password2);
+        console.log(check);
+        if (check === 0) {
+            handleSignUp();
+        } else {
+            Alert.alert('Passwords do not match', 'Please check your passwords');
+        }
     }
 
     return (
@@ -24,7 +34,6 @@ export default function SignUp({ navigation }) {
 
                 <View style={styles.heading}>
                     <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Create a new account</Text>
-                    <Text style={{ fontSize: 18, color: 'red' }}>{errorMsg}</Text>
                 </View>
 
                 <View style={styles.inputView}>
@@ -48,7 +57,14 @@ export default function SignUp({ navigation }) {
                         value={password}
                         onChangeText={setPassword}
                     />
-                    <TouchableOpacity onPress={handleSignUp}>
+                    <TextInput
+                        style={styles.input}
+                        secureTextEntry
+                        placeholder="Repeat password"
+                        value={password2}
+                        onChangeText={setPassword2}
+                    />
+                    <TouchableOpacity onPress={checkPassword}>
                         <View style={styles.signUpBtn}>
                             <Text style={styles.signUpBtnText}>SIGN UP</Text>
                         </View>
