@@ -24,9 +24,9 @@ export default function StashListView({ navigation }) {
 
         let results = await FetchStashes.findStashes();
 
-        //const nearOnes = results.filter(d => calculateDistance(d, location) < rules.stashListRange);
+        const nearOnes = results.filter(d => calculateDistance(d, location) < rules.stashListRange);
 
-        setStashes(results);
+        setStashes(nearOnes);
     }
 
 
