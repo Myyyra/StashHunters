@@ -17,7 +17,18 @@ export default function SignUp({ navigation }) {
                     username: username
                 })
             })
-            .catch(error => console.log(error));
+            .then(() => {
+                Alert.alert('User account created and signed in!');
+            })
+            .catch(error => {
+                if (error.code === 'auth/email-already-exists') {
+                    Alert.alert('Email already exists', 'Use a different email');
+                }
+                if (error.code === 'auth/invalid-email') {
+                    Alert.alert('Email is invalid');
+                }
+                console.log(error);
+            });
     }
     const checkPassword = () => {
         let check = password.localeCompare(password2);

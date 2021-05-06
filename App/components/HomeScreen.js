@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { ImageBackground, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { ImageBackground, StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { firebaseAuth } from '../config/Firebase';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
@@ -12,7 +12,16 @@ export default function HomeScreen({ navigation }) {
   const handleLogin = () => {
     firebaseAuth.signInWithEmailAndPassword(email, password)
       .then(() => navigation.navigate('BottomNavi'))
-      .catch(error => setErrorMsg(error));
+        .catch(error => {
+            if (error.code === 'auth/user-not-found') {
+                Alert.alert('Email address not found', 'Please check your email address');
+            }
+            if (error.code === 'auth/wrong-password') {
+                Alert.alert('Wrong password', 'Please check your password');
+            }
+            console.log(error);
+            console.log(error.code);
+        });
   }
 
    //set the header font

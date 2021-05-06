@@ -9,7 +9,8 @@ export default function StashCard({ navigation, route }) {
     const [edited, setEdits] = useState({});
     const [stashImage, setStashImage] = useState(null);
     const [imageLoaded, setImageLoaded] = useState(false);
-
+    const [userUid, setUserUid] = useState('notSignedIn');
+    
     const stash = route.params;
     const key = stash.key; //stash key and photo's unique name in storage
     let imageRef = Firebase.storage().ref('images/' + key);
@@ -17,9 +18,14 @@ export default function StashCard({ navigation, route }) {
     useEffect(() => {
         getStashes();
         getStashImage();
+        getUserUid();
     }, []);
 
-
+    const getUserUid = () => {
+        if (firebaseAuth.currentUser) {
+            setUserUid(firebaseAuth.currentUser.uid);
+        }
+    }
     const getStashes = async () => {
 
         try {
@@ -121,7 +127,7 @@ export default function StashCard({ navigation, route }) {
 
             <View style={styles.description}>
                 <Text style={styles.descriptionText}>{edited.description}</Text>
-                {firebaseAuth.currentUser.uid == stash.owner &&
+                {userUid == stash.owner &&
                 <View style={styles.buttons}>
                     <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
                         <View style={styles.editBtn}>
