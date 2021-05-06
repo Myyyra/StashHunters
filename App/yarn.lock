@@ -1201,6 +1201,11 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
+"@expo-google-fonts/press-start-2p@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/press-start-2p/-/press-start-2p-0.1.0.tgz#8413e9bc1c6c7f04b743b517ab6a4743124699bf"
+  integrity sha512-tiCXHFnLPtE8LljCEkjQB6p92GPT5rAEcf6qPVIsV2tJbrN4r2kdTEM+Lkhmtn/COuyikCbGkiJKOGS/o1/nWQ==
+
 "@expo/config-plugins@1.0.28", "@expo/config-plugins@^1.0.18":
   version "1.0.28"
   resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-1.0.28.tgz#6c3911d493bc329bf9ef5c99585564539b1a57e1"

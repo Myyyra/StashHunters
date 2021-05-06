@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { firebaseAuth } from '../config/Firebase';
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 export default function HomeScreen({ navigation }) {
     const [email, setEmail] = useState('');
@@ -14,12 +15,22 @@ export default function HomeScreen({ navigation }) {
         });
     }
 
+    
+    //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             <ImageBackground source={require('../assets/kartta.png')} style={styles.image}>
 
                 <View style={styles.textHeader}>
-                    <Text style={{ fontSize: 42, fontWeight: 'bold', textAlign: 'center' }} >Reset your password</Text>
+                    <Text style={styles.headerFont} >Reset your password</Text>
                 </View>
 
                 <View style={styles.textInputView}>
@@ -102,5 +113,10 @@ const styles = StyleSheet.create({
         color: 'white',
         padding: 10,
         fontSize: 20
+    },
+    headerFont: {
+        fontFamily: 'PressStart2P_400Regular',
+        fontSize: 24,
+        textAlign: 'center'
     }
 });

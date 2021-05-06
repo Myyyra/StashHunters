@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import { useIsFocused } from "@react-navigation/native";
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
+
 
 export default function ProfileScreen({ navigation }) {
     const [user, setUser] = useState({});
@@ -71,11 +73,20 @@ export default function ProfileScreen({ navigation }) {
         }
     }
 
+    //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
 
             <View style={styles.header}>
-                <Text style={styles.headerText}>Hello {user.username}!</Text>
+                <Text style={styles.headerFont}>Hello {user.username}!</Text>
             </View>
 
             <View style={styles.image}>
@@ -152,6 +163,9 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+    },
+    headerFont: {
+        fontFamily: 'PressStart2P_400Regular',
+        fontSize: 20
     }
-
 });

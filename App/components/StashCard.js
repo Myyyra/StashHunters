@@ -1,13 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, Alert, TouchableOpacity } from 'react-native';
-import Firebase from '../config/Firebase';
+import Firebase, { firebaseAuth } from '../config/Firebase';
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 export default function StashCard({ navigation, route }) {
 
     const [edited, setEdits] = useState({});
     const [stashImage, setStashImage] = useState(null);
     const [imageLoaded, setImageLoaded] = useState(false);
+    const [userUid, setUserUid] = useState('notSignedIn');
 
     const stash = route.params;
     const key = stash.key; //stash key and photo's unique name in storage
@@ -16,9 +18,14 @@ export default function StashCard({ navigation, route }) {
     useEffect(() => {
         getStashes();
         getStashImage();
+        getUserUid();
     }, []);
 
-
+    const getUserUid = () => {
+        if (firebaseAuth.currentUser) {
+            setUserUid(firebaseAuth.currentUser.uid);
+        }
+    }
     const getStashes = async () => {
 
         try {
@@ -26,6 +33,7 @@ export default function StashCard({ navigation, route }) {
                 .ref('/stashes/' + stash.key)
                 .on('value', snapshot => {
                     const data = snapshot.val();
+                    console.log(data);
                     setEdits(data);
                 });
         } catch (error) {
@@ -93,11 +101,20 @@ export default function StashCard({ navigation, route }) {
         }
     }
 
+    //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
-            
+
             <View style={styles.header}>
-                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{edited.title}</Text>
+                <Text style={styles.headerFont}>{edited.title}</Text>
             </View>
 
             <View style={styles.container}>
@@ -110,16 +127,20 @@ export default function StashCard({ navigation, route }) {
 
             <View style={styles.description}>
                 <Text style={styles.descriptionText}>{edited.description}</Text>
+                {userUid == stash.owner &&
+                    <View style={styles.buttons}>
+                        <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
+                            <View style={styles.editBtn}>
+                                <Text style={styles.btnText}>EDIT</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <ActivateOrArchive />
+                    </View>}
                 <View style={styles.buttons}>
-                    <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
-                        <View style={styles.editBtn}>
-                            <Text style={styles.btnText}>EDIT</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <ActivateOrArchive />
-                </View>
-                <View style={styles.buttons}>
-                    <TouchableOpacity onPress={() => navigation.navigate('MapScreen', stash)}>
+                    <TouchableOpacity onPress={() => {
+                        console.log("tätä lähetää ny ettii " + edited.title);
+                        navigation.navigate('MapScreen', edited);
+                    }}>
                         <View style={styles.huntBtn}>
                             <Text style={styles.btnText}>HUNT</Text>
                         </View>
@@ -127,7 +148,7 @@ export default function StashCard({ navigation, route }) {
                     <TouchableOpacity onPress={() => navigation.goBack()} >
                         <View style={styles.backBtn}>
                             <Text style={styles.btnText}>GO BACK</Text>
-                    </View>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -217,6 +238,10 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+    },
+    headerFont: {
+        fontFamily: 'PressStart2P_400Regular',
+        fontSize: 20,
+        margin: 10
     }
-
 });

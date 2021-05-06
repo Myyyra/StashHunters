@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button, TextInput } from 'react-native';
 import Firebase, { firebaseAuth } from '../config/Firebase';
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 export default function EditStash({ navigation, route }) {
 
@@ -9,7 +10,6 @@ export default function EditStash({ navigation, route }) {
     //initialize states for editing the stash
     const [title, setTitle] = useState(stash.title);
     const [desc, setDesc] = useState(stash.description);
-
 
     //when save-button is pressed, save edits, inform the player that
     //saving was successful, and redirect back to stash card
@@ -35,10 +35,18 @@ export default function EditStash({ navigation, route }) {
         }
     };
 
+    //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
 
     return (
         <View style={styles.container}>
-            <Text>Edit your stash</Text>
+            <Text style={styles.headerFont}>Edit your stash</Text>
             <TextInput
                 style={styles.input}
                 onChangeText={setTitle}
@@ -85,5 +93,9 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         margin: 10
+    },
+    headerFont: {
+        fontFamily: 'PressStart2P_400Regular',
+        fontSize: 20
     }
 });

@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import Firebase, { firebaseAuth } from '../config/Firebase';
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 export default function SignUp({ navigation }) {
     const [email, setEmail] = useState('');
@@ -16,7 +17,18 @@ export default function SignUp({ navigation }) {
                     username: username
                 })
             })
-            .catch(error => console.log(error));
+            .then(() => {
+                Alert.alert('User account created and signed in!');
+            })
+            .catch(error => {
+                if (error.code === 'auth/email-already-exists') {
+                    Alert.alert('Email already exists', 'Use a different email');
+                }
+                if (error.code === 'auth/invalid-email') {
+                    Alert.alert('Email is invalid');
+                }
+                console.log(error);
+            });
     }
     const checkPassword = () => {
         let check = password.localeCompare(password2);
@@ -28,12 +40,21 @@ export default function SignUp({ navigation }) {
         }
     }
 
+    //set the header font
+    const [fontsLoaded] = useFonts({
+        PressStart2P_400Regular,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             <ImageBackground source={require('../assets/kartta.png')} style={{ width: '100%', height: '100%' }}>
 
                 <View style={styles.heading}>
-                    <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Create a new account</Text>
+                    <Text style={styles.headerFont}>Create a new account</Text>
                 </View>
 
                 <View style={styles.inputView}>
@@ -121,5 +142,10 @@ const styles = StyleSheet.create({
         color: 'white',
         padding: 10,
         fontSize: 20
+    },
+    headerFont: {
+        fontFamily: 'PressStart2P_400Regular',
+        fontSize: 24,
+        textAlign: 'center'
     }
 });
