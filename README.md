@@ -101,11 +101,11 @@ If you wish to create new stashes and keep score of the stashes you have found, 
 ## Authors
 
 StashHunters was created (in alphabetical order) by:
-* Veera Aaltonen
-* Henrik Rossi
-* Jutta Ruuskanen
-* Minna Räsänen
-* Melissa Westberg
+* [Veera Aaltonen](https://github.com/pulmakala)
+* [Henrik Rossi](https://github.com/KingHenx)
+* [Jutta Ruuskanen](https://github.com/JuttaEm)
+* [Minna Räsänen](https://github.com/miimss)
+* [Melissa Westberg](https://github.com/melliswee)
 
 <!-- LICENSE -->
 ## License
