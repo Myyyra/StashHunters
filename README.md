@@ -101,7 +101,9 @@ If you wish to create new stashes and keep score of the stashes you have found, 
 ## Authors
 
 StashHunters was created by:
+</br></br>
 (in alphabetical order)
+</br></br>
 * [Veera Aaltonen](https://github.com/pulmakala)
 * [Henrik Rossi](https://github.com/KingHenx)
 * [Jutta Ruuskanen](https://github.com/JuttaEm)
