@@ -94,7 +94,7 @@ You can find the latest published version of StashHunters from Expo Go: https://
 </br></br>
 You can hunt for stashes created by other players without creating a user account. Simply click "Continue without login" on the frontpage to start playing without an account. Please note, that without a user account it is not possible to create new stashes or keep score of the stashes you have found.
 </br></br>
-If you wish to create new stashes and keep score of the stashes you have found, you need to create a user account and sign in. You can browse for stashes on the map view and get details of a specific stash by touching the stash area. You can select a stash you wish to hunt and it will be highlighted on the map. You can add new stashes to the map if there are no other stashes within a distance of 100 meters (109.2 yards) of your current location. Give your stash a cool name, write a short description and take a picture of the stash as a clue for the hunters. 
+If you wish to create new stashes and keep score of the stashes you have found, you need to create a user account and sign in. You can browse for stashes on the map view and get details of a specific stash by touching the stash area. You can select a stash you wish to hunt and it will be highlighted on the map. You can add new stashes to the map if there are no other stashes within a distance of 100 meters (328 feet) of your current location. Give your stash a cool name, write a short description and take a picture of the stash as a clue for the hunters. 
 
 
 <!-- AUTHORS -->
