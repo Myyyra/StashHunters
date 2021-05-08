@@ -173,7 +173,7 @@ export default function MapScreen({ navigation, route }) {
             <View style={styles.map}>
 
                 <View style={styles.header}>
-                    <Text style={styles.hunted}>The Hunted Stash: {hunted.title}</Text>
+                    <Text style={styles.hunted}>Hunting: {hunted.title}</Text>
                     {currentUser ?
                         <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
                         :

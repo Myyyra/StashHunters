@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
 import * as Location from 'expo-location';
-import Firebase from '../config/Firebase';
 import { getDistance } from 'geolib';
 import FetchStashes from './FetchStashes.js';
 import { rules } from '../GameRules.js';
@@ -24,9 +23,9 @@ export default function StashListView({ navigation }) {
 
         let results = await FetchStashes.findStashes();
 
-        //const nearOnes = results.filter(d => calculateDistance(d, location) < rules.stashListRange);
+        const nearOnes = results.filter(d => calculateDistance(d, location) < rules.stashListRange);
 
-        setStashes(results);
+        setStashes(nearOnes);
     }
 
 
@@ -77,7 +76,7 @@ export default function StashListView({ navigation }) {
                                 <Text>{calculateDistance(item, currentPosition)} meters away</Text>
                                 <TouchableOpacity onPress={() => navigation.navigate('StashCard', item)}>
                                     <View style={styles.btn}>
-                                        <Text style={styles.btnText}>STASH</Text>
+                                        <Text style={styles.btnText}>STASH CARD</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>

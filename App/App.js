@@ -17,6 +17,7 @@ import ProfileScreen from './components/ProfileScreen';
 import HiddenStashes from './components/HiddenStashes';
 import FoundStashes from './components/FoundStashes';
 import ForgotPassword from './components/ForgotPassword';
+import Info from './components/Info';
 import { firebaseAuth } from './config/Firebase';
 
 const Tab = createBottomTabNavigator();
@@ -37,6 +38,8 @@ function BottomNavi() {
         iconName = 'add-circle-outline';
       } else if (route.name === 'StashListView') {
         iconName = 'list';
+      } else if (route.name === 'Info') {
+          iconName = 'information-outline';
       }
 
       return <Ionicons name={iconName} size={size} color={color} />;
@@ -69,6 +72,7 @@ function BottomNavi() {
           }
         }} />
       <Tab.Screen name='StashListView' component={StashListView} options={{ title: 'List' }} />
+          <Tab.Screen name='Info' component={Info} options={{ title: 'Info' }} />
     </Tab.Navigator>
   );
 }

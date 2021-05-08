@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Image, StyleSheet, Text, View, Alert, Button, TextInput, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Text, View, Alert, TextInput, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Firebase, { firebaseAuth } from '../config/Firebase';
@@ -47,9 +47,8 @@ export default function CreateNewStash({ navigation }) {
     const checkAllFieldsFilled = () => {
         if (title.length > 0 && desc.length > 0 && photo !== null) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     const clearFields = () => {
@@ -165,6 +164,8 @@ export default function CreateNewStash({ navigation }) {
                     onDismiss: () => navigation.navigate('MapScreen')
                 }
             );
+        } else {
+            Alert.alert('Your stash will be created to this location', `Please don't move until you have saved the stash`);
         }
     }
 
@@ -298,7 +299,9 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 1,
         paddingLeft: 10,
-        margin: 10
+        margin: 10,
+        fontSize: 20,
+        borderRadius: 5
     },
     inputBig: {
         flex: 1,
@@ -308,7 +311,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         paddingLeft: 10,
         paddingRight: 10,
-        margin: 10
+        margin: 10,
+        fontSize: 20,
+        borderRadius: 5
     },
     image: {        
         flex: 2,
@@ -321,7 +326,6 @@ const styles = StyleSheet.create({
         resizeMode: 'contain'
     },
     buttons: {
-
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'flex-end'

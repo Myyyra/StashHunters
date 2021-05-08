@@ -63,7 +63,7 @@ export default function HiddenStashes({ navigation }) {
                         <View style={styles.stashBtnPosition}>                                
                             <TouchableOpacity onPress={() => navigation.navigate('StashCard', item)}>
                                 <View style={styles.btn}>
-                                    <Text style={styles.btnText}>STASH</Text>
+                                        <Text style={styles.btnText}>STASH CARD</Text>
                                 </View>
                             </TouchableOpacity>
                                 {item.disabled === true && <Text style={styles.disabledText}>ARCHIVED</Text>}

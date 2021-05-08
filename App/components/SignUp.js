@@ -18,7 +18,7 @@ export default function SignUp({ navigation }) {
                 })
             })
             .then(() => {
-                Alert.alert('User account created and signed in!');
+                Alert.alert('User account created and signed in!', `Get started by checking out the "Info" page`);
             })
             .catch(error => {
                 if (error.code === 'auth/email-already-exists') {
