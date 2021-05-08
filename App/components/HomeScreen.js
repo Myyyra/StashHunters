@@ -6,8 +6,7 @@ import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-star
 
 export default function HomeScreen({ navigation }) {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+    const [password, setPassword] = useState('');
 
   const handleLogin = () => {
     firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -38,8 +37,7 @@ export default function HomeScreen({ navigation }) {
       <ImageBackground source={require('../assets/kartta.png')} style={styles.image}>
 
         <View style={styles.textHeader}>
-          <Text style={styles.headerFont} >Let's play StashHunters!</Text>
-          <Text style={{ fontSize: 18, color: 'red' }}>{errorMsg}</Text>
+                  <Text style={styles.headerFont} >StashHunters</Text>
         </View>
 
         <View style={styles.textInputView}>
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
   textHeader: {
     flex: 2,
     alignItems: 'center',
-    justifyContent: 'flex-end'
+      justifyContent: 'center'
   },
   textParagraph: {
     textAlign: "center",
@@ -149,7 +147,8 @@ const styles = StyleSheet.create({
   headerFont: {
     fontFamily: 'PressStart2P_400Regular',
     fontSize: 27,
-    textAlign: 'center'
+      textAlign: 'center',
+      marginTop: 60
 }
 
 });

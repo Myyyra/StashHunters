@@ -3,9 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="170bd470-2370-4964-88f6-704c714178a4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.expo/packager-info.json" beforeDir="false" afterPath="$PROJECT_DIR$/.expo/packager-info.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/SignUp.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/SignUp.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/EditStash.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/EditStash.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/HomeScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/HomeScreen.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,11 +103,11 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="410" y="4" key="#test/0.0.1536.864@0.0.1536.864" timestamp="1614596952041" />
-    <state x="30" y="85" width="1200" height="624" key="AVDManager" timestamp="1620472349330">
+    <state x="30" y="85" width="1200" height="624" key="AVDManager" timestamp="1620479351378">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="30" y="81" width="1200" height="596" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1620055222174" />
-    <state x="30" y="85" width="1200" height="624" key="AVDManager/0.0.1536.864@0.0.1536.864" timestamp="1620472349330" />
+    <state x="30" y="85" width="1200" height="624" key="AVDManager/0.0.1536.864@0.0.1536.864" timestamp="1620479351378" />
     <state x="481" y="171" key="FileChooserDialogImpl" timestamp="1614603811321">
       <screen x="0" y="0" width="1536" height="864" />
     </state>

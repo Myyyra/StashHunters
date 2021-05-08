@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Alert, Button, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, TouchableOpacity } from 'react-native';
 import Firebase from '../config/Firebase';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
