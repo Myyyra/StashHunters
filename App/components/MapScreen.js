@@ -31,16 +31,17 @@ export default function MapScreen({ navigation, route }) {
             .catch(error => console.log(error));
     }
 
+    const isFocused = useIsFocused();
+
     useEffect(() => {
-        const enter = navigation.addListener('focus', () => {
-            findLocation();
-            compareStashes();
-            if (route.params) {
-                startHunt();
-            }
-        });
-        return enter;
-    }, [navigation]);
+        findLocation();
+        compareStashes();
+
+        if (route.params) {
+            startHunt(route.params);
+        }
+
+    }, [isFocused, hunted]);
 
     const findLocation = async () => {
 
@@ -93,9 +94,9 @@ export default function MapScreen({ navigation, route }) {
         return { same: same, different: different };
     }
 
-    const startHunt = async () => {
+    const startHunt = async (target) => {
 
-        let stash = route.params;
+        let stash = target;
 
         if (compareArrays([stash], await FetchStashes.getFoundStashes(currentUser)).same.length === 0) {
             setHunted(stash);

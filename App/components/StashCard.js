@@ -10,7 +10,7 @@ export default function StashCard({ navigation, route }) {
     const [stashImage, setStashImage] = useState(null);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [userUid, setUserUid] = useState('notSignedIn');
-    
+
     const stash = route.params;
     const key = stash.key; //stash key and photo's unique name in storage
     let imageRef = Firebase.storage().ref('images/' + key);
@@ -112,7 +112,7 @@ export default function StashCard({ navigation, route }) {
 
     return (
         <View style={styles.container}>
-            
+
             <View style={styles.header}>
                 <Text style={styles.headerFont}>{edited.title}</Text>
             </View>
@@ -128,16 +128,19 @@ export default function StashCard({ navigation, route }) {
             <View style={styles.description}>
                 <Text style={styles.descriptionText}>{edited.description}</Text>
                 {userUid == stash.owner &&
-                <View style={styles.buttons}>
-                    <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
-                        <View style={styles.editBtn}>
-                            <Text style={styles.btnText}>EDIT</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <ActivateOrArchive />
+                    <View style={styles.buttons}>
+                        <TouchableOpacity onPress={() => navigation.navigate('EditStash', stash)}>
+                            <View style={styles.editBtn}>
+                                <Text style={styles.btnText}>EDIT</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <ActivateOrArchive />
                     </View>}
                 <View style={styles.buttons}>
-                    <TouchableOpacity onPress={() => navigation.navigate('MapScreen', stash)}>
+                    <TouchableOpacity onPress={() => {
+                        console.log("tätä lähetää ny ettii " + edited.title);
+                        navigation.navigate('MapScreen', edited);
+                    }}>
                         <View style={styles.huntBtn}>
                             <Text style={styles.btnText}>HUNT</Text>
                         </View>
@@ -145,7 +148,7 @@ export default function StashCard({ navigation, route }) {
                     <TouchableOpacity onPress={() => navigation.goBack()} >
                         <View style={styles.backBtn}>
                             <Text style={styles.btnText}>GO BACK</Text>
-                    </View>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
