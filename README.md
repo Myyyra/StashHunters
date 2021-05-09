@@ -55,7 +55,7 @@ You will find general information and instructions concerning StashHunters on th
 
 ***
 <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/login.png" width="250"> </kbd>   <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/mapscreen.png" width="250"> </kbd>   <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashlist.png" width="250"> </kbd>
-***
+
 <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/createnewstash.png" width="250"> </kbd>  <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashcard.png" width="250"> </kbd>   <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/infopage.png" width="250"> </kbd>
 ***
 
@@ -77,29 +77,51 @@ We would love to hear your ideas and feature preferences for further developing 
 ## Getting Started
 
 For now the game operates only on Android devices.
-</br></br>
-
 
 ### Prerequisites
 
 The game requires permission to use location on your mobile device in order to function correctly.
 </br></br>
-If you wish to add new stashes to the game, you must create a user account and give the game permission to use the camera on your mobile device.
+If you wish to add new stashes to the game, you must create a player account and give the game permission to use the camera on your mobile device.
 
 ### Installation
 
 For now the game is published only in Expo Go -application, and cannot be found in Google Play Store.
 </br></br>
 Install Expo Go to your mobile device: https://expo.io/
+</br></br>
+You can find the latest published version of StashHunters from Expo Go: https://expo.io/@myyyrat/projects/stashhunt
 
 <!-- INSTRUCTIONS -->
 ## Instructions for players
 
-You can find the latest published version of StashHunters from Expo Go: https://expo.io/@myyyrat/projects/stashhunt
+### First of all, great to have you here!
+
+In this section you will find a quick guide we have drawn up for you to get started with the game.
+
+#### Player account: 
+You can hunt for stashes without creating a player account. However, without a player account it is not possible to create new stashes or keep score of the stashes you have found. If you wish to create new stashes and keep score of the stashes you have found, you need to create a player account and sign in. 
+
+#### Map view:
+You can browse for stashes on the map and get details of a specific stash by touching the middle of the stash area. The map should focus on your location after a few seconds. If you are hunting for a specific stash, you will see the stash name on top of the screen.
+
+#### Hunting for stashes:
+You can select a specific stash you wish to hunt, and it will be highlighted on the map. Just click “HUNT” button on the stash card.
+
+#### Stash list:
+From the list you can see stashes that are within 1 kilometer (0.62 miles) of your location.
+
+#### Add a new stash to the map: 
+You can add new stashes to the map if there are no other stashes within a distance of 100 meters (328 feet) of your current location. Give your stash a cool name, write a short description and take a picture of the stash as a clue for the hunters.
+
+#### Edit or archive your stash: 
+You can edit the title and the description of the stashes you have created by clicking “EDIT” on the stash card. If you wish to remove your stash from the map, just click “ARCHIVE” on the stash card.
+
+#### Your profile: 
+You can see your username, avatar, and the statistics of the stashes you have hidden and found on your profile page. At the moment it’s not possible to change your avatar, but that feature will be added soon.
+
+### We hope you enjoy playing StashHunters!
 </br></br>
-You can hunt for stashes created by other players without creating a user account. Simply click "Continue without login" on the frontpage to start playing without an account. Please note, that without a user account it is not possible to create new stashes or keep score of the stashes you have found.
-</br></br>
-If you wish to create new stashes and keep score of the stashes you have found, you need to create a user account and sign in. You can browse for stashes on the map view and get details of a specific stash by touching the stash area. You can select a stash you wish to hunt and it will be highlighted on the map. You can add new stashes to the map if there are no other stashes within a distance of 100 meters (328 feet) of your current location. Give your stash a cool name, write a short description and take a picture of the stash as a clue for the hunters. 
 
 
 <!-- AUTHORS -->
