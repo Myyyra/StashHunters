@@ -49,12 +49,8 @@
 
 ## Screenshots from StashHunters
 
-<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/login.png" width="250">
-<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/mapscreen.png" width="250">
-<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashlist.png" width="250">
-<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/createnewstash.png" width="250">
-<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashcard.png" width="250">
-<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/infopage.png" width="250">
+<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/login.png" width="250"> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/mapscreen.png" width="250"> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashlist.png" width="250">
+<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/createnewstash.png" width="250"> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashcard.png" width="250"> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/infopage.png" width="250">
 ***
 
 StashHunters was created during Haaga-Helia's Software Project II -course (10 ECTS) in spring 2021. It is a team project of five students.
