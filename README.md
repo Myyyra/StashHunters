@@ -36,7 +36,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#instructions-for-players">Instructions for players</a></li>
+    <li><a href="#quick-guide-to-stashhunters">Quick Guide to StashHunters</a></li>
     <li><a href="#authors">Authors</a></li>
     <li><a href="#license">License</a></li>
   </ol>
@@ -95,7 +95,7 @@ Install Expo Go to your mobile device: https://expo.io/
 You can find the latest published version of StashHunters from Expo Go: https://expo.io/@myyyrat/projects/stashhunt
 
 <!-- INSTRUCTIONS -->
-## Instructions for players
+## Quick Guide to StashHunters
 
 ### First of all, great to have you here!
 
