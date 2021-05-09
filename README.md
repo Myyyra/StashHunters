@@ -23,7 +23,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About StashHunters</a>
+      <a href="#about-stashhunters">About StashHunters</a>
       <ul>
         <li><a href="#building-with">Building With</a></li>
       </ul>
