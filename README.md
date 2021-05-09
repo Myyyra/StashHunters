@@ -11,7 +11,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/Myyyra/StashHunters">
-    <img src="App/assets/Readme_title.png" alt="Header" width="80" height="80">
+    <img src="App/assets/Readme_title.png" alt="Header">
   </a>
 
 </p>
