@@ -36,7 +36,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#instructions">Instructions for players</a></li>
+    <li><a href="#instructions-for-players">Instructions for players</a></li>
     <li><a href="#authors">Authors</a></li>
     <li><a href="#license">License</a></li>
   </ol>
