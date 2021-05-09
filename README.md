@@ -59,6 +59,8 @@ You will find general information and instructions concerning StashHunters on th
 * [ReactNative](https://reactnative.dev/)
 * [Firebase](https://firebase.google.com)
 
+For further information about the technologies and libraries used in this project, please refer to the [StashHunters wiki](https://github.com/Myyyra/StashHunters/wiki).
+
 <!-- ROADMAP -->
 ## Roadmap
 
