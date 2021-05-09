@@ -51,7 +51,7 @@ StashHunters was created during Haaga-Helia's Software Project II -course (10 EC
 </br></br>
 StashHunters is a mobile game for hunting virtual stashes that other players have hidden. Stashes can be almost anything (like buildings, statues, landmarks, scenic views etc.). Stashes are hidden somewhere inside the areas visible on the map. Your job is to find the stash with the help of the stash picture without having the exact coordinates to the stash location.
 </br></br>
-You will find general information and instructions concerning StashHunters on this page. If you are interested in developing the game further, please refer to our Wiki for detailed information about technologies, installations and code of conduct.
+You will find general information and instructions concerning StashHunters on this page. If you are interested in developing the game further, please refer to our [Wiki](https://github.com/Myyyra/StashHunters/wiki) for detailed information about technologies, installations and code of conduct.
 
 ***
 <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/login.png" width="250"> </kbd>   <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/mapscreen.png" width="250"> </kbd>   <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashlist.png" width="250"> </kbd>
