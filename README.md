@@ -53,11 +53,10 @@ StashHunters is a mobile game for hunting virtual stashes that other players hav
 </br></br>
 You will find general information and instructions concerning StashHunters on this page. If you are interested in developing the game further, please refer to our Wiki for detailed information about technologies, installations and code of conduct.
 
-### Screenshots from StashHunters
 ***
-<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/login.png" width="250">    <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/mapscreen.png" width="250">    <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashlist.png" width="250">
+<kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/login.png" width="250"> </kbd>   <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/mapscreen.png" width="250"> </kbd>   <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashlist.png" width="250"> </kbd>
 ***
-<img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/createnewstash.png" width="250">    <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashcard.png" width="250">    <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/infopage.png" width="250">
+<kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/createnewstash.png" width="250"> </kbd>  <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/stashcard.png" width="250"> </kbd>   <kbd> <img src="https://github.com/Myyyra/StashHunters/blob/master/App/wiki_assets/infopage.png" width="250"> </kbd>
 ***
 
 ### Building With
