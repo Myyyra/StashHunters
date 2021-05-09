@@ -64,12 +64,14 @@ You will find general information and instructions concerning StashHunters on th
 * [ReactNative](https://reactnative.dev/)
 * [Firebase](https://firebase.google.com)
 
-For further information about the technologies and libraries used in this project, please refer to the [StashHunters wiki](https://github.com/Myyyra/StashHunters/wiki).
+For further information about developing the game and the technologies and libraries used in this project, please refer to the [StashHunters wiki](https://github.com/Myyyra/StashHunters/wiki).
 
 <!-- ROADMAP -->
 ## Roadmap
 
 We have established a development plan starting with a minimum viable product (MVP) and building up from there. You will find a list of features included in each version of the game in our wiki: https://github.com/Myyyra/StashHunters/wiki/Roadmap
+</br></br>
+Current published version of StashHunters is **Release 1.0**.
 </br></br>
 We would love to hear your ideas and feature preferences for further developing the game, so don't hesitate to be in touch if you have any feedback about the game.
 
