@@ -11,10 +11,8 @@
 <br />
 <p align="center">
   <a href="https://github.com/Myyyra/StashHunters">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="App/assets/Readme_title.png" alt="Header" width="80" height="80">
   </a>
-
-  <h1 align="center">StashHunters</h1>
 
 </p>
 
