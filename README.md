@@ -92,7 +92,7 @@ For now the game is published only in Expo Go -application, and cannot be found 
 </br></br>
 Install Expo Go to your mobile device: https://expo.io/
 </br></br>
-You can find the latest published version of StashHunters from Expo Go: https://expo.io/@myyyrat/projects/stashhunt
+You can find the latest published version of StashHunters from Expo Go: https://expo.io/@myyyrat/projects/stashhunters
 
 <!-- INSTRUCTIONS -->
 ## Quick Guide to StashHunters
