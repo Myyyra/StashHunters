@@ -38,6 +38,7 @@
     </li>
     <li><a href="#quick-guide-to-stashhunters">Quick Guide to StashHunters</a></li>
     <li><a href="#authors">Authors</a></li>
+    <li><a href="#acknowledgements">Acknowledgements</a></li>
     <li><a href="#license">License</a></li>
   </ol>
 </details>
@@ -138,6 +139,15 @@ You can see your username, avatar, and the statistics of the stashes you have hi
 * [Jutta Ruuskanen](https://github.com/JuttaEm)
 * [Minna Räsänen](https://github.com/miimss)
 * [Melissa Westberg](https://github.com/melliswee)
+
+</br></br>
+<!-- ACKNOWLEDGEMENTS -->
+## Acknowledgements
+
+We would like to sincerely thank our teachers for their support and excellent advice during this project. We would also like to thank everyone who tested the game and gave us valuable feedback.
+
+Big shoutout also to our colleagues in Team Superpähkinä for their comments and ideas in code reviews.
+</br></br>
 
 <!-- LICENSE -->
 ## License
