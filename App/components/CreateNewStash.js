@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View, Alert, TextInput, TouchableOpacity } fro
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Firebase, { firebaseAuth } from '../config/Firebase';
-import FetchStashes from './FetchStashes.js';
+import StashHandling from './StashHandling';
 import { rules } from '../GameRules.js';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -33,9 +33,9 @@ export default function CreateNewStash({ navigation }) {
     //when save-button is pressed, save the new stash, inform the player that
     //saving was successful, set states back to empty and redirect to map view
     const saveAndRedirect = async () => {
-        if(checkAllFieldsFilled()) {
+        if (checkAllFieldsFilled()) {
             await saveStash();
-           clearFields();
+            clearFields();
             navigation.navigate('MapScreen');
         } else {
             Alert.alert('Please fill all the fields.');
@@ -60,7 +60,7 @@ export default function CreateNewStash({ navigation }) {
         lat = '';
         long = '';
     }
-    
+
     const findLocation = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status === 'granted') {
@@ -121,7 +121,7 @@ export default function CreateNewStash({ navigation }) {
 
     //Checks if the are no other stahes too near. GameRules dictate what is too close.
     const checkDistances = async () => {
-        let stashes = await FetchStashes.findStashes();
+        let stashes = await StashHandling.findStashes();
         let tooClose = false;
 
         await findLocation().then(() => {
@@ -207,7 +207,7 @@ export default function CreateNewStash({ navigation }) {
     // takes image uri from local cache and returns a new local cache image uri
     const manipulateImage = async (uri) => {
         // ImageManipulator can be used to manipulate an image in many ways. Now, we only compress the image.
-        let manipImage = await ImageManipulator.manipulateAsync(uri, [], { compress: 0.5});
+        let manipImage = await ImageManipulator.manipulateAsync(uri, [], { compress: 0.5 });
         return manipImage.uri;
     }
 
@@ -222,7 +222,7 @@ export default function CreateNewStash({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <View style = {styles.header}>
+            <View style={styles.header}>
                 <Text style={styles.headerFont}>Create new stash</Text>
             </View>
             <View style={styles.imageContainer}>
@@ -251,20 +251,20 @@ export default function CreateNewStash({ navigation }) {
                     value={desc}
                     placeholder='Description'
                 />
-                </View>
-                <View style={styles.buttons}>
-                    <TouchableOpacity onPress={saveAndRedirect}>
-                        <View style={styles.saveBtn}>
-                            <Text style={styles.btnText}>Save</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={clearFields}>
-                        <View style={styles.clearBtn}>
-                            <Text style={styles.btnText}>Clear</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            
+            </View>
+            <View style={styles.buttons}>
+                <TouchableOpacity onPress={saveAndRedirect}>
+                    <View style={styles.saveBtn}>
+                        <Text style={styles.btnText}>Save</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={clearFields}>
+                    <View style={styles.clearBtn}>
+                        <Text style={styles.btnText}>Clear</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+
         </View>
 
     );
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly'
     },
     headerText: {
-        fontSize: 30, 
+        fontSize: 30,
         fontWeight: 'bold'
     },
     imageContainer: {
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         borderRadius: 5
     },
-    image: {        
+    image: {
         flex: 2,
         backgroundColor: '#fff',
         alignItems: 'center',

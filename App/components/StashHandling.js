@@ -2,7 +2,7 @@ import Firebase from '../config/Firebase';
 
 class FetchStashes {
 
-    findStashes = async () => {
+    getAllStashes = async () => {
 
         let stashes = [];
 
@@ -45,6 +45,34 @@ class FetchStashes {
         }
 
         return found;
+    }
+
+    getAllNonfoundStashes = async (currentUser) => {
+
+        let all = await this.getAllStashes();
+        let found = await this.getFoundStashes(currentUser);
+
+        let nonfound = this.whichAreNotOnList(found, all);
+
+        return nonfound;
+    }
+
+    //check which items from list X are not found on list Y
+    whichAreNotOnList = (x, y) => {
+
+        let notOnX = y;
+
+        x.forEach(xItem => {
+            if (y.length > 0) {
+                y.forEach(yItem => {
+                    if (xItem.key === yItem.key) {
+                        notOnX = notOnX.filter(item => item.key !== xItem.key);
+                    }
+                })
+            }
+        });
+
+        return notOnX;
     }
 
 }

@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, Alert, TouchableOpacity } from 'react-native';
 import Firebase, { firebaseAuth } from '../config/Firebase';
+import StashHandling from './StashHandling.js';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
 export default function StashCard({ navigation, route }) {
@@ -10,6 +11,8 @@ export default function StashCard({ navigation, route }) {
     const [stashImage, setStashImage] = useState(null);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [userUid, setUserUid] = useState('notSignedIn');
+    const [isFound, setIsFound] = useState(false);
+    const currentUser = firebaseAuth.currentUser ? firebaseAuth.currentUser : null;
 
     const stash = route.params;
     const key = stash.key; //stash key and photo's unique name in storage
@@ -19,7 +22,17 @@ export default function StashCard({ navigation, route }) {
         getStashes();
         getStashImage();
         getUserUid();
+        checkIfFound();
     }, []);
+
+    const checkIfFound = async () => {
+        let foundStashes = await StashHandling.getFoundStashes(currentUser);
+        foundStashes.forEach(item => {
+            if (stash.key === item.key) {
+                setIsFound(true);
+            }
+        })
+    }
 
     const getUserUid = () => {
         if (firebaseAuth.currentUser) {
@@ -33,7 +46,6 @@ export default function StashCard({ navigation, route }) {
                 .ref('/stashes/' + stash.key)
                 .on('value', snapshot => {
                     const data = snapshot.val();
-                    console.log(data);
                     setEdits(data);
                 });
         } catch (error) {
@@ -138,12 +150,12 @@ export default function StashCard({ navigation, route }) {
                     </View>}
                 <View style={styles.buttons}>
                     <TouchableOpacity onPress={() => {
-                        console.log("tätä lähetää ny ettii " + edited.title);
                         navigation.navigate('MapScreen', edited);
                     }}>
-                        <View style={styles.huntBtn}>
-                            <Text style={styles.btnText}>HUNT</Text>
-                        </View>
+                        {!isFound &&
+                            <View style={styles.huntBtn}>
+                                <Text style={styles.btnText}>HUNT</Text>
+                            </View>}
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.goBack()} >
                         <View style={styles.backBtn}>

@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
-import FetchStashes from './FetchStashes.js';
+import StashHandling from './StashHandling.js';
+import LocationActions from './LocationActions';
 import { rules } from '../GameRules.js';
 import { useIsFocused } from "@react-navigation/native";
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
@@ -11,7 +12,6 @@ import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-star
 export default function StashListView({ navigation }) {
     const [currentPosition, setCurrentPosition] = useState({});
     const [stashes, setStashes] = useState([]);
-
     const isFocused = useIsFocused();
 
     useEffect(() => {
@@ -19,28 +19,15 @@ export default function StashListView({ navigation }) {
     }, [isFocused]);
 
     const showStashes = async () => {
-        let location = await findLocation();
+        let location = await LocationActions.findLocation();
 
-        let results = await FetchStashes.findStashes();
+        setCurrentPosition({ latitude: location.latitude, longitude: location.longitude });
 
-        const nearOnes = results.filter(d => calculateDistance(d, location) < rules.stashListRange);
+        let all = await StashHandling.getAllStashes();
+
+        const nearOnes = all.filter(d => calculateDistance(d, location) < rules.stashListRange);
 
         setStashes(nearOnes);
-    }
-
-
-    const findLocation = async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === 'granted') {
-            return await Location.getCurrentPositionAsync({})
-                .then(location => {
-                    setCurrentPosition({ latitude: location.coords.latitude, longitude: location.coords.longitude });
-                    return { latitude: location.coords.latitude, longitude: location.coords.longitude };
-                });
-        } else {
-            Alert.alert("Permission needed", "You need to allow the app to use your location");
-        }
-
     }
 
     const calculateDistance = (stash, location) => {
