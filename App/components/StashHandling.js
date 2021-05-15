@@ -1,4 +1,5 @@
 import Firebase from '../config/Firebase';
+import { rules } from '../GameRules.js';
 
 class FetchStashes {
 
@@ -73,6 +74,70 @@ class FetchStashes {
         });
 
         return notOnX;
+    }
+
+    saveStash = (stash, currentUser) => {
+        try {
+            Firebase.database().ref('stashes/' + stash.key).set(
+                {
+                    latitude: stash.latitude,
+                    longitude: stash.longitude,
+                    title: stash.title,
+                    description: stash.description,
+                    owner: currentUser.uid,
+                    disabled: false,
+                    key: stash.key,
+                    circleLat: this.randomCenter(stash).latitude,
+                    circleLong: this.randomCenter(stash).longitude,
+                    photoURL: stash.photoURL,
+                    created: new Date().toString()
+                }
+            );
+        } catch (error) {
+            console.log("Error saving stash to database " + error);
+        }
+    }
+
+    saveFoundToUser = (stash, currentUser) => {
+        try {
+            Firebase.database().ref('users/' + currentUser.uid + "/foundStashes/" + stash.key).set(
+                {
+                    latitude: stash.latitude,
+                    longitude: stash.longitude,
+                    title: stash.title,
+                    description: stash.description,
+                    owner: stash.owner,
+                    disabled: stash.disabled,
+                    key: stash.key,
+                    circleLat: stash.circleLat,
+                    circleLong: stash.circleLong,
+                    photoURL: stash.photoURL,
+                    created: stash.created,
+                    found: new Date().toString()
+                }
+            );
+        } catch (error) {
+            console.log("Error saving stash to found by user " + error);
+        }
+    }
+
+    randomCenter = (stash) => {
+        let latitude = stash.latitude;
+        let longitude = stash.longitude;
+        let diff = rules.circleRad * 0.0000081; // constant number was calculated to adjust lat and long numbers to meters
+
+        let x = latitude + (Math.random() * diff);
+        let y = longitude + (Math.random() * diff);
+
+        return { latitude: parseFloat(x), longitude: parseFloat(y) }; // modifies randomized numbers to adhere to convention of showing lat and long with 7 decimal points
+    }
+
+    getKey = () => {
+        try {
+            return Firebase.database().ref('stashes/').push().getKey();
+        } catch (error) {
+            console.log("Error generating key " + error);
+        }
     }
 
 }

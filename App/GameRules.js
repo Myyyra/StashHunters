@@ -4,7 +4,7 @@ let rules = {
     circleColor: "rgba(252, 138, 7, 0.35)",
     stashListRange: 1000,
     stashMinDist: 100,
-    stashFindDist: 10
+    stashFindDist: 15
 
 };
 export { rules };

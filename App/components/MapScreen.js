@@ -17,8 +17,7 @@ export default function MapScreen({ navigation, route }) {
     const [hunted, setHunted] = useState({ title: "", latitude: 0, longitude: 0, circleLat: 0, circleLong: 0 });
     const currentUser = firebaseAuth.currentUser ? firebaseAuth.currentUser : null;
 
-    //Haaga-Helia as a preset for mapview to start from somewhere
-    const [region, setRegion] = useState({ latitude: 60.200692, longitude: 24.934302, latitudeDelta: 0.0222, longitudeDelta: 0.0121 });
+    const [region, setRegion] = useState({});
 
     const handleLogout = () => {
         firebaseAuth.signOut()
@@ -33,60 +32,69 @@ export default function MapScreen({ navigation, route }) {
     }, [isFocused, hunted]);
 
     const atStart = async () => {
-        let location = await LocationActions.findLocation();
-        setRegion({ ...region, latitude: location.latitude, longitude: location.longitude });
 
         setStashes(await StashHandling.getAllNonfoundStashes(currentUser));
         setFoundStashes(await StashHandling.getFoundStashes(currentUser));
 
+        //if there is stash to hunt center view to hunted stash
         if (route.params) {
-            startHunt(route.params);
+            //startHunt(route.params);
+            setHunted(route.params);
+            setRegion({ latitude: route.params.latitude, longitude: route.params.longitude, latitudeDelta: 0.0071, longitudeDelta: 0.00405 });
+        }
+        //center view to player location if there is no stash to hunt
+        else {
+            let location = await LocationActions.findLocation();
+            setRegion({ latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.0071, longitudeDelta: 0.00405 });
         }
     }
 
-    const startHunt = async (target) => {
+    const onLocationChange = async () => {
+        if (hunted) {
+            if (await checkIfInRadius(hunted, rules.stashFindDist)) {
 
-        let stash = target;
+                let foundStash = hunted;
+                setHunted({ title: "", latitude: 0, longitude: 0, circleLat: 0, circleLong: 0 });
+                route.params = null;
 
-        setHunted(stash);
-        Hunt(stash);
-        setRegion({
-            latitude: stash.latitude,
-            longitude: stash.longitude,
-            latitudeDelta: 0.0071,
-            longitudeDelta: 0.00405
-        });
-    }
+                if (currentUser !== null) {
+                    Alert.alert("You have found the Stash!");
 
-    const Hunt = async (target) => {
+                    StashHandling.saveFoundToUser(foundStash, currentUser);
 
-        let found = false;
+                    navigation.navigate('StashCard', foundStash);
+                }
+                else {
+                    Alert.alert(
+                        "You have found the Stash",
+                        "But you need to be signed in to register your finding."
+                    );
+                }
+            }
+        }
+    };
+
+    const checkIfInRadius = async (target, radius) => {
+
         let location = await LocationActions.findLocation();
 
         let distance = getDistance(
             {
                 //user location
-                location
+                latitude: location.latitude,
+                longitude: location.longitude
             },
             {
                 //compared stash location
                 latitude: target.latitude,
-                longitude: target.longitude,
+                longitude: target.longitude
             }
         )
-
-        if (distance < rules.stashFindDist) {
-            Alert.alert("You have found " + target.title);
-            if (currentUser) {
-                stashFound(target);
-            }
-            setHunted({ title: "", latitude: 0, longitude: 0, circleLat: 0, circleLong: 0 });
-            found = true;
-            route.params = null;
+        if (distance <= radius) {
+            return true;
         }
-
-        if (!found) {
-            setTimeout(function () { Hunt(target); }, 2000);
+        else {
+            return false;
         }
     }
 
@@ -133,21 +141,14 @@ export default function MapScreen({ navigation, route }) {
                     region={region}
                     showsUserLocation
                     showsMyLocationButton={true}
-
+                    onUserLocationChange={onLocationChange}
                 >
                     {stashes.filter(stash => stash.title !== hunted.title)
                         .map((stash, index) => (
                             <View key={index}>
-
-
                                 <Marker
                                     coordinate={circleCenter(stash)}
-
-                                    title={stash.title}
-                                    description={stash.description}
                                     opacity={0.0}
-                                    //image={require('../assets/circle.png')}
-
                                     onPress={() => {
                                         if (hunted.title !== stash.title) {
                                             route.params = null;
@@ -160,9 +161,7 @@ export default function MapScreen({ navigation, route }) {
                                     radius={rules.circleRad}
                                     strokeColor={rules.circleColor}
                                     fillColor={rules.circleColor}
-
                                 />
-
                             </View>
                         )
                         )
@@ -189,9 +188,6 @@ export default function MapScreen({ navigation, route }) {
                         strokeColor='rgba(0, 234, 82, 1)'
                         fillColor='rgba(0, 234, 82, 0.3)'
                     />
-
-
-
                 </MapView>
 
                 <StatusBar style="auto" />

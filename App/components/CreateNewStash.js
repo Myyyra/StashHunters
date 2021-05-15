@@ -1,16 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Image, StyleSheet, Text, View, Alert, TextInput, TouchableOpacity } from 'react-native';
-import * as Location from 'expo-location';
-import { getDistance } from 'geolib';
 import Firebase, { firebaseAuth } from '../config/Firebase';
 import StashHandling from './StashHandling';
-import { rules } from '../GameRules.js';
+import LocationActions from './LocationActions';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
-
-let lat = '';
-let long = '';
 
 export default function CreateNewStash({ navigation }) {
 
@@ -25,10 +20,37 @@ export default function CreateNewStash({ navigation }) {
     // When this component is on the foreground
     useEffect(() => {
         const enter = navigation.addListener('focus', () => {
-            checkDistances();
+            atStart();
         });
         return enter;
     }, [navigation]);
+
+    //Checks if the are no other stahes too near. GameRules dictate what is too close.
+    const atStart = async () => {
+        let stashes = await StashHandling.getAllStashes();
+
+        let location = await LocationActions.findLocation()
+
+        if (LocationActions.checkIfTooClose(stashes, location)) {
+            Alert.alert(
+                "Stash too close!",
+                "You need to be further away from another stash.",
+                [
+                    {
+                        text: "Ok",
+                        onPress: () => navigation.navigate('MapScreen'),
+                        style: "cancel",
+                    },
+                ],
+                {
+                    cancelable: true,
+                    onDismiss: () => navigation.navigate('MapScreen')
+                }
+            );
+        } else {
+            Alert.alert('Your stash will be created to this location', `Please don't move until you have saved the stash`);
+        }
+    }
 
     //when save-button is pressed, save the new stash, inform the player that
     //saving was successful, set states back to empty and redirect to map view
@@ -57,30 +79,12 @@ export default function CreateNewStash({ navigation }) {
         setPhoto(null);
         setDone(false);
         setPhotoCacheUri('');
-        lat = '';
-        long = '';
-    }
-
-    const findLocation = async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === 'granted') {
-            await Location.getCurrentPositionAsync({})
-                .then(location => {
-                    lat = location.coords.latitude;
-                    long = location.coords.longitude;
-                });
-        }
-    }
-
-    // Get stash unique identifier from Firebase database
-    const getKey = () => {
-        return Firebase.database().ref('stashes/').push().getKey();
     }
 
     //save the created stash to database
     const saveStash = async () => {
         try {
-            let key = getKey(); // get stash' unique key from database 
+            let key = StashHandling.getKey(); // get stash' unique key from database 
             let photokey = key // picture's unique name-to-be in cloud storage
             let photoURL = (Firebase.storage().ref().child('images/' + photokey)).toString(); //image's cloud storage address
 
@@ -95,91 +99,27 @@ export default function CreateNewStash({ navigation }) {
                     console.log('Error in uploading picture to the storage: ' + error);
                 });
 
+            let location = await LocationActions.findLocation();
+
             // finally, set all needed data to firebase database
-            Firebase.database().ref('stashes/' + key).set(
-                {
-                    latitude: lat,
-                    longitude: long,
-                    title: title,
-                    description: desc,
-                    owner: firebaseAuth.currentUser.uid,
-                    disabled: false,
-                    key: key,
-                    circleLat: randomCenter().latitude,
-                    circleLong: randomCenter().longitude,
-                    photoURL: photoURL,
-                    created: new Date().toString()
-                }
-            );
+            let currentUser = firebaseAuth.currentUser;
+            let newStash = {
+                latitude: location.latitude,
+                longitude: location.longitude,
+                title: title,
+                description: desc,
+                owner: currentUser,
+                disabled: false,
+                key: key,
+                photoURL: photoURL
+            }
+            StashHandling.saveStash(newStash, currentUser);
 
             Alert.alert("Stash saved");
 
         } catch (error) {
             console.log("Error saving stash " + error);
         }
-    }
-
-    //Checks if the are no other stahes too near. GameRules dictate what is too close.
-    const checkDistances = async () => {
-        let stashes = await StashHandling.findStashes();
-        let tooClose = false;
-
-        await findLocation().then(() => {
-            stashes.forEach(stash => {
-                //distance between stash and user location in meters
-                let distance = getDistance(
-                    {
-                        //user location
-                        latitude: lat,
-                        longitude: long,
-                    },
-                    {
-                        //compared stash location
-                        latitude: stash.latitude,
-                        longitude: stash.longitude,
-                    }
-                );
-
-                // Compares to GameRules
-                if (distance < rules.stashMinDist) {
-                    tooClose = true;
-                }
-            });
-        });
-
-        // If player is too close to an existing stash, alert and redirect back to MapScreen.
-        if (tooClose) {
-            Alert.alert(
-                "Stash too close!",
-                "You need to be further away from another stash.",
-                [
-                    {
-                        text: "Ok",
-                        onPress: () => navigation.navigate('MapScreen'),
-                        style: "cancel",
-                    },
-                ],
-                {
-                    cancelable: true,
-                    onDismiss: () => navigation.navigate('MapScreen')
-                }
-            );
-        } else {
-            Alert.alert('Your stash will be created to this location', `Please don't move until you have saved the stash`);
-        }
-    }
-
-    // Creates a circle around the stash with a randomized origo and makes sure the stash remains inside the circle 
-    // i.e. creates a stash area
-    const randomCenter = () => {
-        let latitude = lat;
-        let longitude = long;
-        let diff = rules.circleRad * 0.0000081; // constant number was calculated to adjust lat and long numbers to meters
-
-        let x = latitude + (Math.random() * diff);
-        let y = longitude + (Math.random() * diff);
-
-        return { latitude: parseFloat(x.toFixed(7)), longitude: parseFloat(y.toFixed(7)) }; // modifies randomized numbers to adhere to convention of showing lat and long with 7 decimal points
     }
 
     // Launch camera, check if player is satisfied with picture and take a photo snapshot
