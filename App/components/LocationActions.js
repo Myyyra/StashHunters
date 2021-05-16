@@ -21,6 +21,17 @@ class LocationActions {
         }
     }
 
+    randomCenter = (location) => {
+        let latitude = location.latitude;
+        let longitude = location.longitude;
+        let diff = rules.circleRad * 0.0000081; // constant number was calculated to adjust lat and long numbers to meters
+
+        let x = latitude + (Math.random() * diff);
+        let y = longitude + (Math.random() * diff);
+
+        return { latitude: parseFloat(x), longitude: parseFloat(y) }; // modifies randomized numbers to adhere to convention of showing lat and long with 7 decimal points
+    }
+
     checkIfTooClose = (stashes, location) => {
 
         let tooClose = false;

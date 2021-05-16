@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Alert, Button } from 'react-native';
 import MapView, { Marker, Circle } from 'react-native-maps';
-import Firebase, { firebaseAuth } from '../config/Firebase';
+import { firebaseAuth } from '../config/Firebase';
 import { getDistance } from 'geolib';
 import StashHandling from './StashHandling.js';
 import LocationActions from './LocationActions';
@@ -15,9 +15,9 @@ export default function MapScreen({ navigation, route }) {
     const [stashes, setStashes] = useState([{ title: "preset", latitude: 0, longitude: 0 }]);
     const [foundStashes, setFoundStashes] = useState([{ title: "found preset", latitude: 0, longitude: 0 }]);
     const [hunted, setHunted] = useState({ title: "", latitude: 0, longitude: 0, circleLat: 0, circleLong: 0 });
-    const currentUser = firebaseAuth.currentUser ? firebaseAuth.currentUser : null;
+    const [region, setRegion] = useState();
 
-    const [region, setRegion] = useState({});
+    const currentUser = firebaseAuth.currentUser ? firebaseAuth.currentUser : null;
 
     const handleLogout = () => {
         firebaseAuth.signOut()
@@ -98,22 +98,6 @@ export default function MapScreen({ navigation, route }) {
         }
     }
 
-    const stashFound = (stash) => {
-        Firebase.database().ref('users/' + firebaseAuth.currentUser.uid + "/foundStashes/" + stash.key).set(
-            {
-                latitude: stash.latitude,
-                longitude: stash.longitude,
-                title: stash.title,
-                description: stash.description,
-                owner: stash.owner,
-                disabled: stash.disabled,
-                key: stash.key,
-                circleLat: stash.circleLat,
-                circleLong: stash.circleLong
-            }
-        );
-    }
-
     //tämän voi ottaa pois kun databasen kaikkien stashien datarakenteesta löytyy circleLat 
     const circleCenter = (target) => {
         if (target.circleLat) {
@@ -126,73 +110,77 @@ export default function MapScreen({ navigation, route }) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.map}>
+            {region ?
+                <View style={styles.map}>
 
-                <View style={styles.header}>
-                    <Text style={styles.hunted}>Hunting: {hunted.title}</Text>
-                    {currentUser ?
-                        <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
-                        :
-                        <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
-                    }
+                    <View style={styles.header}>
+                        <Text style={styles.hunted}>Hunting: {hunted.title}</Text>
+                        {currentUser ?
+                            <Text style={styles.headerText} onPress={handleLogout}>LOGOUT</Text>
+                            :
+                            <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>SIGN IN</Text>
+                        }
+                    </View>
+                    <MapView
+                        style={styles.map}
+                        region={region}
+                        showsUserLocation
+                        showsMyLocationButton={true}
+                        onUserLocationChange={onLocationChange}
+                    >
+                        {stashes.filter(stash => stash.title !== hunted.title)
+                            .map((stash, index) => (
+                                <View key={index}>
+                                    <Marker
+                                        coordinate={circleCenter(stash)}
+                                        opacity={0.0}
+                                        onPress={() => {
+                                            if (hunted.title !== stash.title) {
+                                                route.params = null;
+                                                navigation.navigate('StashCard', stash);
+                                            }
+                                        }}
+                                    />
+                                    <Circle
+                                        center={circleCenter(stash)}
+                                        radius={rules.circleRad}
+                                        strokeColor={rules.circleColor}
+                                        fillColor={rules.circleColor}
+                                    />
+                                </View>
+                            )
+                            )
+                        }
+
+                        {foundStashes.filter(stash => stash.title !== hunted.title)
+                            .map((stash, index) => (
+                                <View key={index}>
+                                    <Marker
+                                        coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
+                                        title={stash.title}
+                                        pinColor='green'
+                                    //image={require('../assets/flag.png')}
+                                    />
+                                </View>
+                            )
+                            )
+                        }
+
+                        <Circle
+                            center={circleCenter(hunted)}
+                            radius={rules.circleRad}
+                            strokeColor='rgba(0, 234, 82, 1)'
+                            fillColor='rgba(0, 234, 82, 0.3)'
+                        />
+                    </MapView>
+
+                    <StatusBar style="auto" />
                 </View>
-                <MapView
-                    style={styles.map}
-                    region={region}
-                    showsUserLocation
-                    showsMyLocationButton={true}
-                    onUserLocationChange={onLocationChange}
-                >
-                    {stashes.filter(stash => stash.title !== hunted.title)
-                        .map((stash, index) => (
-                            <View key={index}>
-                                <Marker
-                                    coordinate={circleCenter(stash)}
-                                    opacity={0.0}
-                                    onPress={() => {
-                                        if (hunted.title !== stash.title) {
-                                            route.params = null;
-                                            navigation.navigate('StashCard', stash);
-                                        }
-                                    }}
-                                />
-                                <Circle
-                                    center={circleCenter(stash)}
-                                    radius={rules.circleRad}
-                                    strokeColor={rules.circleColor}
-                                    fillColor={rules.circleColor}
-                                />
-                            </View>
-                        )
-                        )
-                    }
-
-                    {foundStashes.filter(stash => stash.title !== hunted.title)
-                        .map((stash, index) => (
-                            <View key={index}>
-                                <Marker
-                                    coordinate={{ latitude: stash.latitude, longitude: stash.longitude }}
-                                    title={stash.title}
-                                    pinColor='green'
-                                //image={require('../assets/flag.png')}
-
-                                />
-                            </View>
-                        )
-                        )
-                    }
-
-                    <Circle
-                        center={circleCenter(hunted)}
-                        radius={rules.circleRad}
-                        strokeColor='rgba(0, 234, 82, 1)'
-                        fillColor='rgba(0, 234, 82, 0.3)'
-                    />
-                </MapView>
-
-                <StatusBar style="auto" />
-            </View>
+                :
+                <View></View>
+            }
         </View>
+
     );
 }
 

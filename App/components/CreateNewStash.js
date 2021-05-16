@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Image, StyleSheet, Text, View, Alert, TextInput, TouchableOpacity } from 'react-native';
-import Firebase, { firebaseAuth } from '../config/Firebase';
 import StashHandling from './StashHandling';
+import Firebase from '../config/Firebase';
 import LocationActions from './LocationActions';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -10,16 +10,15 @@ import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-star
 export default function CreateNewStash({ navigation }) {
 
     //initialize states for creating a new stash
-    const [title, setTitle] = useState('');
-    const [desc, setDesc] = useState('');
+    const [newStash, setNewStash] = useState();
     const camera = useRef(null);
     const [photo, setPhoto] = useState(null);
-    const [done, setDone] = useState(false);
     const [photoCacheUri, setPhotoCacheUri] = useState(''); // local storage uri after player has taken a picture
 
     // When this component is on the foreground
     useEffect(() => {
         const enter = navigation.addListener('focus', () => {
+            clearFields();
             atStart();
         });
         return enter;
@@ -27,6 +26,7 @@ export default function CreateNewStash({ navigation }) {
 
     //Checks if the are no other stahes too near. GameRules dictate what is too close.
     const atStart = async () => {
+
         let stashes = await StashHandling.getAllStashes();
 
         let location = await LocationActions.findLocation()
@@ -49,48 +49,50 @@ export default function CreateNewStash({ navigation }) {
             );
         } else {
             Alert.alert('Your stash will be created to this location', `Please don't move until you have saved the stash`);
+            let s = await StashHandling.newStash();
+            let randomCenter = LocationActions.randomCenter(location);
+            setNewStash({
+                ...s,
+                latitude: location.latitude,
+                longitude: location.longitude,
+                circleLat: randomCenter.latitude,
+                circleLong: randomCenter.longitude
+            });
         }
     }
 
-    //when save-button is pressed, save the new stash, inform the player that
-    //saving was successful, set states back to empty and redirect to map view
-    const saveAndRedirect = async () => {
-        if (checkAllFieldsFilled()) {
-            await saveStash();
-            clearFields();
-            navigation.navigate('MapScreen');
-        } else {
-            Alert.alert('Please fill all the fields.');
-        }
-
+    //when save-button is pressed, save the new stash, clear all fields and navigate to MapScreen
+    const saveClearRedirect = async () => {
+        await saveStash();
+        clearFields();
+        navigation.navigate('MapScreen');
     }
 
     // All fields are required for creating a stash.
     const checkAllFieldsFilled = () => {
-        if (title.length > 0 && desc.length > 0 && photo !== null) {
+        if (newStash.title.length > 0 && newStash.description.length > 0 && photo !== null) {
             return true;
         }
         return false;
     }
 
     const clearFields = () => {
-        setTitle('');
-        setDesc('');
+        setNewStash();
         setPhoto(null);
-        setDone(false);
         setPhotoCacheUri('');
     }
 
     //save the created stash to database
     const saveStash = async () => {
-        try {
-            let key = StashHandling.getKey(); // get stash' unique key from database 
-            let photokey = key // picture's unique name-to-be in cloud storage
-            let photoURL = (Firebase.storage().ref().child('images/' + photokey)).toString(); //image's cloud storage address
+
+        newStash.photoURL = (Firebase.storage().ref().child('images/' + newStash.key)).toString(); //image's cloud storage address
+
+        //save stash to database and if succesful upload image 
+        if (StashHandling.saveStash(newStash)) {
 
             let comprImageUri = await manipulateImage(photoCacheUri); // compress image, returns new uri for compressed image
 
-            uploadImage(comprImageUri, photokey)
+            uploadImage(comprImageUri, newStash.key)
                 .then(console.log('Success uploading the image'))
                 .then(() => {
                     console.log('Success in saving picture to storage');
@@ -98,27 +100,6 @@ export default function CreateNewStash({ navigation }) {
                 .catch((error) => {
                     console.log('Error in uploading picture to the storage: ' + error);
                 });
-
-            let location = await LocationActions.findLocation();
-
-            // finally, set all needed data to firebase database
-            let currentUser = firebaseAuth.currentUser;
-            let newStash = {
-                latitude: location.latitude,
-                longitude: location.longitude,
-                title: title,
-                description: desc,
-                owner: currentUser,
-                disabled: false,
-                key: key,
-                photoURL: photoURL
-            }
-            StashHandling.saveStash(newStash, currentUser);
-
-            Alert.alert("Stash saved");
-
-        } catch (error) {
-            console.log("Error saving stash " + error);
         }
     }
 
@@ -130,7 +111,6 @@ export default function CreateNewStash({ navigation }) {
             if (!result.cancelled) {
                 setPhotoCacheUri(result.uri);
                 setPhoto(result);
-                setDone(true); // When picture is taken succesfully, signals that rendering taken picture to its slot is possible now.
             }
         }
     }
@@ -162,49 +142,62 @@ export default function CreateNewStash({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerFont}>Create new stash</Text>
-            </View>
-            <View style={styles.imageContainer}>
-                <TouchableOpacity onPress={snap}>
-                    {done ?
-                        <View style={styles.image}>
-                            <Image source={photo} style={styles.image} />
-                        </View>
-                        :
-                        <Image source={require('../assets/no-image-icon.png')} style={styles.image} />
-                    }
-                </TouchableOpacity>
-            </View>
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setTitle}
-                    value={title}
-                    placeholder='Stash name'
-                />
-                <TextInput
-                    multiline
-                    numberOfLines={4}
-                    style={styles.inputBig}
-                    onChangeText={setDesc}
-                    value={desc}
-                    placeholder='Description'
-                />
-            </View>
-            <View style={styles.buttons}>
-                <TouchableOpacity onPress={saveAndRedirect}>
-                    <View style={styles.saveBtn}>
-                        <Text style={styles.btnText}>Save</Text>
+            {newStash ?
+                <View style={styles.container}>
+                    <View style={styles.header}>
+                        <Text style={styles.headerFont}>Create new stash</Text>
                     </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={clearFields}>
-                    <View style={styles.clearBtn}>
-                        <Text style={styles.btnText}>Clear</Text>
+                    <View style={styles.imageContainer}>
+                        <TouchableOpacity onPress={snap}>
+                            {photo ?
+                                <View style={styles.image}>
+                                    <Image source={photo} style={styles.image} />
+                                </View>
+                                :
+                                <Image source={require('../assets/no-image-icon.png')} style={styles.image} />
+                            }
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
-            </View>
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={text => setNewStash({ ...newStash, title: text })}
+                            value={newStash.title}
+                            placeholder='Stash name'
+                        />
+                        <TextInput
+                            multiline
+                            numberOfLines={4}
+                            style={styles.inputBig}
+                            onChangeText={text => setNewStash({ ...newStash, description: text })}
+                            value={newStash.description}
+                            placeholder='Description'
+                        />
+                    </View>
+                    <View style={styles.buttons}>
+                        <TouchableOpacity onPress={() => {
+                            if (checkAllFieldsFilled()) {
+                                saveClearRedirect();
+                            } else {
+                                Alert.alert('Please fill all the fields.');
+                            }
+                        }}>
+                            <View style={styles.saveBtn}>
+                                <Text style={styles.btnText}>Save</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={clearFields}>
+                            <View style={styles.clearBtn}>
+                                <Text style={styles.btnText}>Clear</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                :
+                <View>
 
+                </View>
+            }
         </View>
 
     );

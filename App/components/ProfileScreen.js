@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import Firebase, { firebaseAuth } from '../config/Firebase';
+import StashHandling from './StashHandling.js';
 import { useIsFocused } from "@react-navigation/native";
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 
@@ -9,55 +10,23 @@ import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-star
 export default function ProfileScreen({ navigation }) {
     const [user, setUser] = useState({});
     const [hiddenStashes, setHiddenStashes] = useState([]);
-    const [hiddenLength, setHiddenLength] = useState(0);
     const [foundStashes, setFoundStashes] = useState([]);
-    const [foundLength, setFoundLength] = useState(0);
-
 
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        getUser();
-        getHiddenStashes();
-        getFoundStashes();
+        atStart();
     }, [isFocused]);
 
+    const atStart = async () => {
+        let currentUser = firebaseAuth.currentUser;
+        getUser();
 
-    const getHiddenStashes = async () => {
-        try {
-            await Firebase.database()
-                .ref('/stashes')
-                .once('value', snapshot => {
-                    if (snapshot.exists()) {
-                        const data = snapshot.val();
-                        const s = Object.values(data);
-                        const hidden = s.filter(d => d.owner === firebaseAuth.currentUser.uid);
+        let hidden = await StashHandling.getHiddenStashes(currentUser);
+        setHiddenStashes(hidden);
 
-                        setHiddenStashes(hidden);
-                        setHiddenLength(hidden.length);
-                    }
-
-                });
-        } catch (error) {
-            console.log("ALERT! Error finding hidden stashes " + error);
-        }
-    }
-
-    const getFoundStashes = async () => {
-        try {
-            await Firebase.database()
-                .ref('/users/' + firebaseAuth.currentUser.uid + '/foundStashes')
-                .once('value', snapshot => {
-                    if (snapshot.exists()) {
-                        const data = snapshot.val();
-                        const found = Object.values(data);
-                        setFoundStashes(found);
-                        setFoundLength(found.length);
-                    }
-                });
-        } catch (error) {
-            console.log("ALERT! Error finding found stashes " + error);
-        }
+        let found = await StashHandling.getFoundStashes(currentUser);
+        setFoundStashes(found);
     }
 
     const getUser = async () => {
@@ -99,12 +68,12 @@ export default function ProfileScreen({ navigation }) {
                 <View style={styles.buttons}>
                     <TouchableOpacity onPress={() => navigation.navigate('HiddenStashes', hiddenStashes)}>
                         <View style={styles.btn}>
-                            <Text style={styles.btnText}>Hidden ({hiddenLength})</Text>
+                            <Text style={styles.btnText}>Hidden ({hiddenStashes.length})</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate('FoundStashes', foundStashes)}>
                         <View style={styles.btn}>
-                            <Text style={styles.btnText}>Found ({foundLength})</Text>
+                            <Text style={styles.btnText}>Found ({foundStashes.length})</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

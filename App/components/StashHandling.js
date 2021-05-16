@@ -1,5 +1,5 @@
-import Firebase from '../config/Firebase';
-import { rules } from '../GameRules.js';
+import Firebase, { firebaseAuth } from '../config/Firebase';
+import { Alert } from 'react-native';
 
 class FetchStashes {
 
@@ -58,6 +58,28 @@ class FetchStashes {
         return nonfound;
     }
 
+    getHiddenStashes = async (currentUser) => {
+
+        let hidden = [];
+
+        try {
+            await Firebase.database()
+                .ref('/stashes')
+                .once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        const s = Object.values(data);
+                        hidden = s.filter(d => d.owner === currentUser.uid);
+                    }
+
+                });
+        } catch (error) {
+            console.log("ALERT! Error finding hidden stashes " + error);
+        }
+
+        return hidden;
+    }
+
     //check which items from list X are not found on list Y
     whichAreNotOnList = (x, y) => {
 
@@ -76,25 +98,20 @@ class FetchStashes {
         return notOnX;
     }
 
-    saveStash = (stash, currentUser) => {
+    saveStash = (stash) => {
+
+        stash.created = new Date().toString();
+
         try {
             Firebase.database().ref('stashes/' + stash.key).set(
-                {
-                    latitude: stash.latitude,
-                    longitude: stash.longitude,
-                    title: stash.title,
-                    description: stash.description,
-                    owner: currentUser.uid,
-                    disabled: false,
-                    key: stash.key,
-                    circleLat: this.randomCenter(stash).latitude,
-                    circleLong: this.randomCenter(stash).longitude,
-                    photoURL: stash.photoURL,
-                    created: new Date().toString()
-                }
+                stash
             );
+            Alert.alert("Stash saved");
+            return true;
         } catch (error) {
+            Alert.alert("Could not save stash");
             console.log("Error saving stash to database " + error);
+            return false;
         }
     }
 
@@ -121,25 +138,36 @@ class FetchStashes {
         }
     }
 
-    randomCenter = (stash) => {
-        let latitude = stash.latitude;
-        let longitude = stash.longitude;
-        let diff = rules.circleRad * 0.0000081; // constant number was calculated to adjust lat and long numbers to meters
+    newStash = async () => {
 
-        let x = latitude + (Math.random() * diff);
-        let y = longitude + (Math.random() * diff);
+        let s = {
+            latitude: null,
+            longitude: null,
+            title: '',
+            description: '',
+            owner: null,
+            disabled: false,
+            circleLat: null,
+            circleLong: null,
+            key: null,
+            photoURL: '',
+            created: null,
+        }
 
-        return { latitude: parseFloat(x), longitude: parseFloat(y) }; // modifies randomized numbers to adhere to convention of showing lat and long with 7 decimal points
+        s.owner = firebaseAuth.currentUser.uid;
+        s.key = await this.getKey();
+
+        return s;
     }
 
-    getKey = () => {
+    getKey = async () => {
         try {
-            return Firebase.database().ref('stashes/').push().getKey();
+            let key = await Firebase.database().ref('stashes/').push().getKey();
+            return key;
         } catch (error) {
             console.log("Error generating key " + error);
         }
     }
-
 }
 const fetchStashes = new FetchStashes();
 export default fetchStashes;

@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
-import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import StashHandling from './StashHandling.js';
 import LocationActions from './LocationActions';
