@@ -146,7 +146,7 @@ You can see your username, avatar, and the statistics of the stashes you have hi
 
 We would like to sincerely thank our teachers for their support and excellent advice during this project. We would also like to thank everyone who tested the game and gave us valuable feedback.
 
-Big shoutout also to our fellow students in Team Superpähkinä for their comments and ideas in code reviews.
+Big shoutout also to our fellow students in team [Superpähkinä](https://github.com/Super-Pahkina/korttipeli) for their comments and ideas in code reviews.
 </br></br>
 
 <!-- LICENSE -->
