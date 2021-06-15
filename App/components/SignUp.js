@@ -27,6 +27,9 @@ export default function SignUp({ navigation }) {
                 if (error.code === 'auth/invalid-email') {
                     Alert.alert('Email is invalid');
                 }
+                if (error.code === 'auth/invalid-password') {
+                    Alert.alert('Password must be at least six characters long');
+                }
                 console.log(error);
             });
     }
